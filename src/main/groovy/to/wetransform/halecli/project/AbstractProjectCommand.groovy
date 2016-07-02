@@ -50,11 +50,12 @@ abstract class AbstractProjectCommand implements Command {
       List<URI> projects = []
       
       if (projectFile) {
-        if (projectFile.exists()) {
+        if (!projectFile.exists()) {
           throw new FileNotFoundException("File $projectFile does not exist")
         }
         
         if (projectFile.isDirectory()) {
+          println "Checking directory $projectFile for project files..."
           // search for all projects
           ProjectsVisitor visitor = new ProjectsVisitor()
           try {
@@ -90,6 +91,7 @@ abstract class AbstractProjectCommand implements Command {
     ReportHandler reports = Util.createReportHandler()
     projects.each { URI project ->
       try {
+        println "Loading project at ${project}..."
         def projectEnv = new ProjectTransformationEnvironment(null, new DefaultInputSupplier(
           project), reports);
         
