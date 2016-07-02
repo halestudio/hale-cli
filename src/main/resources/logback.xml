@@ -17,6 +17,11 @@
   
   	<!-- ignore errors related to castor messages -->
   	<logger name="org.castor.core.util.Messages" level="OFF" />
+  	
+  	<!-- suppress some messages -->
+  	<logger name="eu.esdihumboldt.hale.io.xsd.reader.XmlSchemaReader" level="WARN" />
+  	<logger name="eu.esdihumboldt.hale.common.core.io.impl.LogProgressIndicator" level="WARN" />
+  	<logger name="eu.esdihumboldt.hale.common.core.report.impl.DefaultReporter" level="WARN" />
   
 	<root level="${log.root.level:-WARN}">
 		<appender-ref ref="STDOUT"/>
