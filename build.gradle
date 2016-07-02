@@ -4,12 +4,18 @@ plugins {
   id 'eclipse'
   id 'maven'
   id 'com.bmuschko.docker-java-application' version '2.6.8'
+  id "nebula.ospackage-application" version "3.6.1"
 }
 
 sourceCompatibility = '1.8'
 
 group = 'to.wetransform'
-version = '1.0.0-SNAPSHOT'
+
+project.ext {
+  haleVersion = '2.9.5-SNAPSHOT'
+}
+
+version = haleVersion
 
 /*
  * Dependencies 
@@ -53,10 +59,6 @@ repositories {
       password project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : ''
     }
   }
-}
-
-project.ext {
-  haleVersion = '2.9.5-SNAPSHOT'
 }
 
 dependencies {
@@ -120,6 +122,20 @@ configurations.all {
 
 mainClassName = 'to.wetransform.halecli.CLI'
 applicationName = 'hale'
+
+/*
+ * OS packaging
+ */
+
+ospackage {
+  packageName = 'hale-cli'
+  
+  link("/usr/local/bin/$applicationName", "/opt/$applicationName/bin/$applicationName")
+}
+
+ospackage_application {
+  prefix = "/opt"
+}
 
 /*
  * Docker configuration
