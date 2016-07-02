@@ -93,7 +93,10 @@ abstract class AbstractProjectCommand implements Command {
         def projectEnv = new ProjectTransformationEnvironment(null, new DefaultInputSupplier(
           project), reports);
         
-        runForProject(projectEnv, project, options, context)
+        boolean success = runForProject(projectEnv, project, options, context)
+        if (success) {
+          failed = true
+        }
       } catch (e) {
         failed = true
         e.printStackTrace()
@@ -109,7 +112,7 @@ abstract class AbstractProjectCommand implements Command {
     }
   }
   
-  abstract void runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
+  abstract boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
     OptionAccessor options, CommandContext context)
 
 }
