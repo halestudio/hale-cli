@@ -4,7 +4,8 @@ import org.eclipse.equinox.nonosgi.registry.RegistryFactoryHelper;
 
 import eu.esdihumboldt.hale.common.core.HalePlatform
 import groovy.lang.GroovySystem
-import to.wetransform.halecli.internal.ContextImpl;
+import to.wetransform.halecli.internal.ContextImpl
+import to.wetransform.halecli.project.ProjectCommands;
 import to.wetransform.halecli.transform.TransformCommand;
 
 class Runner {
@@ -14,7 +15,8 @@ class Runner {
       // print hale version
       println HalePlatform.coreVersion
     },
-    transform: new TransformCommand()
+    transform: new TransformCommand(),
+    project: new ProjectCommands()
   ].asImmutable()
 
   int run(String[] args) {
