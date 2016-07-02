@@ -82,6 +82,7 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.groovy.helpers:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.numeric:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.string:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.custom:$haleVersion"
   // formats
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xml:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xsd:$haleVersion"
@@ -90,6 +91,8 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.csv:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.wfs:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.json:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xls:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.html.svg:$haleVersion"
   // converters
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.core:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.wkt:$haleVersion"
