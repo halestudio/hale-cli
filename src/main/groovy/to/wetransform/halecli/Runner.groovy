@@ -46,6 +46,7 @@ class Runner {
       CLI_MODULES.keySet().each { command ->
         println "  $command"
       }
+      System.exit(1)
     }
   }
 
