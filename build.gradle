@@ -1,0 +1,227 @@
+plugins {
+  id 'groovy'
+  id 'application'
+  id 'eclipse'
+  id 'maven'
+  id 'com.bmuschko.docker-java-application' version '2.6.8'
+}
+
+sourceCompatibility = '1.8'
+
+group = 'to.wetransform'
+version = '1.0.0-SNAPSHOT'
+
+/*
+ * Dependencies 
+ */
+
+repositories {
+  maven { // wetransform release repository (HALE releases and Eclipse dependencies)
+    url 'https://artifactory.wetransform.to/artifactory/libs-release-local'
+  }
+  maven { // wetransform snapshot repository (HALE snapshots)
+    url 'https://artifactory.wetransform.to/artifactory/libs-snapshot-local'
+  }
+  
+  // these need to before jcenter/MavenCentral for retrieving JAI
+  maven {
+    url 'http://download.java.net/maven/2'
+  }
+  maven {
+    url 'http://download.osgeo.org/webdav/geotools/'
+  }
+  
+  maven { // HALE artifactory (dependencies for HALE)
+    url 'http://artifactory.esdi-humboldt.eu/artifactory/libs-release/'
+  }
+  
+  maven {
+    url 'http://repo.opengeo.org'
+  }
+  jcenter()
+  maven { // wetransform internal release repository
+    url 'https://artifactory.wetransform.to/artifactory/private-release-local'
+    credentials {
+      username project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : ''
+      password project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : ''
+    }
+  }
+  maven { // wetransform internal snapshot repository
+    url 'https://artifactory.wetransform.to/artifactory/private-snapshot-local'
+    credentials {
+      username project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : ''
+      password project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : ''
+    }
+  }
+}
+
+project.ext {
+  haleVersion = '2.9.5-SNAPSHOT'
+}
+
+dependencies {
+  // HALE
+  
+  // core
+  compile 'eu.esdihumboldt.unpuzzled:org.eclipse.equinox.nonosgi.registry:1.0.0'
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
+
+  // transformation
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.transform:$haleVersion"
+  // needed to run successfully:
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.headless.orient:$haleVersion" // reiterable transformation sink (for WFS FeatureCollection)
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.propertyaccessor:$haleVersion" // for CQL filters to work
+  // transformation functions:
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.core:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.inspire:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.geometric:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.groovy:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.groovy.helpers:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.numeric:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.string:$haleVersion"
+  // formats
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xml:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xsd:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.gml:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.shp:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.csv:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.wfs:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.json:$haleVersion"
+  // converters
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.core:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.wkt:$haleVersion"
+  
+  // Groovy meta extensions
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.util.groovy.meta.extension:$haleVersion"
+  
+  // logging
+  compile(group: 'eu.esdihumboldt.unpuzzled', name: 'de.fhg.igd.slf4jplus.logback.appender', version: '1.2.0.201503311443')
+
+  // resource cache (OpenGIS schemas, INSPIRE schemas, W3C schemas, etc.)
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: '2015.10.27')
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: '2015.10.27')
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.portele.de', version: '2015.10.27')
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.w3.org', version: '2015.10.27')
+  
+  // Testing
+  testCompile 'junit:junit:4.12'
+
+  // Logging
+  testRuntime 'ch.qos.logback:logback-core:1.1.6'
+  testRuntime 'ch.qos.logback:logback-classic:1.1.6'
+}
+
+configurations.all {
+  // ensure SNAPSHOTs are updated every time if needed
+  resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+mainClassName = 'to.wetransform.halecli.CLI'
+applicationName = 'hale'
+
+/*
+ * Docker configuration
+ * see https://github.com/bmuschko/gradle-docker-plugin
+ */
+
+docker {
+  javaApplication {
+    baseImage = 'isuper/java-oracle:server_jre_8'
+    maintainer = 'Simon Templer "simon@wetransform.to"'
+    tag = "wetransform/${project.name}:${project.version}"
+  }
+  
+  url = project.hasProperty('dockerHost') ? dockerHost : 'http://localdocker:2375'
+  
+  registryCredentials {
+    url = 'https://index.docker.io/v1'
+    username = project.hasProperty('dockerHubUsername') ? dockerHubUsername : ''
+    password = project.hasProperty('dockerHubPassword') ? dockerHubPassword : ''
+    email = project.hasProperty('dockerHubEmail') ? dockerHubEmail : ''
+  }
+}
+
+dockerPushImage {
+  // workaround for wrong image name used when pushing to docker hub
+  imageName = project.tasks.dockerBuildImage.getTag().split(':')[0]
+  tag = project.tasks.dockerBuildImage.getTag().split(':')[1]
+}
+
+
+/*
+ * Packaging and publishing
+ */
+
+// package groovydoc into a jar file
+task packageJavadoc(type: Jar, dependsOn: 'groovydoc') {
+  from groovydoc.destinationDir
+  classifier = 'javadoc'
+}
+
+// groovydoc task work-around
+configurations {
+  jansi.extendsFrom(runtime)
+}
+groovydoc {
+  groovyClasspath = project.configurations.jansi
+}
+dependencies {
+  jansi 'org.fusesource.jansi:jansi:1.11'
+}
+
+// package source into a jar file
+task packageSources(type: Jar) {
+  from sourceSets.main.allSource
+  classifier = 'sources'
+}
+
+// define artifacts for upload
+artifacts {
+  archives jar
+  archives packageJavadoc
+  archives packageSources
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      
+      // upload to wetransform artifactory
+      repository(url: 'https://artifactory.wetransform.to/artifactory/private-release-local') {
+        authentication(userName: project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : '',
+          password: project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : '')
+      }
+      snapshotRepository(url: 'https://artifactory.wetransform.to/artifactory/private-snapshot-local') {
+        authentication(userName: project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : '',
+          password: project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : '')
+      }
+
+    }
+  }
+}
+
+
+/*
+ * Gradle wrapper
+ */
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.14'
+}
+
+
+/*
+ * Eclipse configuration. 
+ */
+eclipse {
+  jdt {
+    file {
+      withProperties { properties ->
+        properties['org.eclipse.jdt.core.formatter.indentation.size'] = '2'
+        properties['org.eclipse.jdt.core.formatter.tabulation.size'] = '2'
+        properties['org.eclipse.jdt.core.formatter.tabulation.char'] = 'space'
+      }
+    }
+  }
+}
