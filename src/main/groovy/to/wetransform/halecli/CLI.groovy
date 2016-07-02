@@ -1,10 +1,15 @@
 package to.wetransform.halecli
 
+import eu.esdihumboldt.hale.common.core.HalePlatform;
 import to.wetransform.halecli.transform.TransformCLI;
 
 class CLI {
   
   static Map CLI_MODULES = [
+    version: {
+      // print hale version
+      println HalePlatform.coreVersion
+    },
     transform: TransformCLI.&main
   ].asImmutable()
 
@@ -13,7 +18,14 @@ class CLI {
     
     def run
     if (args) {
-      run = CLI_MODULES[args[0]]
+      def commandName = args[0]
+      
+      // support --version
+      if ('--version' == commandName) {
+        commandName = 'version'
+      }
+      
+      run = CLI_MODULES[commandName]
     }
     
     if (run) {
