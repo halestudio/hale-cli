@@ -9,7 +9,11 @@ public class CLI {
     Init.init();
     
     Runner runner = new Runner();
-    runner.run(args);
+    int returnCode = runner.run(args);
+    
+    if (returnCode != 0) {
+      System.exit(returnCode);
+    }
   }
 
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="de.fhg.igd.slf4jplus.logback.appender.FlattenFilter" />
+		<encoder>
+			<pattern>%level %logger{15}\(%line\) - %message%n%xException{10}</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="to.wetf" level="${log.hale.level:-INFO}" />
+  	<logger name="eu.esdihumboldt" level="${log.hale.level:-INFO}" />
+  
+  	<!-- ignore some warnings: -->
+  	<logger name="org.geotools.referencing.operation.projection" level="ERROR" />
+  	<logger name="java.util.prefs" level="ERROR" />
+  
+  	<!-- ignore errors related to castor messages -->
+  	<logger name="org.castor.core.util.Messages" level="OFF" />
+  	
+  	<!-- suppress some messages -->
+  	<logger name="eu.esdihumboldt.hale.io.xsd.reader.XmlSchemaReader" level="WARN" />
+  	<logger name="eu.esdihumboldt.hale.common.core.io.impl.LogProgressIndicator" level="WARN" />
+  	<logger name="eu.esdihumboldt.hale.common.core.report.impl.DefaultReporter" level="WARN" />
+  
+	<root level="${log.root.level:-WARN}">
+		<appender-ref ref="STDOUT"/>
+	</root>
+</configuration>
