@@ -112,10 +112,7 @@ dependencies {
   
   // Testing
   testCompile 'junit:junit:4.12'
-
-  // Logging
-  testRuntime 'ch.qos.logback:logback-core:1.1.6'
-  testRuntime 'ch.qos.logback:logback-classic:1.1.6'
+  testCompile 'com.github.stefanbirkner:system-rules:1.16.0'
 }
 
 configurations.all {

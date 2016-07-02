@@ -3,8 +3,9 @@ package to.wetransform.halecli
 import org.eclipse.equinox.nonosgi.registry.RegistryFactoryHelper;
 
 import eu.esdihumboldt.hale.common.core.HalePlatform
-import groovy.lang.GroovySystem;
-import to.wetransform.halecli.transform.TransformCLI;
+import groovy.lang.GroovySystem
+import to.wetransform.halecli.internal.ContextImpl;
+import to.wetransform.halecli.transform.TransformCommand;
 
 class Runner {
   
@@ -13,15 +14,16 @@ class Runner {
       // print hale version
       println HalePlatform.coreVersion
     },
-    transform: TransformCLI.&main
+    transform: new TransformCommand()
   ].asImmutable()
 
-  def run(String[] args) {
+  int run(String[] args) {
     // delegate to CLI modules
     
     def run
+    def commandName
     if (args) {
-      def commandName = args[0]
+      commandName = args[0]
       
       // support --version
       if ('--version' == commandName) {
@@ -38,7 +40,27 @@ class Runner {
       else {
         args = [] as String[]
       }
-      run(args)
+      
+      if (run instanceof Command) {
+        // run a command
+        def context = new ContextImpl(
+          baseCommand: "hale $commandName",
+          commandName: commandName)
+        run.run(args as List, context)
+      }
+      else { // assume it's a closure
+        // run closure as command
+        def result = run(args)
+        
+        if (result instanceof Number) {
+          // interpret as return code
+          result as int
+        }
+        else {
+          // assume successful execution
+          0
+        }
+      }
     } else {
       println 'usage: hale <command> [<args>]'
       println()
@@ -46,7 +68,7 @@ class Runner {
       CLI_MODULES.keySet().each { command ->
         println "  $command"
       }
-      System.exit(1)
+      1
     }
   }
 
