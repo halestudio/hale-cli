@@ -1,11 +1,14 @@
 package to.wetransform.halecli
 
-import eu.esdihumboldt.hale.common.core.HalePlatform;
+import org.eclipse.equinox.nonosgi.registry.RegistryFactoryHelper;
+
+import eu.esdihumboldt.hale.common.core.HalePlatform
+import groovy.lang.GroovySystem;
 import to.wetransform.halecli.transform.TransformCLI;
 
-class CLI {
+class Runner {
   
-  static Map CLI_MODULES = [
+  final Map CLI_MODULES = [
     version: {
       // print hale version
       println HalePlatform.coreVersion
@@ -13,7 +16,7 @@ class CLI {
     transform: TransformCLI.&main
   ].asImmutable()
 
-  static main(args) {
+  def run(String[] args) {
     // delegate to CLI modules
     
     def run
