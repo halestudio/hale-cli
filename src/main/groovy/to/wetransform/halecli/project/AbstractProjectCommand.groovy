@@ -135,8 +135,7 @@ abstract class AbstractProjectCommand implements Command {
     
     if (args) {
       // complete project file/dir
-      def arg = args[-1]
-      "compgen -f \"$arg\""
+      Util.BASH_COMPLETION_FILE
     }
     else {
       null

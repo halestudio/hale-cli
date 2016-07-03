@@ -23,7 +23,7 @@ class ListProjectsCommand extends AbstractProjectCommand {
       projects.each { URI location ->
         try {
           Path path = Paths.get(location)
-          Path relative = Paths.get('.').toAbsolutePath().relativize(path)
+          Path relative = Paths.get('.').toAbsolutePath().parent.relativize(path)
           println "  $relative"
         } catch (e) {
           e.printStackTrace()

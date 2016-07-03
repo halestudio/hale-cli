@@ -10,6 +10,8 @@ import eu.esdihumboldt.hale.common.headless.report.ReportFile;
 import groovy.transform.CompileStatic
 
 class Util {
+  
+  public static final String BASH_COMPLETION_FILE = 'FILE'
 
   @CompileStatic
   static URI fileOrUri(String value) {
