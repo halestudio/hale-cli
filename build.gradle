@@ -102,6 +102,7 @@ dependencies {
   
   // logging
   compile(group: 'eu.esdihumboldt.unpuzzled', name: 'de.fhg.igd.slf4jplus.logback.appender', version: '1.2.0.201503311443')
+  compile 'org.slf4j:jul-to-slf4j:1.7.21'
 
   // resource cache (OpenGIS schemas, INSPIRE schemas, W3C schemas, etc.)
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
