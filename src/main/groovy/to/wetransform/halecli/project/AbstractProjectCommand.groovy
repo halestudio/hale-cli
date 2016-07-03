@@ -91,10 +91,23 @@ abstract class AbstractProjectCommand implements Command {
     ReportHandler reports = Util.createReportHandler()
     projects.each { URI project ->
       try {
+        println()
         println "Loading project at ${project}..."
+        
         def projectEnv = new ProjectTransformationEnvironment(null, new DefaultInputSupplier(
           project), reports);
-        
+       
+        println()
+        String projectName = projectEnv.project?.name
+        print "Running ${context.commandName} command on project"
+        if (projectName) {
+          print " \"$projectName\"..."
+        }
+        else {
+          '...'
+        }
+        println()
+         
         boolean success = runForProject(projectEnv, project, options, context)
         if (success) {
           failed = true
