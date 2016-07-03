@@ -92,7 +92,6 @@ class Util {
       print(' - '.padLeft(maxEntry.length() - 1))
       print 'Show this help'
       println()
-      println()
       
       commands.sort().each { name, command ->
         print "  $name"
