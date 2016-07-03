@@ -86,7 +86,7 @@ class Util {
     }
     
     if (maxEntry) {
-      commands.each { name, command ->
+      commands.sort().each { name, command ->
         print "  $name"
         if (command.shortDescription) {
           print(' - '.padLeft(maxEntry.length() - name.length() + 3))
