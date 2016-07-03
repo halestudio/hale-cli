@@ -80,13 +80,20 @@ class Util {
     println "usage: ${context.baseCommand} <command> [<args>]"
     println()
     println 'Supported commands are:'
-    commands.each { name, command ->
-      print "  $name"
-      if (command.shortDescription) {
-        print ' - '
-        print command.shortDescription
+    
+    String maxEntry = commands.keySet().max {
+      it.length()
+    }
+    
+    if (maxEntry) {
+      commands.each { name, command ->
+        print "  $name"
+        if (command.shortDescription) {
+          print(' - '.padLeft(maxEntry.length() - name.length() + 3))
+          print command.shortDescription
+        }
+        println()
       }
-      println()
     }
   }
   
