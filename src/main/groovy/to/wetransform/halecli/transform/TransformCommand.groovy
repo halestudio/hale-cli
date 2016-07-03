@@ -29,5 +29,7 @@ class TransformCommand implements Command {
     }
     returnCode
   }
+  
+  final String shortDescription = 'Run a transformation based on a hale project'
 
 }

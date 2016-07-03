@@ -31,6 +31,13 @@ class RunnerTest {
   @Test
   void testNoArgs() {
     int code = new Runner().run()
+    assertEquals(0, code)
+    assertTrue(out.log.startsWith('usage:'))
+  }
+  
+  @Test
+  void testWrongCommands() {
+    int code = new Runner().run('zombie-apocalypse')
     assertEquals(1, code)
     assertTrue(out.log.startsWith('usage:'))
   }

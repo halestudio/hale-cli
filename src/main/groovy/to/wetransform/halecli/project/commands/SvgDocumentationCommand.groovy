@@ -8,22 +8,20 @@ import eu.esdihumboldt.hale.common.core.io.Value;
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
 import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier;
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
-import eu.esdihumboldt.hale.io.csv.writer.MappingTableConstants
-import eu.esdihumboldt.hale.io.xls.writer.XLSAlignmentMappingWriter
+import eu.esdihumboldt.hale.io.html.svg.mapping.MappingExporter;
 import groovy.transform.CompileStatic;
 import groovy.util.OptionAccessor
 import to.wetransform.halecli.CommandContext
 import to.wetransform.halecli.Util;
 import to.wetransform.halecli.project.AbstractProjectCommand
-import static MappingTableConstants.*
 
 @CompileStatic
-class MappingTableCommand extends AbstractProjectCommand {
+class SvgDocumentationCommand extends AbstractProjectCommand {
 
   boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
       OptionAccessor options, CommandContext context) {
     // configure writer
-    XLSAlignmentMappingWriter writer = new XLSAlignmentMappingWriter()
+    MappingExporter writer = new MappingExporter()
     writer.alignment = projectEnv.alignment
     writer.projectInfo = projectEnv.project
     writer.projectLocation = projectLocation
@@ -31,18 +29,11 @@ class MappingTableCommand extends AbstractProjectCommand {
     writer.sourceSchema = projectEnv.sourceSchema
     writer.targetSchema = projectEnv.targetSchema
     
-    writer.setContentType(HalePlatform.contentTypeManager.getContentType(
-      'eu.esdihumboldt.hale.io.xls.xlsx'))
-    
-    writer.setParameter(PARAMETER_MODE, MODE_BY_TYPE_CELLS as Value)
-    writer.setParameter(INCLUDE_NAMESPACES, false as Value)
-    writer.setParameter(TRANSFORMATION_AND_DISABLED_FOR, true as Value)
-    
     //XXX only supported for files right now
     File projectFile = new File(projectLocation)
     
-    // derive file name for Excel file
-    File mappingTable = new File(projectFile.parentFile, projectFile.name + '.xlsx')
+    // derive file name for HTML file
+    File mappingTable = new File(projectFile.parentFile, projectFile.name + '.svg.html')
     
     writer.target = new FileIOSupplier(mappingTable)
     
@@ -53,6 +44,6 @@ class MappingTableCommand extends AbstractProjectCommand {
     report.isSuccess() && !report.errors
   }
 
-  final String shortDescription = 'Generate a mapping table from hale projects'
+  final String shortDescription = 'Generate HTML mapping documentation for hale projects'
 
 }

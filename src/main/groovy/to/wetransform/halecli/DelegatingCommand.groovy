@@ -10,7 +10,7 @@ abstract class DelegatingCommand implements Command {
   public int run(List<String> args, CommandContext context) {
     if (args.size() == 0) {
       // usage - list sub-commands
-      usage(context)
+      Util.printUsage(context, subCommands)
       0
     }
     else {
@@ -36,18 +36,9 @@ abstract class DelegatingCommand implements Command {
         command.run(args, subContext)
       }
       else {
-        usage(context)
+        Util.printUsage(context, subCommands)
         1
       }
-    }
-  }
-  
-  void usage(CommandContext context) {
-    println "usage: ${context.baseCommand} <command> [<args>]"
-    println()
-    println 'Supported commands are:'
-    subCommands.keySet().each { command ->
-      println "  $command"
     }
   }
 

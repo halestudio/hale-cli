@@ -7,7 +7,10 @@ import to.wetransform.halecli.project.commands.*
 class ProjectCommands extends DelegatingCommand {
 
   final Map<String, Command> subCommands = [
-    'mapping-table': new MappingTableCommand()
-  ]
+    'mapping-table': new MappingTableCommand(),
+    'doc-svg': new SvgDocumentationCommand()
+  ].asImmutable()
 
+  final String shortDescription = 'Various utility commands working on hale projects'  
+  
 }
