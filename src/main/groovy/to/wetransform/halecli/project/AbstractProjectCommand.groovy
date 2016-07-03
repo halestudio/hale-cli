@@ -36,54 +36,54 @@ abstract class AbstractProjectCommand implements Command {
     //TODO check options?
     
     def extraArgs = options.arguments()
+    String projectArg
     if (extraArgs) {
-      String projectArg = extraArgs[0]
+      projectArg = extraArgs[0]
+    }
+    else {
+      // default to current directory
+      projectArg = '.'
+    }
       
-      URI projectUri = Util.fileOrUri(projectArg)
-      File projectFile
-      try {
-        projectFile = new File(projectUri)
-      } catch (e) {
-        // ignore -> project is not a file/directory
+    URI projectUri = Util.fileOrUri(projectArg)
+    File projectFile
+    try {
+      projectFile = new File(projectUri)
+    } catch (e) {
+      // ignore -> project is not a file/directory
+    }
+    
+    List<URI> projects = []
+    
+    if (projectFile) {
+      if (!projectFile.exists()) {
+        throw new FileNotFoundException("File $projectFile does not exist")
       }
       
-      List<URI> projects = []
-      
-      if (projectFile) {
-        if (!projectFile.exists()) {
-          throw new FileNotFoundException("File $projectFile does not exist")
+      if (projectFile.isDirectory()) {
+        println "Checking directory $projectFile for project files..."
+        // search for all projects
+        ProjectsVisitor visitor = new ProjectsVisitor()
+        try {
+          Files.walkFileTree(projectFile.toPath(), visitor);
+        } catch (IOException e) {
+          throw new IllegalStateException("Error browsing given project directory $projectFile", e)
         }
-        
-        if (projectFile.isDirectory()) {
-          println "Checking directory $projectFile for project files..."
-          // search for all projects
-          ProjectsVisitor visitor = new ProjectsVisitor()
-          try {
-            Files.walkFileTree(projectFile.toPath(), visitor);
-          } catch (IOException e) {
-            throw new IllegalStateException("Error browsing given project directory $projectFile", e)
-          }
-          visitor.getCollectedFiles().each { Path file ->
-            projects << file.toUri()
-          }
-        }
-        else {
-          // only project specified
-          projects << projectUri
+        visitor.getCollectedFiles().each { Path file ->
+          projects << file.toUri()
         }
       }
       else {
-        // only URI specified 
+        // only project specified
         projects << projectUri
       }
-      
-      runForProjects(projects, options, context)
     }
     else {
-      // argument for project needed
-      cli.usage()
-      1
+      // only URI specified 
+      projects << projectUri
     }
+    
+    runForProjects(projects, options, context)
   }
   
   int runForProjects(List<URI> projects, OptionAccessor options, CommandContext context) {
