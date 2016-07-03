@@ -67,8 +67,13 @@ class Runner {
       println 'usage: hale <command> [<args>]'
       println()
       println 'Supported commands are:'
-      CLI_MODULES.keySet().each { command ->
-        println "  $command"
+      CLI_MODULES.each { name, command ->
+        print "  $name"
+        if (command instanceof Command && command.shortDescription) {
+          print ' - '
+          print command.shortDescription
+        }
+        println()
       }
       1
     }

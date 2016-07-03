@@ -53,4 +53,6 @@ class MappingTableCommand extends AbstractProjectCommand {
     report.isSuccess() && !report.errors
   }
 
+  final String shortDescription = 'Generate a mapping table from a hale project'
+
 }

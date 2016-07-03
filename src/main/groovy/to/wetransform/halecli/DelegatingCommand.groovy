@@ -46,8 +46,13 @@ abstract class DelegatingCommand implements Command {
     println "usage: ${context.baseCommand} <command> [<args>]"
     println()
     println 'Supported commands are:'
-    subCommands.keySet().each { command ->
-      println "  $command"
+    subCommands.each { name, command ->
+      print "  $name"
+      if (command.shortDescription) {
+        print ' - '
+        print command.shortDescription
+      }
+      println()
     }
   }
 

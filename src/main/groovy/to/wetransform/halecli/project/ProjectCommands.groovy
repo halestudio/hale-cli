@@ -10,4 +10,6 @@ class ProjectCommands extends DelegatingCommand {
     'mapping-table': new MappingTableCommand()
   ]
 
+  final String shortDescription = 'Various utility commands working on hale projects'  
+  
 }
