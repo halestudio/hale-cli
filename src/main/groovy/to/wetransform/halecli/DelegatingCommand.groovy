@@ -41,5 +41,23 @@ abstract class DelegatingCommand implements Command {
       }
     }
   }
+  
+  String bashCompletion(List<String> args) {
+    if (args.size() > 1) {
+      // delegate to command
+      String commandName = args[0]
+      Command command = subCommands[commandName]
+      if (command) {
+        command.bashCompletion(args[1..-1])
+      }
+      else {
+        null
+      }
+    }
+    else {
+      // complete subcommand
+      'compgen -W "' + subCommands.keySet().join(' ') + '" -- ' + args[-1]
+    }
+  }
 
 }

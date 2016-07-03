@@ -141,10 +141,21 @@ ospackage {
   packageName = 'hale-cli'
   
   link("/usr/local/bin/$applicationName", "/opt/$applicationName/bin/$applicationName")
+  link("/etc/bash_completion.d/hale", "/opt/$applicationName/etc/bash_completion.sh")
 }
 
 ospackage_application {
   prefix = "/opt"
+}
+
+distributions {
+  main {
+      contents {
+          from(file('etc')) {
+              into 'etc'
+          }
+      }
+  }
 }
 
 /*

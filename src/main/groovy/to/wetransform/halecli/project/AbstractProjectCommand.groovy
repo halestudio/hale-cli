@@ -130,4 +130,17 @@ abstract class AbstractProjectCommand implements Command {
   abstract boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
     OptionAccessor options, CommandContext context)
 
+  String bashCompletion(List<String> args) {
+    //TODO handling for options? how to adapt in subclasses?
+    
+    if (args) {
+      // complete project file/dir
+      def arg = args[-1]
+      "compgen -f \"$arg\""
+    }
+    else {
+      null
+    }
+  }
+  
 }
