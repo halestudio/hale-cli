@@ -75,4 +75,19 @@ class Util {
     }
   }
   
+  @CompileStatic
+  static void printUsage(CommandContext context, Map<String, Command> commands) {
+    println "usage: ${context.baseCommand} <command> [<args>]"
+    println()
+    println 'Supported commands are:'
+    commands.each { name, command ->
+      print "  $name"
+      if (command.shortDescription) {
+        print ' - '
+        print command.shortDescription
+      }
+      println()
+    }
+  }
+  
 }
