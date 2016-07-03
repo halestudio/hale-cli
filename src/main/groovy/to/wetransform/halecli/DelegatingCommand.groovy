@@ -11,7 +11,7 @@ abstract class DelegatingCommand implements Command {
     if (args.size() == 0) {
       // usage - list sub-commands
       Util.printUsage(context, subCommands)
-      0
+      1
     }
     else {
       // select sub-command
@@ -20,6 +20,12 @@ abstract class DelegatingCommand implements Command {
       def commandName
       if (args) {
         commandName = args[0]
+        
+        if (commandName == 'help') {
+          Util.printUsage(context, subCommands)
+          return 0
+        }
+        
         command = subCommands[commandName]
       }
       
@@ -39,6 +45,24 @@ abstract class DelegatingCommand implements Command {
         Util.printUsage(context, subCommands)
         1
       }
+    }
+  }
+  
+  String bashCompletion(List<String> args) {
+    if (args.size() > 1) {
+      // delegate to command
+      String commandName = args[0]
+      Command command = subCommands[commandName]
+      if (command) {
+        command.bashCompletion(args[1..-1])
+      }
+      else {
+        null
+      }
+    }
+    else {
+      // complete subcommand
+      'compgen -W "help ' + subCommands.keySet().join(' ') + '" -- ' + args[-1]
     }
   }
 

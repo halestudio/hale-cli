@@ -9,7 +9,7 @@ public interface Command {
   /**
    * Run the command.
    * 
-   * @param args the list or arguments
+   * @param args the list of arguments
    * @return
    */
   int run(List<String> args, CommandContext context);
@@ -21,5 +21,16 @@ public interface Command {
    */
   @Nullable
   String getShortDescription();
+  
+  /**
+   * Return a Unix command to use to generate bash completions.
+   * 
+   * @param args the list of arguments (ending with the proposal to complete)
+   * @return the Unix command or <code>null</code>
+   */
+  @Nullable
+  default String bashCompletion(List<String> args) {
+    return null;
+  }
 
 }

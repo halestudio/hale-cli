@@ -10,6 +10,8 @@ import eu.esdihumboldt.hale.common.headless.report.ReportFile;
 import groovy.transform.CompileStatic
 
 class Util {
+  
+  public static final String BASH_COMPLETION_FILE = 'FILE'
 
   @CompileStatic
   static URI fileOrUri(String value) {
@@ -86,6 +88,11 @@ class Util {
     }
     
     if (maxEntry) {
+      print '  help'
+      print(' - '.padLeft(maxEntry.length() - 1))
+      print 'Show this help'
+      println()
+      
       commands.sort().each { name, command ->
         print "  $name"
         if (command.shortDescription) {

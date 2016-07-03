@@ -77,3 +77,12 @@ Example:
 ```
 HALE_OPTS="-Dhttp.proxyHost=webcache.example.com -Dhttp.proxyPort=8080 -Dhttp.nonProxyHosts='localhost|host.example.com'"
 ```
+
+Helpers
+-------
+
+Check which files were installed by the `.deb` package:
+
+```
+dpkg-query -L hale-cli
+```
