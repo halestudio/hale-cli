@@ -78,6 +78,24 @@ Example:
 HALE_OPTS="-Dhttp.proxyHost=webcache.example.com -Dhttp.proxyPort=8080 -Dhttp.nonProxyHosts='localhost|host.example.com'"
 ```
 
+
+### Language
+
+Some commands may produce different results based on your language.
+By default the system language is used.
+You can override the default locale settings via the following system properties:
+
+* `user.language` - two letter code for the language (e.g. `de`)
+* `user.country` - two letter code for the country (e.g. `DE`)
+* `user.variant` - name of the variant, if applicable
+
+Example:
+
+```
+HALE_OPTS="-Duser.country=DE -Duser.language=de"
+```
+
+
 Helpers
 -------
 
