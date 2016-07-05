@@ -130,7 +130,8 @@ abstract class AbstractProjectCommand implements Command {
   abstract boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
     OptionAccessor options, CommandContext context)
 
-  String bashCompletion(List<String> args) {
+  @Override
+  String bashCompletion(List<String> args, int current) {
     //TODO handling for options? how to adapt in subclasses?
     
     if (args) {

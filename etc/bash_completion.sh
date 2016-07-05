@@ -1,3 +1,5 @@
+_hale_join() { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }
+
 _hale()
 {
   compopt +o default
@@ -5,7 +7,10 @@ _hale()
   local cur="${COMP_WORDS[COMP_CWORD]}"
   
   # delegate to hale command
-  local hale_result=$(hale --complete $COMP_CWORD ${COMP_WORDS[@]})
+  #local joined=$(_hale_join "' '" "${COMP_WORDS[@]}")
+  #local joined="'$joined'"
+  #local hale_result=$(hale --complete $COMP_CWORD $joined)
+  local hale_result=$(hale --complete $COMP_CWORD "${COMP_WORDS[@]}")
 
   case "${hale_result}" in
     # Reserved word FILE

@@ -49,7 +49,7 @@ class Runner extends DelegatingCommand {
         // strip first word (which is the base command)
         words = words.size() > 1 ? words[1..-1] : []
         
-        String completion = bashCompletion(words)
+        String completion = bashCompletion(words, currentWord - 1)
         if (completion) {
           println completion
           return 0

@@ -48,13 +48,14 @@ abstract class DelegatingCommand implements Command {
     }
   }
   
-  String bashCompletion(List<String> args) {
-    if (args.size() > 1) {
+  @Override
+  String bashCompletion(List<String> args, int current) {
+    if (current > 0) {
       // delegate to command
       String commandName = args[0]
       Command command = subCommands[commandName]
       if (command) {
-        command.bashCompletion(args[1..-1])
+        command.bashCompletion(args[1..-1], current - 1)
       }
       else {
         null
@@ -62,7 +63,7 @@ abstract class DelegatingCommand implements Command {
     }
     else {
       // complete subcommand
-      'compgen -W "help ' + subCommands.keySet().join(' ') + '" -- ' + args[-1]
+      'compgen -W "help ' + subCommands.keySet().join(' ') + '" -- ' + args[current]
     }
   }
 
