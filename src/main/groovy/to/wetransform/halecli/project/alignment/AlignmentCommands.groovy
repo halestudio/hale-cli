@@ -8,7 +8,8 @@ class AlignmentCommands extends DelegatingCommand {
 
   final Map<String, Command> subCommands = [
     'export-table': new MappingTableCommand(),
-    'export-doc': new SvgDocumentationCommand()
+    'export-doc': new SvgDocumentationCommand(),
+    'export-json': new ExportJsonCommand()
   ].asImmutable()
 
   final String shortDescription = 'Commands working on hale alignments'  
