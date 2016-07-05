@@ -33,8 +33,6 @@ class GroovyShellCommand implements Command {
     CliBuilder cli = new CliBuilder(usage : "${context.baseCommand} [options] [...]",
     formatter: new HelpFormatter(), writer: io.out)
 
-    cli.classpath(messages['cli.option.classpath.description'])
-    cli.cp(longOpt: 'classpath', messages['cli.option.cp.description'])
     cli.h(longOpt: 'help', messages['cli.option.help.description'])
     cli.V(longOpt: 'version', messages['cli.option.version.description'])
     cli.v(longOpt: 'verbose', messages['cli.option.verbose.description'])
