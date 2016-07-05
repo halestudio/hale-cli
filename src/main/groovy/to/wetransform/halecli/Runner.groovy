@@ -1,7 +1,8 @@
 package to.wetransform.halecli
 
-import java.util.Map;
+import java.util.Map
 
+import to.wetransform.halecli.groovy.GroovyShellCommand;
 import to.wetransform.halecli.internal.ContextImpl
 import to.wetransform.halecli.project.ProjectCommands
 import to.wetransform.halecli.transform.TransformCommand
@@ -11,7 +12,8 @@ class Runner extends DelegatingCommand {
   final Map<String, Command> subCommands = [
     version: new VersionCommand(),
     transform: new TransformCommand(),
-    project: new ProjectCommands()
+    project: new ProjectCommands(),
+    groovysh: new GroovyShellCommand()
   ].asImmutable()
 
   final String shortDescription = 'hale command line utility'
