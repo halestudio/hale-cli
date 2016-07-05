@@ -17,6 +17,9 @@ import org.fusesource.jansi.AnsiConsole
 
 import eu.esdihumboldt.cst.functions.groovy.GroovyConstants
 import eu.esdihumboldt.cst.functions.groovy.helper.HelperFunctions
+import eu.esdihumboldt.hale.common.core.HalePlatform;
+import eu.esdihumboldt.hale.common.core.io.HaleIO;
+import eu.esdihumboldt.hale.common.core.io.Value;
 import groovy.transform.CompileStatic;
 import to.wetransform.halecli.Command
 import to.wetransform.halecli.CommandContext
@@ -126,8 +129,13 @@ class GroovyShellCommand implements Command {
   }
   
   void populateBinding(Binding binding) {
-    // helper functions
-    binding.setVariable(GroovyConstants.BINDING_HELPER_FUNCTIONS, HelperFunctions.createDefault())
+    /*
+     * helper functions
+     *
+     * default binding (GroovyConstants.BINDING_HELPER_FUNCTIONS)
+     * seems to be reserved by Groovy shell
+     */
+    binding.setVariable('helpers', HelperFunctions.createDefault())
   }
   
   @CompileStatic
@@ -155,6 +163,11 @@ class GroovyShellCommand implements Command {
       // e.g. star imports, static imports...
     }
         
+    // add custom imports
+    result << Value.class.name
+    result << HaleIO.class.name
+    result << HalePlatform.class.name
+
     result
   }
 
