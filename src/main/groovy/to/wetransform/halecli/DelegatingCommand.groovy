@@ -21,7 +21,7 @@ abstract class DelegatingCommand implements Command {
       if (args) {
         commandName = args[0]
         
-        if (commandName == 'help') {
+        if (commandName == 'help' || commandName == '--help') {
           Util.printUsage(context, subCommands)
           return 0
         }

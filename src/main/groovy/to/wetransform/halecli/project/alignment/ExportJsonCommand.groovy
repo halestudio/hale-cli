@@ -1,4 +1,4 @@
-package to.wetransform.halecli.project.commands;
+package to.wetransform.halecli.project.alignment;
 
 import java.net.URI;
 
@@ -8,7 +8,7 @@ import eu.esdihumboldt.hale.common.core.io.Value;
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
 import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier;
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
-import eu.esdihumboldt.hale.io.html.svg.mapping.MappingExporter;
+import eu.esdihumboldt.hale.io.html.svg.mapping.json.JsonMappingExporter;
 import groovy.transform.CompileStatic;
 import groovy.util.OptionAccessor
 import to.wetransform.halecli.CommandContext
@@ -16,12 +16,12 @@ import to.wetransform.halecli.Util;
 import to.wetransform.halecli.project.AbstractProjectCommand
 
 @CompileStatic
-class SvgDocumentationCommand extends AbstractProjectCommand {
+class ExportJsonCommand extends AbstractProjectCommand {
 
   boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
       OptionAccessor options, CommandContext context) {
     // configure writer
-    MappingExporter writer = new MappingExporter()
+    JsonMappingExporter writer = new JsonMappingExporter()
     writer.alignment = projectEnv.alignment
     writer.projectInfo = projectEnv.project
     writer.projectLocation = projectLocation
@@ -33,7 +33,7 @@ class SvgDocumentationCommand extends AbstractProjectCommand {
     File projectFile = new File(projectLocation)
     
     // derive file name for HTML file
-    File mappingTable = new File(projectFile.parentFile, projectFile.name + '.svg.html')
+    File mappingTable = new File(projectFile.parentFile, projectFile.name + '.json')
     
     writer.target = new FileIOSupplier(mappingTable)
     
@@ -44,6 +44,6 @@ class SvgDocumentationCommand extends AbstractProjectCommand {
     report.isSuccess() && !report.errors
   }
 
-  final String shortDescription = 'Generate HTML mapping documentation for hale projects'
+  final String shortDescription = 'Generate JSON represenation of hale alignments'
 
 }
