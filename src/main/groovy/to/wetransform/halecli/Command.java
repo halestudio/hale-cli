@@ -25,11 +25,12 @@ public interface Command {
   /**
    * Return a Unix command to use to generate bash completions.
    * 
-   * @param args the list of arguments (ending with the proposal to complete)
+   * @param args the list of arguments
+   * @param current the index of the current argument to be completed
    * @return the Unix command or <code>null</code>
    */
   @Nullable
-  default String bashCompletion(List<String> args) {
+  default String bashCompletion(List<String> args, int current) {
     return null;
   }
 
