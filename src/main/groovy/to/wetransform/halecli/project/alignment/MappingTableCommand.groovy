@@ -1,4 +1,4 @@
-package to.wetransform.halecli.project.commands;
+package to.wetransform.halecli.project.alignment;
 
 import java.net.URI;
 
