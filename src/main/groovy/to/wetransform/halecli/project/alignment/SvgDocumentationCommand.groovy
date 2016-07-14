@@ -13,10 +13,10 @@ import groovy.transform.CompileStatic;
 import groovy.util.OptionAccessor
 import to.wetransform.halecli.CommandContext
 import to.wetransform.halecli.Util;
-import to.wetransform.halecli.project.AbstractProjectCommand
+import to.wetransform.halecli.project.AbstractProjectEnvironmentCommand
 
 @CompileStatic
-class SvgDocumentationCommand extends AbstractProjectCommand {
+class SvgDocumentationCommand extends AbstractProjectEnvironmentCommand {
 
   boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
       OptionAccessor options, CommandContext context) {

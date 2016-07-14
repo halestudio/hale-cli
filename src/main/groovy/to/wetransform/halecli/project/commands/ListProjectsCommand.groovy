@@ -9,10 +9,11 @@ import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironmen
 import groovy.transform.CompileStatic;
 import groovy.util.OptionAccessor;
 import to.wetransform.halecli.CommandContext;
-import to.wetransform.halecli.project.AbstractProjectCommand;
+import to.wetransform.halecli.project.AbstractProjectCommand
+import to.wetransform.halecli.project.AbstractProjectEnvironmentCommand
 
 @CompileStatic
-class ListProjectsCommand extends AbstractProjectCommand {
+class ListProjectsCommand extends AbstractProjectEnvironmentCommand {
 
   final String shortDescription = 'List hale projects found at the specified location'
 

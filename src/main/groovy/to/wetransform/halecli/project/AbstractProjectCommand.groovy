@@ -15,7 +15,7 @@ import to.wetransform.halecli.CommandContext
 import to.wetransform.halecli.Util
 
 @CompileStatic
-abstract class AbstractProjectCommand implements Command {
+abstract class AbstractProjectCommand<T> implements Command {
   
   String getUsageExtension() {
     ''
@@ -86,6 +86,10 @@ abstract class AbstractProjectCommand implements Command {
     runForProjects(projects, options, context)
   }
   
+  abstract T loadProject(URI location, ReportHandler reports)
+  
+  abstract String getProjectName(T project)
+  
   int runForProjects(List<URI> projects, OptionAccessor options, CommandContext context) {
     boolean failed = false
     ReportHandler reports = Util.createReportHandler()
@@ -94,11 +98,10 @@ abstract class AbstractProjectCommand implements Command {
         println()
         println "Loading project at ${project}..."
         
-        def projectEnv = new ProjectTransformationEnvironment(null, new DefaultInputSupplier(
-          project), reports);
+        def projectEnv = loadProject(project, reports)
        
         println()
-        String projectName = projectEnv.project?.name
+        String projectName = getProjectName(projectEnv)
         print "Running ${context.commandName} command on project"
         if (projectName) {
           print " \"$projectName\"..."
@@ -127,7 +130,7 @@ abstract class AbstractProjectCommand implements Command {
     }
   }
   
-  abstract boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
+  abstract boolean runForProject(T project, URI projectLocation,
     OptionAccessor options, CommandContext context)
 
   @Override
