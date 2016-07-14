@@ -7,6 +7,7 @@ import to.wetransform.halecli.project.commands.*
 class AlignmentCommands extends DelegatingCommand {
 
   final Map<String, Command> subCommands = [
+//    'filter': new FilterAlignmentCommand(),
     'export-table': new MappingTableCommand(),
     'export-doc': new SvgDocumentationCommand(),
     'export-json': new ExportJsonCommand()

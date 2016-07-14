@@ -6,7 +6,8 @@ import eu.esdihumboldt.hale.common.align.io.AlignmentWriter
 import eu.esdihumboldt.hale.common.core.HalePlatform;
 import eu.esdihumboldt.hale.common.core.io.Value;
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
-import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier;
+import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier
+import eu.esdihumboldt.hale.common.core.report.ReportHandler;
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.hale.io.csv.writer.MappingTableConstants
 import eu.esdihumboldt.hale.io.xls.writer.XLSAlignmentMappingWriter
@@ -22,7 +23,7 @@ import static MappingTableConstants.*
 class MappingTableCommand extends AbstractProjectEnvironmentCommand {
 
   boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
-      OptionAccessor options, CommandContext context) {
+      OptionAccessor options, CommandContext context, ReportHandler reports) {
     // configure writer
     XLSAlignmentMappingWriter writer = new XLSAlignmentMappingWriter()
     writer.alignment = projectEnv.alignment

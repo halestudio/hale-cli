@@ -6,7 +6,8 @@ import eu.esdihumboldt.hale.common.align.io.AlignmentWriter
 import eu.esdihumboldt.hale.common.core.HalePlatform;
 import eu.esdihumboldt.hale.common.core.io.Value;
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
-import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier;
+import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier
+import eu.esdihumboldt.hale.common.core.report.ReportHandler;
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.hale.io.html.svg.mapping.MappingExporter;
 import groovy.transform.CompileStatic;
@@ -19,7 +20,7 @@ import to.wetransform.halecli.project.AbstractProjectEnvironmentCommand
 class SvgDocumentationCommand extends AbstractProjectEnvironmentCommand {
 
   boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
-      OptionAccessor options, CommandContext context) {
+      OptionAccessor options, CommandContext context, ReportHandler reports) {
     // configure writer
     MappingExporter writer = new MappingExporter()
     writer.alignment = projectEnv.alignment

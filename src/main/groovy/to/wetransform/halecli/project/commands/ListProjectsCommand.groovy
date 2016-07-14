@@ -5,6 +5,7 @@ import java.nio.file.Path
 import java.nio.file.Paths;
 import java.util.List;
 
+import eu.esdihumboldt.hale.common.core.report.ReportHandler
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import groovy.transform.CompileStatic;
 import groovy.util.OptionAccessor;
@@ -40,8 +41,8 @@ class ListProjectsCommand extends AbstractProjectEnvironmentCommand {
     }
   }
 
-  boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation, OptionAccessor options,
-      CommandContext context) {
+  boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
+    OptionAccessor options, CommandContext context, ReportHandler reports) {
     // is not being called
     true
   }

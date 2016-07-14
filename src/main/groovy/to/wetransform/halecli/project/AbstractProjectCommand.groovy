@@ -9,7 +9,8 @@ import eu.esdihumboldt.hale.app.transform.ExecTransformation.DirVisitor
 import eu.esdihumboldt.hale.common.core.io.supplier.DefaultInputSupplier
 import eu.esdihumboldt.hale.common.core.report.ReportHandler;
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment;
-import groovy.transform.CompileStatic;
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode;
 import to.wetransform.halecli.Command
 import to.wetransform.halecli.CommandContext
 import to.wetransform.halecli.Util
@@ -25,13 +26,21 @@ abstract class AbstractProjectCommand<T> implements Command {
     // override me
   }
 
+  @CompileStatic(TypeCheckingMode.SKIP)
   @Override
   public int run(List<String> args, CommandContext context) {
-    def cli = new CliBuilder(usage: context.baseCommand + ' <project>' + usageExtension)
+    def cli = new CliBuilder(usage: context.baseCommand + ' [options] <project>' + usageExtension)
+    
+    cli._(longOpt: 'help', 'Show this help')
     
     setupOptions(cli)
     
     OptionAccessor options = cli.parse(args)
+    
+    if (options.help) {
+      cli.usage()
+      return 0
+    }
     
     //TODO check options?
     
@@ -111,7 +120,7 @@ abstract class AbstractProjectCommand<T> implements Command {
         }
         println()
          
-        boolean success = runForProject(projectEnv, project, options, context)
+        boolean success = runForProject(projectEnv, project, options, context, reports)
         if (success) {
           failed = true
         }
@@ -131,7 +140,7 @@ abstract class AbstractProjectCommand<T> implements Command {
   }
   
   abstract boolean runForProject(T project, URI projectLocation,
-    OptionAccessor options, CommandContext context)
+    OptionAccessor options, CommandContext context, ReportHandler reports)
 
   @Override
   String bashCompletion(List<String> args, int current) {
