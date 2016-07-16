@@ -59,7 +59,12 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
     
     List<String> messages = []
     
-    MutableAlignment result = new DefaultAlignment()
+    MutableAlignment result = new DefaultAlignment(alignment)
+    def originalCells = new ArrayList<>(result.cells)
+    originalCells.each { Cell cell ->
+      result.removeCell(cell)
+    }
+    
     int removed = 0
     int retained = 0
     
@@ -74,6 +79,8 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
         removed++
       }
     }
+    
+    assert retained == result.cells.size()
     
     messages << "Removed $removed cells"
     messages << "Retained $retained cells from original project"
