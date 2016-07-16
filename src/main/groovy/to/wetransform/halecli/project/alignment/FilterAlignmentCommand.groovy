@@ -29,8 +29,9 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
   void setupOptions(CliBuilder cli) {
     super.setupOptions(cli)
     
-    cli._(longOpt: 'json-filter', args: 1, argName: 'json-file',
+    cli._(longOpt: 'json-filter', args: 1, argName: 'json-file', required: true,
       'Specify a JSON file with the filter definition')
+    cli._(longOpt: 'skip-empty', 'Specify to skip the project if the filtered alignment is empty')
   }
   
   DeriveProjectResult deriveProject(ProjectTransformationEnvironment projectEnv,
@@ -45,13 +46,16 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
       Project project = projectEnv.project
       
       Alignment alignment = filterAlignment(projectEnv.alignment, filterDef, project)
+      if (options.'skip-empty' && alignment.cells.empty) {
+        println 'Skipping creating project, as the filtered alignment is empty'
+        return null
+      }
       
       // derived project
       return new DeriveProjectResult(project: project, alignment: alignment)
     }
     
-    // fall-back
-    new DeriveProjectResult(project: projectEnv.project, alignment: projectEnv.alignment)
+    throw new IllegalStateException('No alignment filter definition provided')
   }
     
   Alignment filterAlignment(Alignment alignment, def filterDef, Project project) {

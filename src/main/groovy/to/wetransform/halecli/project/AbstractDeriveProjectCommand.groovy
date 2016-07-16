@@ -61,6 +61,9 @@ abstract class AbstractDeriveProjectCommand extends AbstractProjectEnvironmentCo
     }
     
     DeriveProjectResult result = deriveProject(projectEnv, options)
+    if (!result) {
+      return true
+    }
     
     Project project = result.project
     ComplexConfigurationService conf = ProjectIO.createProjectConfigService(project)
