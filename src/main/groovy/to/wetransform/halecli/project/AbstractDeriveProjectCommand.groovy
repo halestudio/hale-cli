@@ -7,6 +7,7 @@ import to.wetransform.halecli.project.advisor.SaveProjectAdvisor;
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.extension.IOProviderDescriptor
+import eu.esdihumboldt.hale.common.core.io.project.ComplexConfigurationService;
 import eu.esdihumboldt.hale.common.core.io.project.ProjectIO;
 import eu.esdihumboldt.hale.common.core.io.project.ProjectWriter
 import eu.esdihumboldt.hale.common.core.io.project.extension.ProjectFileExtension
@@ -27,9 +28,9 @@ import eu.esdihumboldt.util.io.OutputSupplier
 import groovy.transform.CompileStatic;
 import groovy.util.CliBuilder;
 
-abstract class AbstractModifyProjectCommand extends AbstractProjectEnvironmentCommand {
+abstract class AbstractDeriveProjectCommand extends AbstractProjectEnvironmentCommand {
   
-  static class ModifyProjectResult {
+  static class DeriveProjectResult {
     Alignment alignment
     Project project
   }
@@ -41,7 +42,7 @@ abstract class AbstractModifyProjectCommand extends AbstractProjectEnvironmentCo
     cli._(longOpt: 'name', args: 1, argName: 'variant-name', 'Set the name of project variant')
   }
   
-  abstract ModifyProjectResult modifyProject(ProjectTransformationEnvironment projectEnv,
+  abstract DeriveProjectResult deriveProject(ProjectTransformationEnvironment projectEnv,
     OptionAccessor options)
   
   @Override
@@ -53,7 +54,17 @@ abstract class AbstractModifyProjectCommand extends AbstractProjectEnvironmentCo
       variant = 'variant'
     }
     
-    ModifyProjectResult result = modifyProject(projectEnv, options)
+    ComplexConfigurationService orgConf = ProjectIO.createProjectConfigService(projectEnv.project)
+    if (orgConf.getBoolean('derivedProject', false)) {
+      println 'Skipping derived project'
+      return true
+    }
+    
+    DeriveProjectResult result = deriveProject(projectEnv, options)
+    
+    Project project = result.project
+    ComplexConfigurationService conf = ProjectIO.createProjectConfigService(project)
+    conf.setBoolean('derivedProject', true)
     
     //XXX only supported for files right now
     File projectFile = new File(projectLocation)
@@ -70,7 +81,7 @@ abstract class AbstractModifyProjectCommand extends AbstractProjectEnvironmentCo
     File projectOut = new File(projectFile.parentFile, fileName)
     def output = new FileIOSupplier(projectOut)
     
-    saveProject(result.project, result.alignment, projectEnv.sourceSchema,
+    saveProject(project, result.alignment, projectEnv.sourceSchema,
       projectEnv.targetSchema, output, reports, extension)
     
     true
