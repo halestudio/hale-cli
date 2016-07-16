@@ -1,5 +1,7 @@
 package to.wetransform.halecli.project.alignment
 
+import javax.xml.namespace.QName;
+
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.align.model.Cell
 import eu.esdihumboldt.hale.common.align.model.Entity;
@@ -11,6 +13,8 @@ import eu.esdihumboldt.hale.common.core.io.project.ComplexConfigurationService
 import eu.esdihumboldt.hale.common.core.io.project.ProjectIO;
 import eu.esdihumboldt.hale.common.core.io.project.model.Project
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
+import eu.esdihumboldt.hale.common.schema.SchemaSpaceID;
+import eu.esdihumboldt.hale.common.schema.io.SchemaIO;
 import eu.esdihumboldt.hale.common.schema.model.TypeDefinition
 import eu.esdihumboldt.hale.io.xsd.constraint.XmlElements
 import eu.esdihumboldt.hale.io.xsd.model.XmlElement;
@@ -55,6 +59,26 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
       if (options.'skip-no-type-cells' && alignment.typeCells.empty) {
         println 'Skipping creating project, as the filtered alignment contains no type cells'
         return null
+      }
+      
+      ComplexConfigurationService conf = ProjectIO.createProjectConfigService(project)
+      
+      // adapt mapping relevant source types
+      if (filterDef && filterDef.sourceTypes) {
+        String confName = SchemaIO.getMappingRelevantTypesParameterName(SchemaSpaceID.SOURCE)
+        
+        List<String> typeNames = conf.getList(confName)
+        List<String> retain = []
+        
+        typeNames.each { String name ->
+          QName qname = QName.valueOf(name)
+          TypeDefinition typeDef = projectEnv.sourceSchema.getType(qname)
+          if (typeDef && matchesTypes(typeDef, filterDef.sourceTypes)) {
+            retain << name
+          }
+        }
+        
+        conf.setList(confName, retain)
       }
       
       // derived project
@@ -110,8 +134,12 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
   }
   
   boolean matchesTypes(Entity entity, Collection<String> types) {
+    matchesTypes(entity.definition.type, types)
+  }
+  
+  boolean matchesTypes(TypeDefinition type, Collection<String> types) {
     Deque<TypeDefinition> check = new ArrayDeque<>()
-    check.push(entity.definition.type)
+    check.push(type)
     
     while (!check.isEmpty()) {
       TypeDefinition typeDef = check.poll()
