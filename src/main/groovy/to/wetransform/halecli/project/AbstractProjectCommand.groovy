@@ -100,6 +100,8 @@ abstract class AbstractProjectCommand<T> implements Command {
   abstract String getProjectName(T project)
   
   int runForProjects(List<URI> projects, OptionAccessor options, CommandContext context) {
+    List<URI> failedProjects = []
+    
     boolean failed = false
     ReportHandler reports = Util.createReportHandler()
     projects.each { URI project ->
@@ -121,16 +123,26 @@ abstract class AbstractProjectCommand<T> implements Command {
         println()
          
         boolean success = runForProject(projectEnv, project, options, context, reports)
-        if (success) {
+        if (!success) {
+          failedProjects << project
           failed = true
         }
       } catch (e) {
+        failedProjects << project
         failed = true
         e.printStackTrace()
       }
     }
     
     if (failed) {
+      if (projects.size() > 1) {
+        println()
+        println 'Execution failed for projects:'
+        failedProjects.each { URI projectUri ->
+          println "  $projectUri"
+        }
+      }
+      
       1
     }
     else {
