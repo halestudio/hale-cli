@@ -32,6 +32,7 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
     cli._(longOpt: 'json-filter', args: 1, argName: 'json-file', required: true,
       'Specify a JSON file with the filter definition')
     cli._(longOpt: 'skip-empty', 'Specify to skip the project if the filtered alignment is empty')
+    cli._(longOpt: 'skip-no-type-cells', 'Specify to skip the project if the filtered alignment contains no type cells')
   }
   
   DeriveProjectResult deriveProject(ProjectTransformationEnvironment projectEnv,
@@ -48,6 +49,11 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
       Alignment alignment = filterAlignment(projectEnv.alignment, filterDef, project)
       if (options.'skip-empty' && alignment.cells.empty) {
         println 'Skipping creating project, as the filtered alignment is empty'
+        return null
+      }
+      
+      if (options.'skip-no-type-cells' && alignment.typeCells.empty) {
+        println 'Skipping creating project, as the filtered alignment contains no type cells'
         return null
       }
       
