@@ -5,14 +5,16 @@ import java.nio.file.Path
 import java.nio.file.Paths;
 import java.util.List;
 
+import eu.esdihumboldt.hale.common.core.report.ReportHandler
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import groovy.transform.CompileStatic;
 import groovy.util.OptionAccessor;
 import to.wetransform.halecli.CommandContext;
-import to.wetransform.halecli.project.AbstractProjectCommand;
+import to.wetransform.halecli.project.AbstractProjectCommand
+import to.wetransform.halecli.project.AbstractProjectEnvironmentCommand
 
 @CompileStatic
-class ListProjectsCommand extends AbstractProjectCommand {
+class ListProjectsCommand extends AbstractProjectEnvironmentCommand {
 
   final String shortDescription = 'List hale projects found at the specified location'
 
@@ -39,8 +41,8 @@ class ListProjectsCommand extends AbstractProjectCommand {
     }
   }
 
-  boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation, OptionAccessor options,
-      CommandContext context) {
+  boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
+    OptionAccessor options, CommandContext context, ReportHandler reports) {
     // is not being called
     true
   }

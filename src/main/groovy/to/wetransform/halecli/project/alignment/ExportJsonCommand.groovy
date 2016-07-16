@@ -6,20 +6,21 @@ import eu.esdihumboldt.hale.common.align.io.AlignmentWriter
 import eu.esdihumboldt.hale.common.core.HalePlatform;
 import eu.esdihumboldt.hale.common.core.io.Value;
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
-import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier;
+import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier
+import eu.esdihumboldt.hale.common.core.report.ReportHandler;
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.hale.io.html.svg.mapping.json.JsonMappingExporter;
 import groovy.transform.CompileStatic;
 import groovy.util.OptionAccessor
 import to.wetransform.halecli.CommandContext
 import to.wetransform.halecli.Util;
-import to.wetransform.halecli.project.AbstractProjectCommand
+import to.wetransform.halecli.project.AbstractProjectEnvironmentCommand
 
 @CompileStatic
-class ExportJsonCommand extends AbstractProjectCommand {
+class ExportJsonCommand extends AbstractProjectEnvironmentCommand {
 
   boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
-      OptionAccessor options, CommandContext context) {
+      OptionAccessor options, CommandContext context, ReportHandler reports) {
     // configure writer
     JsonMappingExporter writer = new JsonMappingExporter()
     writer.alignment = projectEnv.alignment

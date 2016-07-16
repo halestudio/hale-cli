@@ -9,13 +9,14 @@ import eu.esdihumboldt.hale.app.transform.ExecTransformation.DirVisitor
 import eu.esdihumboldt.hale.common.core.io.supplier.DefaultInputSupplier
 import eu.esdihumboldt.hale.common.core.report.ReportHandler;
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment;
-import groovy.transform.CompileStatic;
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode;
 import to.wetransform.halecli.Command
 import to.wetransform.halecli.CommandContext
 import to.wetransform.halecli.Util
 
 @CompileStatic
-abstract class AbstractProjectCommand implements Command {
+abstract class AbstractProjectCommand<T> implements Command {
   
   String getUsageExtension() {
     ''
@@ -25,13 +26,21 @@ abstract class AbstractProjectCommand implements Command {
     // override me
   }
 
+  @CompileStatic(TypeCheckingMode.SKIP)
   @Override
   public int run(List<String> args, CommandContext context) {
-    def cli = new CliBuilder(usage: context.baseCommand + ' <project>' + usageExtension)
+    def cli = new CliBuilder(usage: context.baseCommand + ' [options] <project>' + usageExtension)
+    
+    cli._(longOpt: 'help', 'Show this help')
     
     setupOptions(cli)
     
     OptionAccessor options = cli.parse(args)
+    
+    if (options.help) {
+      cli.usage()
+      return 0
+    }
     
     //TODO check options?
     
@@ -86,7 +95,13 @@ abstract class AbstractProjectCommand implements Command {
     runForProjects(projects, options, context)
   }
   
+  abstract T loadProject(URI location, ReportHandler reports)
+  
+  abstract String getProjectName(T project)
+  
   int runForProjects(List<URI> projects, OptionAccessor options, CommandContext context) {
+    List<URI> failedProjects = []
+    
     boolean failed = false
     ReportHandler reports = Util.createReportHandler()
     projects.each { URI project ->
@@ -94,11 +109,10 @@ abstract class AbstractProjectCommand implements Command {
         println()
         println "Loading project at ${project}..."
         
-        def projectEnv = new ProjectTransformationEnvironment(null, new DefaultInputSupplier(
-          project), reports);
+        def projectEnv = loadProject(project, reports)
        
         println()
-        String projectName = projectEnv.project?.name
+        String projectName = getProjectName(projectEnv)
         print "Running ${context.commandName} command on project"
         if (projectName) {
           print " \"$projectName\"..."
@@ -108,17 +122,27 @@ abstract class AbstractProjectCommand implements Command {
         }
         println()
          
-        boolean success = runForProject(projectEnv, project, options, context)
-        if (success) {
+        boolean success = runForProject(projectEnv, project, options, context, reports)
+        if (!success) {
+          failedProjects << project
           failed = true
         }
       } catch (e) {
+        failedProjects << project
         failed = true
         e.printStackTrace()
       }
     }
     
     if (failed) {
+      if (projects.size() > 1) {
+        println()
+        println 'Execution failed for projects:'
+        failedProjects.each { URI projectUri ->
+          println "  $projectUri"
+        }
+      }
+      
       1
     }
     else {
@@ -127,8 +151,8 @@ abstract class AbstractProjectCommand implements Command {
     }
   }
   
-  abstract boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
-    OptionAccessor options, CommandContext context)
+  abstract boolean runForProject(T project, URI projectLocation,
+    OptionAccessor options, CommandContext context, ReportHandler reports)
 
   @Override
   String bashCompletion(List<String> args, int current) {
