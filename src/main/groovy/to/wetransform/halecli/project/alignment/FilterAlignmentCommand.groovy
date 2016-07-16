@@ -14,7 +14,8 @@ import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironmen
 import eu.esdihumboldt.hale.common.schema.model.TypeDefinition
 import eu.esdihumboldt.hale.io.xsd.constraint.XmlElements
 import eu.esdihumboldt.hale.io.xsd.model.XmlElement;
-import groovy.json.JsonSlurper;
+import groovy.json.JsonSlurper
+import groovy.transform.CompileStatic;
 import groovy.util.CliBuilder;
 import groovy.util.OptionAccessor;
 import to.wetransform.halecli.project.AbstractDeriveProjectCommand
@@ -59,18 +60,34 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
     List<String> messages = []
     
     MutableAlignment result = new DefaultAlignment()
+    int removed = 0
+    int retained = 0
     
-    alignment.cells.each { cell ->
+    alignment.cells.each { Cell cell ->
       if (acceptCell(cell, filterDef, messages)) {
         result.addCell(cell)
+        retained++
+      }
+      else {
+        String cellTypes = cellTypesName(cell)
+        messages << "Removed cell ${cell.id} (types $cellTypes)"
+        removed++
       }
     }
+    
+    messages << "Removed $removed cells"
+    messages << "Retained $retained cells from original project"
     
     ValueList msgList = new ValueList()
     messages.each {
       msgList << Value.simple(it)
     }
-    conf.setProperty('derivedProjectLog', msgList as Value) 
+    conf.setProperty('derivedProjectLog', msgList as Value)
+    
+    println 'Alignment filter log:'
+    messages.each {
+      println "  $it"
+    } 
     
     result
   }
@@ -120,19 +137,47 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
         matchesTypes(entity, sourceTypes)
       }
       
-      boolean partial = cell.source.values().any { Entity entity ->
+      def misMatches = cell.source.values().findAll { Entity entity ->
         !matchesTypes(entity, sourceTypes)
       }
       
       if (!keep) {
         return false
       }
-      else if (partial) {
-        messages << "Only partial source type match for cell ${cell.id}"
+      else if (misMatches) {
+        def name = entitiesTypesName(misMatches)
+        messages << "Only partial source type match for cell ${cell.id} (also found types $name)"
       }
     }
     
     true
+  }
+  
+  @CompileStatic
+  String cellTypesName(Cell cell) {
+    String sourceName
+    if (cell.source) {
+      sourceName = entitiesTypesName(cell.source.values())
+    }
+    
+    String targetName
+    if (cell.target) {
+      targetName = entitiesTypesName(cell.target.values())
+    }
+    
+    if (sourceName) {
+      "$sourceName to $targetName"
+    }
+    else {
+      "To $targetName"
+    }
+  }
+  
+  @CompileStatic
+  String entitiesTypesName(Collection<? extends Entity> entities) {
+    entities.collect { Entity entity ->
+      entity.definition.type.displayName
+    }.unique().join(', ')
   }
 
 }
