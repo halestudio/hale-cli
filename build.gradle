@@ -287,3 +287,21 @@ eclipse {
     }
   }
 }
+
+tasks.cleanEclipse.doLast {
+  delete("${project.projectDir}/.settings/org.eclipse.jdt.ui.prefs")
+}
+
+tasks.eclipse.doLast {
+  File saveActionPrefs = file("${project.projectDir}/.settings/org.eclipse.jdt.ui.prefs")
+  if (saveActionPrefs.exists()) {
+    logger.warn("UI preferences already exist and will not be overridden. Use task 'cleanEclipse' first.")
+  } else {
+    def codeTemplates = project.file('codetemplates.xml').text.replace('\n', '\\n').replace('\r', '').replaceAll(/=/, '\\\\=')
+    saveActionPrefs.append("""\
+      |eclipse.preferences.version=1
+      |org.eclipse.jdt.ui.javadoc=true
+      |org.eclipse.jdt.ui.text.custom_code_templates=$codeTemplates
+      """.stripMargin())
+  }
+}
