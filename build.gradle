@@ -48,20 +48,6 @@ repositories {
     url 'http://repo.opengeo.org'
   }
   jcenter()
-  maven { // wetransform internal release repository
-    url 'https://artifactory.wetransform.to/artifactory/private-release-local'
-    credentials {
-      username project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : ''
-      password project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : ''
-    }
-  }
-  maven { // wetransform internal snapshot repository
-    url 'https://artifactory.wetransform.to/artifactory/private-snapshot-local'
-    credentials {
-      username project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : ''
-      password project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : ''
-    }
-  }
 }
 
 dependencies {
@@ -253,16 +239,22 @@ artifacts {
   archives packageSources
 }
 
+// exclude distZip ands distTar artifacts
+configurations.archives.with {
+  artifacts.remove artifacts.find { it.archiveTask.is distZip }
+  artifacts.remove artifacts.find { it.archiveTask.is distTar }
+}
+
 uploadArchives {
   repositories {
     mavenDeployer {
       
       // upload to wetransform artifactory
-      repository(url: 'https://artifactory.wetransform.to/artifactory/private-release-local') {
+      repository(url: 'https://artifactory.wetransform.to/artifactory/libs-release-local') {
         authentication(userName: project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : '',
           password: project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : '')
       }
-      snapshotRepository(url: 'https://artifactory.wetransform.to/artifactory/private-snapshot-local') {
+      snapshotRepository(url: 'https://artifactory.wetransform.to/artifactory/libs-snapshot-local') {
         authentication(userName: project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : '',
           password: project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : '')
       }
