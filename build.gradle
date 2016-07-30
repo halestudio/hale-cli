@@ -6,6 +6,7 @@ plugins {
   id 'osgi'
   id 'com.bmuschko.docker-java-application' version '2.6.8'
   id "nebula.ospackage-application" version "3.6.1"
+  id 'org.ajoberstar.grgit' version '1.5.0'
 }
 
 sourceCompatibility = '1.8'
@@ -17,6 +18,7 @@ project.ext {
 }
 
 version = '2.9.5-SNAPSHOT'
+//TODO define versioning strategy, specifically in respect to the hale version used
 
 /*
  * Dependencies 
@@ -211,6 +213,11 @@ dockerPushImage {
   tag = project.tasks.dockerBuildImage.getTag().split(':')[1]
 }
 
+dockerDistTar {
+  def buildTime = java.time.ZonedDateTime.now().format(java.time.format.DateTimeFormatter.ISO_INSTANT);
+  label('git.sha': grgit.head().id, 'git.branch': grgit.branch.current.name, 'build.version': version, 'build.time': buildTime)
+}
+
 
 /*
  * Packaging and publishing
@@ -285,5 +292,23 @@ eclipse {
         properties['org.eclipse.jdt.core.formatter.tabulation.char'] = 'space'
       }
     }
+  }
+}
+
+tasks.cleanEclipse.doLast {
+  delete("${project.projectDir}/.settings/org.eclipse.jdt.ui.prefs")
+}
+
+tasks.eclipse.doLast {
+  File saveActionPrefs = file("${project.projectDir}/.settings/org.eclipse.jdt.ui.prefs")
+  if (saveActionPrefs.exists()) {
+    logger.warn("UI preferences already exist and will not be overridden. Use task 'cleanEclipse' first.")
+  } else {
+    def codeTemplates = project.file('codetemplates.xml').text.replace('\n', '\\n').replace('\r', '').replaceAll(/=/, '\\\\=')
+    saveActionPrefs.append("""\
+      |eclipse.preferences.version=1
+      |org.eclipse.jdt.ui.javadoc=true
+      |org.eclipse.jdt.ui.text.custom_code_templates=$codeTemplates
+      """.stripMargin())
   }
 }
