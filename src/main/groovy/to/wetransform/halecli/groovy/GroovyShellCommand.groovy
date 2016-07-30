@@ -20,9 +20,9 @@ import eu.esdihumboldt.cst.functions.groovy.helper.HelperFunctions
 import eu.esdihumboldt.hale.common.core.HalePlatform;
 import eu.esdihumboldt.hale.common.core.io.HaleIO;
 import eu.esdihumboldt.hale.common.core.io.Value;
+import eu.esdihumboldt.util.cli.Command
+import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic;
-import to.wetransform.halecli.Command
-import to.wetransform.halecli.CommandContext
 
 class GroovyShellCommand implements Command {
   

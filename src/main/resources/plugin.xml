@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+>
+   <extension
+         point="eu.esdihumboldt.cli">
+      <command
+            class="to.wetransform.halecli.VersionCommand"
+            id="hale-cli.version"
+            name="version">
+      </command>
+      <command
+            class="to.wetransform.halecli.project.alignment.FilterAlignmentCommand"
+            group="project.alignment"
+            id="hale-cli.project.alignment.filter"
+            name="filter">
+      </command>
+      <command
+            class="to.wetransform.halecli.groovy.GroovyShellCommand"
+            id="hale-cli.groovysh"
+            name="groovysh">
+      </command>
+   </extension>
+</plugin>
