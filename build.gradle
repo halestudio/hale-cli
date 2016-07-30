@@ -6,6 +6,7 @@ plugins {
   id 'osgi'
   id 'com.bmuschko.docker-java-application' version '2.6.8'
   id "nebula.ospackage-application" version "3.6.1"
+  id 'org.ajoberstar.grgit' version '1.5.0'
 }
 
 sourceCompatibility = '1.8'
@@ -210,6 +211,11 @@ dockerPushImage {
   // workaround for wrong image name used when pushing to docker hub
   imageName = project.tasks.dockerBuildImage.getTag().split(':')[0]
   tag = project.tasks.dockerBuildImage.getTag().split(':')[1]
+}
+
+dockerDistTar {
+  def buildTime = java.time.ZonedDateTime.now().format(java.time.format.DateTimeFormatter.ISO_INSTANT);
+  label('git.sha': grgit.head().id, 'git.branch': grgit.branch.current.name, 'build.version': version, 'build.time': buildTime)
 }
 
 
