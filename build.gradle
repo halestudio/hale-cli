@@ -17,6 +17,7 @@ project.ext {
 }
 
 version = '2.9.5-SNAPSHOT'
+//TODO define versioning strategy, specifically in respect to the hale version used
 
 /*
  * Dependencies 
