@@ -3,6 +3,7 @@ plugins {
   id 'application'
   id 'eclipse'
   id 'maven'
+  id 'osgi'
   id 'com.bmuschko.docker-java-application' version '2.6.8'
   id "nebula.ospackage-application" version "3.6.1"
 }
@@ -15,7 +16,7 @@ project.ext {
   haleVersion = '2.9.5-SNAPSHOT'
 }
 
-version = haleVersion
+version = '2.9.5-SNAPSHOT'
 
 /*
  * Dependencies 
@@ -64,6 +65,11 @@ repositories {
 dependencies {
   // HALE
   
+  // CLI API, utilities and default commands
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.util.cli:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.cli:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.cli.commands:$haleVersion"
+  
   // core
   compile 'eu.esdihumboldt.unpuzzled:org.eclipse.equinox.nonosgi.registry:1.0.0'
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
@@ -83,6 +89,7 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.numeric:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.string:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.custom:$haleVersion"
+  
   // formats
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xml:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xsd:$haleVersion"
@@ -93,6 +100,7 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.json:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xls:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.html.svg:$haleVersion"
+  
   // converters
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.core:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.wkt:$haleVersion"
@@ -134,6 +142,21 @@ applicationDefaultJvmArgs = [
   '-Dcache.level2.enabled=false',
   '-Dcache.level2.size=0'
 ]
+
+/*
+ * plugin.xml and OSGi manifest
+ * 
+ * For the plugin.xml file to be recognised there must be an
+ * OSGi manifest. In the resources is a dummy file that is required
+ * for tests and execution from within Eclipse or Gradle.
+ * In the build Jar, the manifest file is overriden.
+ */
+jar {
+  manifest {
+      symbolicName = 'to.wetransform.halecli;singleton:=true'
+      instruction 'Bundle-Vendor', 'wetransform GmbH'
+  }
+}
 
 /*
  * OS packaging

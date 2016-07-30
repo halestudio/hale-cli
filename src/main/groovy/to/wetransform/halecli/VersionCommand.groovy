@@ -1,8 +1,8 @@
 package to.wetransform.halecli
 
-import java.util.List
-
 import eu.esdihumboldt.hale.common.core.HalePlatform
+import eu.esdihumboldt.util.cli.Command
+import eu.esdihumboldt.util.cli.CommandContext
 
 class VersionCommand implements Command {
 
