@@ -1,6 +1,9 @@
 hale-cli
 ========
 
+[![Build Status](https://builds.wetransform.to/buildStatus/icon?job=hale/hale-cli~publish)](https://builds.wetransform.to/job/hale/job/hale-cli~publish)
+[![Docker Hub Badge](https://img.shields.io/badge/Docker-Hub%20Hosted-blue.svg)](https://hub.docker.com/r/wetransform/hale-cli/)
+
 hale command line interface.
 Lists available commands when run without arguments.
 
