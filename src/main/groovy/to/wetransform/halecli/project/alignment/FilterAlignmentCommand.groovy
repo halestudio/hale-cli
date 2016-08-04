@@ -21,6 +21,7 @@ import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.align.model.Cell
 import eu.esdihumboldt.hale.common.align.model.Entity;
 import eu.esdihumboldt.hale.common.align.model.MutableAlignment
+import eu.esdihumboldt.hale.common.align.model.MutableCell;
 import eu.esdihumboldt.hale.common.align.model.impl.DefaultAlignment
 import eu.esdihumboldt.hale.common.core.io.Value
 import eu.esdihumboldt.hale.common.core.io.ValueList;
@@ -116,28 +117,50 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
     MutableAlignment result = new DefaultAlignment(alignment)
     def originalCells = new ArrayList<>(result.cells)
     originalCells.each { Cell cell ->
-      result.removeCell(cell)
+      if (cell instanceof MutableCell) { //FIXME handle base alignment cells properly
+        result.removeCell(cell)
+      }
     }
     
     int removed = 0
     int retained = 0
+    int baseAccepted = 0
+    int baseRejected = 0
     
     alignment.cells.each { Cell cell ->
-      if (acceptCell(cell, filterDef, messages)) {
-        result.addCell(cell)
-        retained++
+      if (cell instanceof MutableCell) { //FIXME handle base alignment cells properly
+        if (acceptCell(cell, filterDef, messages)) {
+          result.addCell(cell)
+          retained++
+        }
+        else {
+          String cellTypes = cellTypesName(cell)
+          messages << "Removed cell ${cell.id} (types $cellTypes)"
+          removed++
+        }
       }
       else {
-        String cellTypes = cellTypesName(cell)
-        messages << "Removed cell ${cell.id} (types $cellTypes)"
-        removed++
+        if (acceptCell(cell, filterDef, messages)) {
+          baseAccepted ++
+        }
+        else {
+          String cellTypes = cellTypesName(cell)
+          messages << "Rejected base alignment cell ${cell.id} (types $cellTypes)"
+          baseRejected++
+        }
       }
     }
     
     assert retained == result.cells.size()
     
     messages << "Removed $removed cells"
-    messages << "Retained $retained cells from original project"
+    messages << "Retained $retained editable cells from original project"
+    if (baseAccepted) {
+      messages << "Retained $baseAccepted accepted base alignment cells"
+    }
+    if (baseRejected) {
+      messages << "Retained $baseRejected rejected base alignment cells"
+    }
     
     ValueList msgList = new ValueList()
     messages.each {
