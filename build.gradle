@@ -141,8 +141,8 @@ applicationDefaultJvmArgs = [
  */
 jar {
   manifest {
-      symbolicName = 'to.wetransform.halecli;singleton:=true'
-      instruction 'Bundle-Vendor', 'wetransform GmbH'
+    symbolicName = 'to.wetransform.halecli;singleton:=true'
+    instruction 'Bundle-Vendor', 'wetransform GmbH'
   }
 }
 
@@ -163,11 +163,11 @@ ospackage_application {
 
 distributions {
   main {
-      contents {
-          from(file('etc')) {
-              into 'etc'
-          }
+    contents {
+      from(file('etc')) {
+        into 'etc'
       }
+    }
   }
 }
 
@@ -204,6 +204,20 @@ dockerDistTar {
   label('git.sha': grgit.head().id, 'git.branch': grgit.branch.current.name, 'build.version': version, 'build.time': buildTime)
 }
 
+// "latest" tag
+
+task dockerTagLatest(type: com.bmuschko.gradle.docker.tasks.image.DockerTagImage,
+    dependsOn: dockerBuildImage) {
+  imageId = "wetransform/${project.name}:${project.version}"
+  repository = "wetransform/${project.name}"
+  tag = 'latest'
+}
+
+task dockerPushLatest(type: com.bmuschko.gradle.docker.tasks.image.DockerPushImage,
+    dependsOn: dockerTagLatest) {
+  imageName = "wetransform/${project.name}"
+  tag = 'latest'
+}
 
 /*
  * Packaging and publishing
