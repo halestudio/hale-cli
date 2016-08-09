@@ -1,10 +1,20 @@
+buildscript {
+  // workaround https://github.com/bmuschko/gradle-docker-plugin/issues/257
+  repositories {
+    // this needs to be defined before jcenter/MavenCentral for retrieving JAI
+    maven {
+      url 'http://download.osgeo.org/webdav/geotools/'
+    }
+  }
+}
+
 plugins {
   id 'groovy'
   id 'application'
   id 'eclipse'
   id 'maven'
   id 'osgi'
-  id 'com.bmuschko.docker-java-application' version '2.6.8'
+  id 'com.bmuschko.docker-java-application' version '3.0.1'
   id "nebula.ospackage-application" version "3.6.1"
   id 'org.ajoberstar.grgit' version '1.5.0'
 }
@@ -32,10 +42,7 @@ repositories {
     url 'https://artifactory.wetransform.to/artifactory/libs-snapshot-local'
   }
   
-  // these need to before jcenter/MavenCentral for retrieving JAI
-  maven {
-    url 'http://download.java.net/maven/2'
-  }
+  // this needs to be defined before jcenter/MavenCentral for retrieving JAI
   maven {
     url 'http://download.osgeo.org/webdav/geotools/'
   }
