@@ -46,11 +46,11 @@ import to.wetransform.halecli.project.advisor.SaveProjectAdvisor
 
 /**
  * Base class for command creating derived projects.
- * 
+ *
  * @author Simon Templer
  */
 abstract class AbstractDeriveProjectCommand extends AbstractProjectEnvironmentCommand {
-  
+
   static class DeriveProjectResult {
     Alignment alignment
     Project project
@@ -59,40 +59,40 @@ abstract class AbstractDeriveProjectCommand extends AbstractProjectEnvironmentCo
   @Override
   void setupOptions(CliBuilder cli) {
     super.setupOptions(cli);
-    
+
     cli._(longOpt: 'name', args: 1, argName: 'variant-name', 'Set the name of project variant')
   }
-  
+
   abstract DeriveProjectResult deriveProject(ProjectTransformationEnvironment projectEnv,
     OptionAccessor options)
-  
+
   @Override
   boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
     OptionAccessor options, CommandContext context, ReportHandler reports) {
-    
+
     def variant = options.name
     if (!variant) {
       variant = 'variant'
     }
-    
+
     ComplexConfigurationService orgConf = ProjectIO.createProjectConfigService(projectEnv.project)
     if (orgConf.getBoolean('derivedProject', false)) {
       println 'Skipping derived project'
       return true
     }
-    
+
     DeriveProjectResult result = deriveProject(projectEnv, options)
     if (!result) {
       return true
     }
-    
+
     Project project = result.project
     ComplexConfigurationService conf = ProjectIO.createProjectConfigService(project)
     conf.setBoolean('derivedProject', true)
-    
+
     //XXX only supported for files right now
     File projectFile = new File(projectLocation)
-    
+
     String fileName = projectFile.name
     String extension = 'halex'
     int dotIndex = fileName.lastIndexOf('.')
@@ -101,21 +101,21 @@ abstract class AbstractDeriveProjectCommand extends AbstractProjectEnvironmentCo
       if (ext) extension = ext
       fileName = fileName[0..(dotIndex - 1)] + "-${variant}.$extension"
     }
-    
+
     File projectOut = new File(projectFile.parentFile, fileName)
     def output = new FileIOSupplier(projectOut)
-    
+
     saveProject(project, result.alignment, projectEnv.sourceSchema,
       projectEnv.targetSchema, output, reports, extension)
-    
+
     true
   }
-   
-  @CompileStatic   
+
+  @CompileStatic
   void saveProject(Project project, Alignment alignment, SchemaSpace sourceSchema,
     SchemaSpace targetSchema, LocatableOutputSupplier<? extends OutputStream> output,
     ReportHandler reports, String extension) {
-    
+
     // write project
     IContentType projectType = HaleIO.findContentType(
       ProjectWriter.class, null, "project.$extension")

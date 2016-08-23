@@ -24,20 +24,20 @@ import groovy.lang.GroovySystem;
 
 /**
  * Initializes hale functionality in a non-OSGi environment.
- * 
+ *
  * @author Simon Templer
  */
 public class Init {
-  
+
   private static AtomicBoolean initialized = new AtomicBoolean(false);
-  
+
   public static void init() {
     if (initialized.compareAndSet(false, true)) {
       SLF4JBridgeHandler.install();
-      
+
       // initialize registry
       RegistryFactoryHelper.getRegistry();
-      
+
       // initialize meta extensions
       GroovySystem.getMetaClassRegistry().setMetaClassCreationHandle(new CustomMetaClassCreationHandle());
     }

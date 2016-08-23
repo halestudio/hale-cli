@@ -21,7 +21,7 @@ import eu.esdihumboldt.util.cli.CommandContext
 
 /**
  * Command that prints the hale version.
- * 
+ *
  * @author Simon Templer
  */
 class VersionCommand implements Command {
