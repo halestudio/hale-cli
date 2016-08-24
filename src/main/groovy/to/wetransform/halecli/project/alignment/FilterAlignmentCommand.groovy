@@ -65,6 +65,7 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
     cli.b(longOpt: 'use-base-alignment', 'Use the original alignment as base alignment instead of copying the cells')
     cli._(longOpt: 'skip-empty', 'Specify to skip the project if the filtered alignment is empty')
     cli._(longOpt: 'skip-no-type-cells', 'Specify to skip the project if the filtered alignment contains no type cells')
+    cli._(longOpt: 'prepend-description', args: 1, argName: 'text', 'Text to prepend to the project description')
   }
 
   DeriveProjectResult deriveProject(ProjectTransformationEnvironment projectEnv,
@@ -109,6 +110,16 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
         }
 
         conf.setList(confName, retain)
+      }
+
+      // project adaptions
+      if (options.'prepend-description') {
+        if (project.description) {
+          project.description = options.'prepend-description' + '\n\n' + project.description
+        }
+        else {
+          project.description = options.'prepend-description'
+        }
       }
 
       // derived project
