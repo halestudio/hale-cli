@@ -24,7 +24,7 @@ import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
 
 /**
  * Headless advisor for saving an alignment.
- * 
+ *
  * @author Simon Templer
  */
 public class SaveAlignmentAdvisor extends AbstractIOAdvisor<AlignmentWriter> {
@@ -46,7 +46,7 @@ public class SaveAlignmentAdvisor extends AbstractIOAdvisor<AlignmentWriter> {
   @Override
   public void prepareProvider(AlignmentWriter provider) {
     super.prepareProvider(provider);
-    
+
     provider.setTargetSchema(targetSchema);
     provider.setSourceSchema(sourceSchema);
     provider.setAlignment(alignment);

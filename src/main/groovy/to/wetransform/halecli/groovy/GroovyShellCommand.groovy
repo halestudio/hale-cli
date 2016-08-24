@@ -42,12 +42,12 @@ import groovy.transform.CompileStatic;
 
 /**
  * Groovy shell command based on Groovy shell main class.
- * 
+ *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @author Simon Templer
  */
 class GroovyShellCommand implements Command {
-  
+
   private final MessageSource messages = new MessageSource(Main)
 
   @Override
@@ -112,13 +112,13 @@ class GroovyShellCommand implements Command {
     // Groovy shell binding
     Binding binding = new Binding()
     populateBinding(binding)
-    
+
     // Boot up the shell
     final Groovysh shell = new Groovysh(binding, io)
-    
+
     // add imports
     shell.imports.addAll(determineImports())
-    
+
     // Add a hook to display some status when shutting down...
     addShutdownHook {
       //
@@ -149,7 +149,7 @@ class GroovyShellCommand implements Command {
 
     return code
   }
-  
+
   void populateBinding(Binding binding) {
     /*
      * helper functions
@@ -159,18 +159,18 @@ class GroovyShellCommand implements Command {
      */
     binding.setVariable('helpers', HelperFunctions.createDefault())
   }
-  
+
   @CompileStatic
   List<String> determineImports() {
     List<String> result = []
-    
+
     // determine imports from extension (see DefaultGroovyService class)
     for (IConfigurationElement conf : Platform.getExtensionRegistry()
         .getConfigurationElementsFor('eu.esdihumboldt.util.groovy.sandbox')) {
       if (conf.getName().equals("import")) {
         String className = conf.getAttribute("class");
         String alias = conf.getAttribute("alias");
-  
+
         if (className != null && !className.isEmpty()) {
           if (alias == null || alias.isEmpty()) {
             result << className
@@ -180,11 +180,11 @@ class GroovyShellCommand implements Command {
           }
         }
       }
-  
+
       // TODO support also other kind of imports?
       // e.g. star imports, static imports...
     }
-        
+
     // add custom imports
     result << Value.class.name
     result << HaleIO.class.name

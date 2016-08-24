@@ -28,7 +28,7 @@ import groovy.lang.MetaClassRegistry.MetaClassCreationHandle;
 /**
  * Adapts created meta classes with delegating meta classes registered in the
  * {@link MetaClassExtension}.
- * 
+ *
  * @author Simon Templer
  */
 public class CustomMetaClassCreationHandle extends MetaClassCreationHandle {
@@ -38,10 +38,10 @@ public class CustomMetaClassCreationHandle extends MetaClassCreationHandle {
   public CustomMetaClassCreationHandle() {
     // initialize registry
     RegistryFactoryHelper.getRegistry();
-    
+
     ext = new MetaClassExtension();
   }
-  
+
   @Override
   protected MetaClass createNormalMetaClass(@SuppressWarnings("rawtypes") Class theClass,
       MetaClassRegistry registry) {
@@ -66,7 +66,7 @@ public class CustomMetaClassCreationHandle extends MetaClassCreationHandle {
 
   /**
    * Check if a meta class descriptor applies to a given class.
-   * 
+   *
    * @param descriptor the meta class descriptor
    * @param theClass the class for which should be determined if the
    *            descriptor applies
