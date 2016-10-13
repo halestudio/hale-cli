@@ -20,5 +20,16 @@
             id="hale-cli.groovysh"
             name="groovysh">
       </command>
+      <group
+            description="Data processing"
+            id="data"
+            name="data">
+      </group>
+      <command
+            class="to.wetransform.halecli.data.SplitCommand"
+            group="data"
+            id="hale-cli.data.split"
+            name="split">
+      </command>
    </extension>
 </plugin>
