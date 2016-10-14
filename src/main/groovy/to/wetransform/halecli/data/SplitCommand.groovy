@@ -93,4 +93,6 @@ class SplitCommand implements Command {
 
   final String shortDescription = 'Split a source file into portions'
 
+  final boolean experimental = true
+
 }
