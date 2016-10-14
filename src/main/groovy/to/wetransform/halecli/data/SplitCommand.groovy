@@ -15,17 +15,47 @@
 
 package to.wetransform.halecli.data
 
+import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail
+
+import java.io.File;
 import java.util.Iterator;
 import java.util.List
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+
+import com.google.common.io.Files
+
+import eu.esdihumboldt.hale.app.transform.ConsoleProgressMonitor;
+import eu.esdihumboldt.hale.common.core.io.HaleIO
+import eu.esdihumboldt.hale.common.core.io.Value;
+import eu.esdihumboldt.hale.common.core.io.report.IOReport;
+import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier
+import eu.esdihumboldt.hale.common.headless.transform.AbstractTransformationJob;
 import eu.esdihumboldt.hale.common.instance.graph.reference.ReferenceGraph;
-import eu.esdihumboldt.hale.common.instance.graph.reference.impl.XMLInspector;
+import eu.esdihumboldt.hale.common.instance.graph.reference.impl.XMLInspector
+import eu.esdihumboldt.hale.common.instance.io.InstanceWriter
+import eu.esdihumboldt.hale.common.instance.model.DataSet;
+import eu.esdihumboldt.hale.common.instance.model.Filter;
+import eu.esdihumboldt.hale.common.instance.model.Instance;
 import eu.esdihumboldt.hale.common.instance.model.InstanceCollection
+import eu.esdihumboldt.hale.common.instance.model.impl.FilteredInstanceCollection;
+import eu.esdihumboldt.hale.common.instance.orient.OInstance;
+import eu.esdihumboldt.hale.common.instance.orient.storage.BrowseOrientInstanceCollection;
+import eu.esdihumboldt.hale.common.instance.orient.storage.LocalOrientDB
+import eu.esdihumboldt.hale.common.instance.orient.storage.StoreInstancesJob;
 import eu.esdihumboldt.hale.common.schema.model.Schema;
+import eu.esdihumboldt.hale.common.schema.model.TypeIndex
+import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace;
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
-import to.wetransform.halecli.util.InstanceCLI;
-import to.wetransform.halecli.util.SchemaCLI;;;
+import groovy.transform.CompileStatic
+import to.wetransform.halecli.util.InstanceCLI
+import to.wetransform.halecli.util.SchemaCLI
 
 /**
  * @author simon
@@ -39,7 +69,8 @@ class SplitCommand implements Command {
 
     cli._(longOpt: 'help', 'Show this help')
 
-    //TODO more options
+    // threshold for splitting instances
+    cli._(longOpt: 'threshold', args: 1, argName: 'max-number', 'The maximum number of instances to put in a part (if possible)')
 
     // options for schema
     SchemaCLI.loadSchemaOptions(cli)
@@ -48,7 +79,8 @@ class SplitCommand implements Command {
     InstanceCLI.loadOptions(cli)
 
     // options for target data
-    InstanceCLI.saveOptions(cli)
+    cli._(longOpt: 'target', args: 1, required: true, argName: 'target-folder', 'The target folder to write the parts too')
+    //TODO more options
 
     OptionAccessor options = cli.parse(args)
 
@@ -59,36 +91,134 @@ class SplitCommand implements Command {
 
     // handle schema
     Schema schema = SchemaCLI.loadSchema(options)
+    assert schema
 
     // handle source data
     InstanceCollection source = InstanceCLI.load(options, schema)
+    assert source
 
-    // create a reference graph
-    ReferenceGraph<String> rg = new ReferenceGraph<String>(new XMLInspector(),
-        source)
+    // store in temporary database
+    //XXX reason is that sources may have slow InstanceReference resolving (e.g. XML/GML)
+    LocalOrientDB db = loadTempDatabase(source, schema)
+    try {
+      // replace source with database
+      source = new BrowseOrientInstanceCollection(db, schema, DataSet.SOURCE);
+      // Note: It is important that OrientDB caches are disabled
+      // via system properties to have a decent performance
 
-    // partition the graph
-    int threshold = 10000
-    Iterator<InstanceCollection> parts = rg.partition(threshold);
+      println "Building reference graph..."
 
-    //FIXME
-    int partCount = 0
-    while (parts.hasNext()) {
-      def size = parts.next().size()
-      if (size >= 0) {
-        println "Part with $size instances"
+      // create a reference graph
+      ReferenceGraph<String> rg = new ReferenceGraph<String>(new XMLInspector(),
+          source)
+
+      // partition the graph
+      int threshold = (options.threshold ?: 10000) as int
+      Iterator<InstanceCollection> parts = rg.partition(threshold);
+
+      // target
+      def target = options.target as File
+      if (!target) {
+        throw new IllegalStateException('Please provide a target folder')
+      }
+      if (target.exists()) {
+        if (!target.isDirectory()) {
+          throw new IllegalStateException('Target is not a folder')
+        }
       }
       else {
-        println "Part with undefined size"
+        target.mkdirs()
       }
-      partCount++
+
+      int partCount = 0
+      while (parts.hasNext()) {
+        partCount++
+
+        def instances = parts.next()
+
+        //FIXME right now only GML as target supported, with default settings
+        File targetFile = new File(target, "part_${partCount}.gml")
+
+        def size = instances.size()
+        if (size >= 0) {
+          println "Writing part with $size instances to $targetFile"
+        }
+        else {
+          println "Writing part with undefined size to $targetFile"
+        }
+
+        saveGml(instances, targetFile, schema)
+      }
+      println "Total $partCount parts"
+    } finally {
+      db.delete()
     }
-    println "Total $partCount parts"
 
-    //TODO write target
-
-    // TODO Auto-generated method stub
     return 0
+  }
+
+  @CompileStatic
+  private void saveGml(InstanceCollection instances, File targetFile, Schema schema) {
+    def target = new FileIOSupplier(targetFile)
+
+    // create I/O provider
+    InstanceWriter instanceWriter = null
+    String customProvider = 'eu.esdihumboldt.hale.io.gml.writer'
+    if (customProvider != null) {
+      // use specified provider
+      instanceWriter = HaleIO.createIOProvider(InstanceWriter, null, customProvider);
+      if (instanceWriter == null) {
+        fail("Could not find instance writer with ID " + customProvider);
+      }
+    }
+    if (instanceWriter == null) {
+      // find applicable reader
+      instanceWriter = HaleIO.findIOProvider(InstanceWriter, target, targetFile.name);
+    }
+    if (instanceWriter == null) {
+      throw fail("Could not determine instance reader to use for source data");
+    }
+
+    //TODO apply custom settings
+    //FIXME
+    instanceWriter.setParameter('xml.pretty', Value.of((Boolean)false))
+
+    DefaultSchemaSpace schemaSpace = new DefaultSchemaSpace()
+    schemaSpace.addSchema(schema)
+    instanceWriter.targetSchema = schemaSpace
+    instanceWriter.target = target
+    instanceWriter.instances = instances
+
+    IOReport report = instanceWriter.execute(null)
+    //TODO report?
+
+    if (!report.isSuccess()) {
+      //TODO common way to deal with reports
+      throw new IllegalStateException('Writing target file failed: ' + report.summary)
+    }
+  }
+
+  @CompileStatic
+  private LocalOrientDB loadTempDatabase(InstanceCollection instances, TypeIndex schema) {
+    // create db
+    File tmpDir = Files.createTempDir();
+    LocalOrientDB db = new LocalOrientDB(tmpDir);
+    tmpDir.deleteOnExit();
+
+    // run store instance job first...
+    Job storeJob = new StoreInstancesJob("Load source instances into temporary database",
+        db, instances, null) {
+
+      @Override
+      protected void onComplete() {
+        // do nothing
+      }
+
+    };
+
+    storeJob.run(new ConsoleProgressMonitor())
+
+    db
   }
 
   final String shortDescription = 'Split a source file into portions'

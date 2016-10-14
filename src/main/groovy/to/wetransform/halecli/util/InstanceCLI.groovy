@@ -64,7 +64,7 @@ class InstanceCLI {
       // use specified provider
       instanceReader = HaleIO.createIOProvider(InstanceReader.class, null, customProvider);
       if (instanceReader == null) {
-        fail("Could not find schema reader with ID " + customProvider);
+        fail("Could not find instance reader with ID " + customProvider);
       }
     }
     if (instanceReader == null) {
@@ -80,16 +80,20 @@ class InstanceCLI {
     instanceReader.setSourceSchema(schema)
     instanceReader.setSource(sourceIn);
 
+    println "Loading data from ${loc}..."
+
     IOReport report = instanceReader.execute(null)
     //TODO report?
 
     instanceReader.getInstances()
   }
 
-  //TODO
+  //TODO save data
 
+  /*
   static void saveOptions(CliBuilder cli, String argName = 'target', String descr = 'Target location') {
     cli._(longOpt: argName, args:2, argName: 'file-or-URL> <providerId', descr)
   }
+  */
 
 }

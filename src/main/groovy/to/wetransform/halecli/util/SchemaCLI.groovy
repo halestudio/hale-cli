@@ -77,6 +77,8 @@ class SchemaCLI {
 
     schemaReader.setSource(sourceIn);
 
+    println "Loading schema from ${loc}..."
+
     IOReport report = schemaReader.execute(null)
     //TODO report?
 
