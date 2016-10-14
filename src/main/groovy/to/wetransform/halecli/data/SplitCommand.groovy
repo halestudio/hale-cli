@@ -179,9 +179,8 @@ class SplitCommand implements Command {
       throw fail("Could not determine instance reader to use for source data");
     }
 
-    //TODO apply custom settings
-    //FIXME
-    instanceWriter.setParameter('xml.pretty', Value.of((Boolean)false))
+    //FIXME apply custom settings
+    instanceWriter.setParameter('xml.pretty', Value.of((Boolean)true))
 
     DefaultSchemaSpace schemaSpace = new DefaultSchemaSpace()
     schemaSpace.addSchema(schema)
