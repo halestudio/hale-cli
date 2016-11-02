@@ -20,12 +20,15 @@ import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail;
 import java.io.InputStream;
 
 import eu.esdihumboldt.hale.common.core.io.HaleIO
+import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
 import eu.esdihumboldt.hale.common.core.io.supplier.DefaultInputSupplier;
 import eu.esdihumboldt.hale.common.core.io.supplier.LocatableInputSupplier;
 import eu.esdihumboldt.hale.common.instance.io.InstanceReader
+import eu.esdihumboldt.hale.common.schema.io.SchemaIO;
 import eu.esdihumboldt.hale.common.schema.io.SchemaReader;
 import eu.esdihumboldt.hale.common.schema.model.Schema
+import eu.esdihumboldt.util.Pair;
 import eu.esdihumboldt.util.cli.CLIUtil
 import groovy.transform.CompileStatic;;
 
@@ -52,22 +55,28 @@ class SchemaCLI {
   }
 
   @CompileStatic
-  static Schema loadSchema(URI loc) {
+  static Pair<SchemaReader, String> prepareSchemaReader(URI loc) {
     LocatableInputSupplier<? extends InputStream> sourceIn = new DefaultInputSupplier(loc)
 
     // create I/O provider
     SchemaReader schemaReader = null
     String customProvider = null
+    String providerId = null
     if (customProvider != null) {
       // use specified provider
       schemaReader = HaleIO.createIOProvider(SchemaReader.class, null, customProvider);
       if (schemaReader == null) {
         fail("Could not find schema reader with ID " + customProvider);
       }
+      providerId = customProvider
     }
     if (schemaReader == null) {
       // find applicable reader
-      schemaReader = HaleIO.findIOProvider(SchemaReader.class, sourceIn, loc.getPath());
+      def providerInfo = HaleIO.findIOProviderAndId(SchemaReader.class, sourceIn, loc.getPath());
+      if (providerInfo) {
+        schemaReader = providerInfo.first
+        providerId = providerInfo.second
+      }
     }
     if (schemaReader == null) {
       throw fail("Could not determine instance reader to use for source data");
@@ -76,6 +85,39 @@ class SchemaCLI {
     //TODO apply custom settings
 
     schemaReader.setSource(sourceIn);
+
+    new Pair<>(schemaReader, providerId)
+  }
+
+  static IOConfiguration getSchemaIOConfig(OptionAccessor options, String argName = 'schema', boolean isSource = true) {
+    def location = options."$argName"
+    if (location) {
+      URI loc = CLIUtil.fileOrUri(location)
+      return getSchemaIOConfig(loc, isSource)
+    }
+    else {
+      return null
+    }
+  }
+
+  @CompileStatic
+  static IOConfiguration getSchemaIOConfig(URI loc, boolean isSource) {
+    Pair<SchemaReader, String> readerInfo = prepareSchemaReader(loc)
+    SchemaReader schemaReader = readerInfo.first
+
+    IOConfiguration conf = new IOConfiguration()
+
+    conf.providerId = readerInfo.second
+    conf.actionId = isSource ? SchemaIO.ACTION_LOAD_SOURCE_SCHEMA : SchemaIO.ACTION_LOAD_TARGET_SCHEMA
+    schemaReader.storeConfiguration(conf.providerConfiguration)
+
+    conf
+  }
+
+  @CompileStatic
+  static Schema loadSchema(URI loc) {
+    Pair<SchemaReader, String> readerInfo = prepareSchemaReader(loc)
+    SchemaReader schemaReader = readerInfo.first
 
     println "Loading schema from ${loc}..."
 
