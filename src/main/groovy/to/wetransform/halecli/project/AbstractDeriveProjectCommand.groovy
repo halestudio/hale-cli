@@ -105,52 +105,10 @@ abstract class AbstractDeriveProjectCommand extends AbstractProjectEnvironmentCo
     File projectOut = new File(projectFile.parentFile, fileName)
     def output = new FileIOSupplier(projectOut)
 
-    saveProject(project, result.alignment, projectEnv.sourceSchema,
+    ProjectHelper.saveProject(project, result.alignment, projectEnv.sourceSchema,
       projectEnv.targetSchema, output, reports, extension)
 
     true
-  }
-
-  @CompileStatic
-  void saveProject(Project project, Alignment alignment, SchemaSpace sourceSchema,
-    SchemaSpace targetSchema, LocatableOutputSupplier<? extends OutputStream> output,
-    ReportHandler reports, String extension) {
-
-    // write project
-    IContentType projectType = HaleIO.findContentType(
-      ProjectWriter.class, null, "project.$extension")
-    IOProviderDescriptor factory = HaleIO.findIOProviderFactory(
-      ProjectWriter.class, projectType, null);
-    ProjectWriter projectWriter
-    try {
-      projectWriter = (ProjectWriter) factory.createExtensionObject()
-    } catch (Exception e1) {
-      throw new IllegalStateException("Failed to create project writer", e1)
-    }
-    projectWriter.setTarget(output)
-
-    // store (incomplete) save configuration
-    IOConfiguration saveConf = new IOConfiguration()
-    projectWriter.storeConfiguration(saveConf.getProviderConfiguration())
-    saveConf.setProviderId(factory.getIdentifier())
-    project.setSaveConfiguration(saveConf)
-
-    SaveProjectAdvisor advisor = new SaveProjectAdvisor(project, alignment, sourceSchema,
-      targetSchema);
-    advisor.prepareProvider(projectWriter)
-    advisor.updateConfiguration(projectWriter)
-    // HeadlessIO.executeProvider(projectWriter, advisor, null, reports);
-    IOReport report
-    try {
-      report = projectWriter.execute(null)
-    } catch (Exception e) {
-      throw new IllegalStateException("Error writing project file.", e)
-    }
-    if (report != null) {
-      if (!report.isSuccess() || report.errors) {
-        throw new IllegalStateException("Error writing project file.")
-      }
-    }
   }
 
 }
