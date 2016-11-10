@@ -17,7 +17,19 @@ package to.wetransform.halecli.project.migrate
 
 import java.util.List
 
-import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment;
+import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration;
+import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigrator
+import eu.esdihumboldt.hale.common.align.migrate.MigrationOptions;
+import eu.esdihumboldt.hale.common.align.migrate.impl.DefaultAlignmentMigrator
+import eu.esdihumboldt.hale.common.align.migrate.impl.MigrationOptionsImpl;
+import eu.esdihumboldt.hale.common.align.model.Alignment
+import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
+import eu.esdihumboldt.hale.common.core.io.project.model.Project;
+import eu.esdihumboldt.hale.common.core.service.ServiceProvider;
+import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
+import eu.esdihumboldt.hale.common.instance.io.InstanceIO;
+import eu.esdihumboldt.hale.common.schema.io.SchemaIO;
+import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic
@@ -39,6 +51,8 @@ class MigrateMatchingCommand implements Command {
     // options for projects to load
     ProjectCLI.loadProjectOptions(cli, 'source-project', 'The source project to migrate')
     ProjectCLI.loadProjectOptions(cli, 'matching-project', 'The project defining a schema matching')
+    // options for project to save
+    ProjectCLI.saveProjectOptions(cli)
 
     OptionAccessor options = cli.parse(args)
 
@@ -56,9 +70,49 @@ class MigrateMatchingCommand implements Command {
     assert matchProject
 
     //TODO do matching
-    //TODO save target project
+    ServiceProvider serviceProvider = sourceProject.serviceProvider
+    AlignmentMigrator migrator = new DefaultAlignmentMigrator(serviceProvider)
 
-    return 0;
+    Alignment originalAlignment = sourceProject.alignment
+    AlignmentMigration migration = new MatchingMigration(matchProject.alignment)
+
+    //FIXME configurable if source or target is updated?
+    boolean updateSource = true
+    boolean updateTarget = false
+    MigrationOptions opts = new MigrationOptionsImpl(updateSource, updateTarget)
+    def newAlignment = migrator.updateAligmment(originalAlignment, migration, opts)
+
+    SchemaSpace newSource
+    SchemaSpace newTarget
+
+    newSource = matchProject.targetSchema
+    newTarget = sourceProject.targetSchema
+
+    Project newProject = new Project(sourceProject.project)
+    // update I/O configurations -> new source schema
+    // remove source schema and data
+    newProject.resources.removeIf { IOConfiguration conf ->
+      conf.actionId == SchemaIO.ACTION_LOAD_SOURCE_SCHEMA || conf.actionId == InstanceIO.ACTION_LOAD_SOURCE_DATA
+    }
+    // transfer source schema from matching project
+    def sourceConfs = matchProject.project.resources.findAll { IOConfiguration conf ->
+      conf.actionId == SchemaIO.ACTION_LOAD_TARGET_SCHEMA
+    }.collect { IOConfiguration conf ->
+      IOConfiguration clone = conf.clone()
+      clone.actionId = SchemaIO.ACTION_LOAD_SOURCE_SCHEMA
+      clone
+    }
+    newProject.resources.addAll(sourceConfs)
+
+    //TODO migrate project (mapping relevant source types etc.)
+
+    // save target project
+    println 'Saving migrated project...'
+    ProjectCLI.saveProject(options, newProject, newAlignment, newSource, newTarget)
+
+    println 'Completed'
+
+    return 0
   }
 
   final String shortDescription = 'Migrate a source project based on a project providing a schema matching'
