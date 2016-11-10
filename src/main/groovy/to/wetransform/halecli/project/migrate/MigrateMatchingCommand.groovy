@@ -105,7 +105,8 @@ class MigrateMatchingCommand implements Command {
     }
     newProject.resources.addAll(sourceConfs)
 
-    //TODO migrate project (mapping relevant source types etc.)
+    // migrate project (mapping relevant source types etc.)
+    ProjectMigrator.updateProject(newProject, migration, opts, sourceProject.sourceSchema, sourceProject.targetSchema)
 
     // save target project
     println 'Saving migrated project...'
