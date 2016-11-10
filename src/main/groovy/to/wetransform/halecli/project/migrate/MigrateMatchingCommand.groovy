@@ -79,7 +79,8 @@ class MigrateMatchingCommand implements Command {
     //FIXME configurable if source or target is updated?
     boolean updateSource = true
     boolean updateTarget = false
-    MigrationOptions opts = new MigrationOptionsImpl(updateSource, updateTarget)
+    boolean transferBase = true
+    MigrationOptions opts = new MigrationOptionsImpl(updateSource, updateTarget, transferBase)
     def newAlignment = migrator.updateAligmment(originalAlignment, migration, opts)
 
     SchemaSpace newSource

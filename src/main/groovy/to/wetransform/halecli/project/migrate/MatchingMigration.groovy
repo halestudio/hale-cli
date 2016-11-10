@@ -18,7 +18,10 @@ package to.wetransform.halecli.project.migrate
 import java.util.Optional
 
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration
-import eu.esdihumboldt.hale.common.align.model.Alignment;
+import eu.esdihumboldt.hale.common.align.model.Alignment
+import eu.esdihumboldt.hale.common.align.model.AlignmentUtil
+import eu.esdihumboldt.hale.common.align.model.Cell
+import eu.esdihumboldt.hale.common.align.model.Entity;
 import eu.esdihumboldt.hale.common.align.model.EntityDefinition
 import groovy.transform.CompileStatic;;;
 
@@ -36,10 +39,52 @@ class MatchingMigration implements AlignmentMigration {
     this.matching = matching
   }
 
+  protected Optional<EntityDefinition> findMatch(EntityDefinition entity) {
+    Collection<? extends Cell> cells = matching.getCells(entity)
+
+    if (cells.empty) {
+      //XXX no replacement can be found -> what to do in this case?
+      Optional.empty()
+    }
+    else {
+      if (cells.size() == 1) {
+        Cell cell = cells.iterator().next()
+
+        // replace by target
+        //XXX also support other way round?
+        if (cell.target) {
+          Entity e = cell.target.values().iterator().next()
+          Optional.ofNullable(e.definition)
+        }
+        else {
+          Optional.empty()
+        }
+      }
+      else {
+        //XXX more than one cell - for now ignored
+
+        Optional.empty()
+      }
+    }
+  }
+
   @Override
-  public Optional<EntityDefinition> entityReplacement(EntityDefinition entity) {
-    // TODO Auto-generated method stub
-    return Optional.empty();
+  Optional<EntityDefinition> entityReplacement(EntityDefinition entity) {
+    def defaultEntity = AlignmentUtil.getAllDefaultEntity(entity)
+
+    def matchedEntity = findMatch(defaultEntity);
+
+    if (entity != defaultEntity) {
+      // entity contained contexts -> translate them if possible
+      //TODO
+      println "Contexts for entities not handled yet"
+    }
+
+    if (!matchedEntity.isPresent()) {
+      println "No match for entity $entity found"
+    }
+
+    return matchedEntity;
   }
 
 }
