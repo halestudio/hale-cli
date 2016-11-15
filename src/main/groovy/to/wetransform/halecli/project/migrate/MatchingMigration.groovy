@@ -23,6 +23,8 @@ import eu.esdihumboldt.hale.common.align.model.AlignmentUtil
 import eu.esdihumboldt.hale.common.align.model.Cell
 import eu.esdihumboldt.hale.common.align.model.Entity;
 import eu.esdihumboldt.hale.common.align.model.EntityDefinition
+import eu.esdihumboldt.hale.common.schema.model.PropertyDefinition
+import eu.esdihumboldt.hale.common.schema.model.constraint.type.GeometryType;
 import groovy.transform.CompileStatic;;;
 
 /**
@@ -72,7 +74,7 @@ class MatchingMigration implements AlignmentMigration {
   Optional<EntityDefinition> entityReplacement(EntityDefinition entity) {
     def defaultEntity = AlignmentUtil.getAllDefaultEntity(entity)
 
-    def matchedEntity = findMatch(defaultEntity);
+    def matchedEntity = findMatch(defaultEntity)
 
     if (entity != defaultEntity) {
       // entity contained contexts -> translate them if possible
@@ -80,11 +82,39 @@ class MatchingMigration implements AlignmentMigration {
       println "Contexts for entities not handled yet"
     }
 
+    // special case handling
+    if (!matchedEntity.isPresent()) {
+      matchedEntity = findParentMatch(defaultEntity)
+      if (matchedEntity.present) {
+        println "Inaccurate match of $entity to ${matchedEntity.get()} via parent entity"
+      }
+    }
+
     if (!matchedEntity.isPresent()) {
       println "No match for entity $entity found"
     }
 
-    return matchedEntity;
+    return matchedEntity
+  }
+
+  protected Optional<EntityDefinition> findParentMatch(EntityDefinition entity) {
+    //XXX only allow parent matches for specific cases right now
+    if (!(entity.definition instanceof PropertyDefinition) ||
+      !((PropertyDefinition) entity.definition).propertyType.getConstraint(GeometryType).isGeometry()) {
+      // not a geometry
+      return Optional.empty()
+    }
+
+    while (entity != null) {
+      entity = AlignmentUtil.getParent(entity)
+
+      def matchedEntity = findMatch(entity);
+      if (matchedEntity.present) {
+        return matchedEntity
+      }
+    }
+
+    return Optional.empty()
   }
 
 }
