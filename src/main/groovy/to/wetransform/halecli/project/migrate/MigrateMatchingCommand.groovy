@@ -21,7 +21,8 @@ import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration;
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigrator
 import eu.esdihumboldt.hale.common.align.migrate.MigrationOptions;
 import eu.esdihumboldt.hale.common.align.migrate.impl.DefaultAlignmentMigrator
-import eu.esdihumboldt.hale.common.align.migrate.impl.MigrationOptionsImpl;
+import eu.esdihumboldt.hale.common.align.migrate.impl.MigrationOptionsImpl
+import eu.esdihumboldt.hale.common.align.migrate.util.EffectiveMapping;
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
 import eu.esdihumboldt.hale.common.core.io.project.model.Project;
@@ -75,6 +76,9 @@ class MigrateMatchingCommand implements Command {
 
     Alignment originalAlignment = sourceProject.alignment
     AlignmentMigration migration = new MatchingMigration(matchProject.alignment)
+
+    // to effective mapping TODO configurable?
+    originalAlignment = EffectiveMapping.expand(originalAlignment)
 
     //FIXME configurable if source or target is updated?
     boolean updateSource = true
