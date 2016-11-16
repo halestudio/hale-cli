@@ -56,7 +56,7 @@ class SchemaCLI {
       def settings = options."${argName}-settings"
       settings = settings ? settings.toSpreadMap() : [:]
 
-      String customProvider = options."${argName}-reader"
+      String customProvider = options."${argName}-reader" ?: null
 
       return loadSchema(loc, settings, customProvider)
     }
@@ -112,7 +112,7 @@ class SchemaCLI {
       def settings = options."${argName}-settings"
       settings = settings ? settings.toSpreadMap() : [:]
 
-      String customProvider = options."${argName}-reader"
+      String customProvider = options."${argName}-reader" ?: null
 
       return getSchemaIOConfig(loc, settings, customProvider, isSource)
     }
