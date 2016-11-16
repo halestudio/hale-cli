@@ -20,6 +20,7 @@ import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail;
 import java.io.InputStream;
 
 import eu.esdihumboldt.hale.common.core.io.HaleIO
+import eu.esdihumboldt.hale.common.core.io.Value;
 import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
 import eu.esdihumboldt.hale.common.core.io.supplier.DefaultInputSupplier;
@@ -41,13 +42,19 @@ class SchemaCLI {
 
   static void loadSchemaOptions(CliBuilder cli, String argName = 'schema', String descr = 'Schema to load') {
     cli._(longOpt: argName, args:1, argName:'file-or-URL', descr)
+    cli._(longOpt: argName + '-setting', args:2, valueSeparator:'=', argName:'setting=value',
+      'Setting for schema reader')
   }
 
   static Schema loadSchema(OptionAccessor options, String argName = 'schema') {
     def location = options."$argName"
     if (location) {
       URI loc = CLIUtil.fileOrUri(location)
-      return loadSchema(loc)
+
+      def settings = options."${argName}-settings"
+      settings = settings ? settings.toSpreadMap() : [:]
+
+      return loadSchema(loc, settings)
     }
     else {
       return null
@@ -55,7 +62,7 @@ class SchemaCLI {
   }
 
   @CompileStatic
-  static Pair<SchemaReader, String> prepareSchemaReader(URI loc) {
+  static Pair<SchemaReader, String> prepareSchemaReader(URI loc, Map<String, String> settings) {
     LocatableInputSupplier<? extends InputStream> sourceIn = new DefaultInputSupplier(loc)
 
     // create I/O provider
@@ -82,7 +89,10 @@ class SchemaCLI {
       throw fail("Could not determine instance reader to use for source data");
     }
 
-    //TODO apply custom settings
+    // apply custom settings
+    settings.each { setting, value ->
+      schemaReader.setParameter(setting, Value.simple(value))
+    }
 
     schemaReader.setSource(sourceIn);
 
@@ -93,7 +103,11 @@ class SchemaCLI {
     def location = options."$argName"
     if (location) {
       URI loc = CLIUtil.fileOrUri(location)
-      return getSchemaIOConfig(loc, isSource)
+
+      def settings = options."${argName}-settings"
+      settings = settings ? settings.toSpreadMap() : [:]
+
+      return getSchemaIOConfig(loc, settings, isSource)
     }
     else {
       return null
@@ -101,8 +115,8 @@ class SchemaCLI {
   }
 
   @CompileStatic
-  static IOConfiguration getSchemaIOConfig(URI loc, boolean isSource) {
-    Pair<SchemaReader, String> readerInfo = prepareSchemaReader(loc)
+  static IOConfiguration getSchemaIOConfig(URI loc, Map<String, String> settings, boolean isSource) {
+    Pair<SchemaReader, String> readerInfo = prepareSchemaReader(loc, settings)
     SchemaReader schemaReader = readerInfo.first
 
     IOConfiguration conf = new IOConfiguration()
@@ -115,8 +129,8 @@ class SchemaCLI {
   }
 
   @CompileStatic
-  static Schema loadSchema(URI loc) {
-    Pair<SchemaReader, String> readerInfo = prepareSchemaReader(loc)
+  static Schema loadSchema(URI loc, Map<String, String> settings) {
+    Pair<SchemaReader, String> readerInfo = prepareSchemaReader(loc, settings)
     SchemaReader schemaReader = readerInfo.first
 
     println "Loading schema from ${loc}..."
