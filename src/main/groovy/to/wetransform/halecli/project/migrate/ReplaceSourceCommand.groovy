@@ -29,14 +29,17 @@ import eu.esdihumboldt.hale.common.core.io.project.model.Project;
 import eu.esdihumboldt.hale.common.core.service.ServiceProvider;
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.hale.common.instance.io.InstanceIO;
-import eu.esdihumboldt.hale.common.schema.io.SchemaIO;
-import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
+import eu.esdihumboldt.hale.common.schema.io.SchemaIO
+import eu.esdihumboldt.hale.common.schema.model.Schema;
+import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
+import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace;
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic
 import groovy.util.CliBuilder;
 import groovy.util.OptionAccessor;
-import to.wetransform.halecli.util.ProjectCLI;;;;
+import to.wetransform.halecli.util.ProjectCLI
+import to.wetransform.halecli.util.SchemaCLI;;;;;
 
 /**
  * Command that migrates a project to a different schema.
@@ -44,36 +47,39 @@ import to.wetransform.halecli.util.ProjectCLI;;;;
  * @author Simon Templer
  */
 @CompileStatic
-class MigrateMatchingCommand extends AbstractMigrateCommand<MatchingMigration> {
+class ReplaceSourceCommand extends AbstractMigrateCommand<DefaultSchemaMigration> {
 
   @Override
   protected void addOptions(CliBuilder cli) {
-    // options for loading matching command
-    ProjectCLI.loadProjectOptions(cli, 'matching-project', 'The project defining a schema matching')
+    // options for loading new source schema
+    SchemaCLI.loadSchemaOptions(cli, 'schema', 'The new source schema for the project')
   }
 
   @Override
-  protected MatchingMigration createMigration(OptionAccessor options) {
-    println 'Loading matching project...'
-    ProjectTransformationEnvironment matchProject = ProjectCLI.loadProject(options, 'matching-project')
-    assert matchProject
+  protected DefaultSchemaMigration createMigration(OptionAccessor options) {
+    println 'Loading new source schema...'
+    Schema newSource = SchemaCLI.loadSchema(options, 'schema')
+    assert newSource
 
-    new MatchingMigration(matchProject)
+    //TODO support multiple schemas?
+
+    DefaultSchemaSpace schemaSpace = new DefaultSchemaSpace()
+    schemaSpace.addSchema(newSource)
+
+    new DefaultSchemaMigration(schemaSpace)
   }
 
   @Override
-  protected SchemaSpace getNewSource(MatchingMigration migration) {
-    migration.project.targetSchema
+  protected SchemaSpace getNewSource(DefaultSchemaMigration migration) {
+    migration.newSchema
   }
 
   @Override
-  protected List<IOConfiguration> getNewSourceConfig(MatchingMigration migration, OptionAccessor options) {
-    migration.project.project.resources.findAll { IOConfiguration conf ->
-      conf.actionId == SchemaIO.ACTION_LOAD_TARGET_SCHEMA
-    } as List
+  protected List<IOConfiguration> getNewSourceConfig(DefaultSchemaMigration migration, OptionAccessor options) {
+    [SchemaCLI.getSchemaIOConfig(options, 'schema', true)]
   }
 
-  final String shortDescription = 'Migrate a source project based on a project providing a schema matching'
+  final String shortDescription = 'Migrate a source project to a new source schema'
 
   final boolean experimental = true
 

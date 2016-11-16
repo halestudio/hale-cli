@@ -44,6 +44,8 @@ class SchemaCLI {
     cli._(longOpt: argName, args:1, argName:'file-or-URL', descr)
     cli._(longOpt: argName + '-setting', args:2, valueSeparator:'=', argName:'setting=value',
       'Setting for schema reader')
+    cli._(longOpt: argName + '-reader', args:1, argName: 'provider-id',
+      'Identifier of schema reader to use')
   }
 
   static Schema loadSchema(OptionAccessor options, String argName = 'schema') {
@@ -54,7 +56,9 @@ class SchemaCLI {
       def settings = options."${argName}-settings"
       settings = settings ? settings.toSpreadMap() : [:]
 
-      return loadSchema(loc, settings)
+      String customProvider = options."${argName}-reader"
+
+      return loadSchema(loc, settings, customProvider)
     }
     else {
       return null
@@ -62,14 +66,14 @@ class SchemaCLI {
   }
 
   @CompileStatic
-  static Pair<SchemaReader, String> prepareSchemaReader(URI loc, Map<String, String> settings) {
+  static Pair<SchemaReader, String> prepareSchemaReader(URI loc,
+      Map<String, String> settings, String customProvider) {
     LocatableInputSupplier<? extends InputStream> sourceIn = new DefaultInputSupplier(loc)
 
     // create I/O provider
     SchemaReader schemaReader = null
-    String customProvider = null
     String providerId = null
-    if (customProvider != null) {
+    if (customProvider) {
       // use specified provider
       schemaReader = HaleIO.createIOProvider(SchemaReader.class, null, customProvider);
       if (schemaReader == null) {
@@ -99,7 +103,8 @@ class SchemaCLI {
     new Pair<>(schemaReader, providerId)
   }
 
-  static IOConfiguration getSchemaIOConfig(OptionAccessor options, String argName = 'schema', boolean isSource = true) {
+  static IOConfiguration getSchemaIOConfig(OptionAccessor options, String argName = 'schema',
+      boolean isSource = true) {
     def location = options."$argName"
     if (location) {
       URI loc = CLIUtil.fileOrUri(location)
@@ -107,7 +112,9 @@ class SchemaCLI {
       def settings = options."${argName}-settings"
       settings = settings ? settings.toSpreadMap() : [:]
 
-      return getSchemaIOConfig(loc, settings, isSource)
+      String customProvider = options."${argName}-reader"
+
+      return getSchemaIOConfig(loc, settings, customProvider, isSource)
     }
     else {
       return null
@@ -115,8 +122,9 @@ class SchemaCLI {
   }
 
   @CompileStatic
-  static IOConfiguration getSchemaIOConfig(URI loc, Map<String, String> settings, boolean isSource) {
-    Pair<SchemaReader, String> readerInfo = prepareSchemaReader(loc, settings)
+  static IOConfiguration getSchemaIOConfig(URI loc, Map<String, String> settings,
+      String customProvider, boolean isSource) {
+    Pair<SchemaReader, String> readerInfo = prepareSchemaReader(loc, settings, customProvider)
     SchemaReader schemaReader = readerInfo.first
 
     IOConfiguration conf = new IOConfiguration()
@@ -129,8 +137,8 @@ class SchemaCLI {
   }
 
   @CompileStatic
-  static Schema loadSchema(URI loc, Map<String, String> settings) {
-    Pair<SchemaReader, String> readerInfo = prepareSchemaReader(loc, settings)
+  static Schema loadSchema(URI loc, Map<String, String> settings, String customProvider) {
+    Pair<SchemaReader, String> readerInfo = prepareSchemaReader(loc, settings, customProvider)
     SchemaReader schemaReader = readerInfo.first
 
     println "Loading schema from ${loc}..."

@@ -43,5 +43,11 @@
             id="hale-cli.project.migrate.matching"
             name="matching">
       </command>
+      <command
+            class="to.wetransform.halecli.project.migrate.ReplaceSourceCommand"
+            group="project.migrate"
+            id="hale-cli.project.migrate.source"
+            name="source">
+      </command>
    </extension>
 </plugin>

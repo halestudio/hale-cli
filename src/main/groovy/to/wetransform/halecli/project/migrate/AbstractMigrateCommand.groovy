@@ -49,7 +49,7 @@ abstract class AbstractMigrateCommand<T extends AlignmentMigration> implements C
 
   protected abstract SchemaSpace getNewSource(T migration)
 
-  protected abstract List<IOConfiguration> getNewSourceConfig(T migration)
+  protected abstract List<IOConfiguration> getNewSourceConfig(T migration, OptionAccessor options)
 
   @Override
   public int run(List<String> args, CommandContext context) {
@@ -109,7 +109,7 @@ abstract class AbstractMigrateCommand<T extends AlignmentMigration> implements C
       conf.actionId == SchemaIO.ACTION_LOAD_SOURCE_SCHEMA || conf.actionId == InstanceIO.ACTION_LOAD_SOURCE_DATA
     }
     // apply source schema
-    def sourceConfs = getNewSourceConfig(migration).collect { IOConfiguration conf ->
+    def sourceConfs = getNewSourceConfig(migration, options).collect { IOConfiguration conf ->
       IOConfiguration clone = conf.clone()
       clone.actionId = SchemaIO.ACTION_LOAD_SOURCE_SCHEMA
       clone
