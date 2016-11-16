@@ -23,6 +23,7 @@ import eu.esdihumboldt.hale.common.align.model.AlignmentUtil
 import eu.esdihumboldt.hale.common.align.model.Cell
 import eu.esdihumboldt.hale.common.align.model.Entity;
 import eu.esdihumboldt.hale.common.align.model.EntityDefinition
+import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment;
 import eu.esdihumboldt.hale.common.schema.model.PropertyDefinition
 import eu.esdihumboldt.hale.common.schema.model.constraint.type.GeometryType;
 import groovy.transform.CompileStatic;;;
@@ -35,14 +36,14 @@ import groovy.transform.CompileStatic;;;
 @CompileStatic
 class MatchingMigration implements AlignmentMigration {
 
-  private final Alignment matching
+  final ProjectTransformationEnvironment project
 
-  MatchingMigration(Alignment matching) {
-    this.matching = matching
+  MatchingMigration(ProjectTransformationEnvironment project) {
+    this.project = project
   }
 
   protected Optional<EntityDefinition> findMatch(EntityDefinition entity) {
-    Collection<? extends Cell> cells = matching.getCells(entity)
+    Collection<? extends Cell> cells = project.alignment.getCells(entity)
 
     if (cells.empty) {
       //XXX no replacement can be found -> what to do in this case?

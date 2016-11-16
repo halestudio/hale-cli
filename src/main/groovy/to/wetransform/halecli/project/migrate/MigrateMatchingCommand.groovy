@@ -34,6 +34,8 @@ import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic
+import groovy.util.CliBuilder;
+import groovy.util.OptionAccessor;
 import to.wetransform.halecli.util.ProjectCLI;;;;
 
 /**
@@ -41,84 +43,34 @@ import to.wetransform.halecli.util.ProjectCLI;;;;
  *
  * @author Simon Templer
  */
-class MigrateMatchingCommand implements Command {
+@CompileStatic
+class MigrateMatchingCommand extends AbstractMigrateCommand<MatchingMigration> {
 
   @Override
-  public int run(List<String> args, CommandContext context) {
-    CliBuilder cli = new CliBuilder(usage : "${context.baseCommand} [options] [...]")
-
-    cli._(longOpt: 'help', 'Show this help')
-
-    // options for projects to load
-    ProjectCLI.loadProjectOptions(cli, 'source-project', 'The source project to migrate')
+  protected void addOptions(CliBuilder cli) {
+    // options for loading matching command
     ProjectCLI.loadProjectOptions(cli, 'matching-project', 'The project defining a schema matching')
-    // options for project to save
-    ProjectCLI.saveProjectOptions(cli)
+  }
 
-    OptionAccessor options = cli.parse(args)
-
-    if (options.help) {
-      cli.usage()
-      return 0
-    }
-
-    // load projects
-    println 'Loading source project...'
-    ProjectTransformationEnvironment sourceProject = ProjectCLI.loadProject(options, 'source-project')
-    assert sourceProject
+  @Override
+  protected MatchingMigration createMigration(OptionAccessor options) {
     println 'Loading matching project...'
     ProjectTransformationEnvironment matchProject = ProjectCLI.loadProject(options, 'matching-project')
     assert matchProject
 
-    //TODO do matching
-    ServiceProvider serviceProvider = sourceProject.serviceProvider
-    AlignmentMigrator migrator = new DefaultAlignmentMigrator(serviceProvider)
+    new MatchingMigration(matchProject)
+  }
 
-    Alignment originalAlignment = sourceProject.alignment
-    AlignmentMigration migration = new MatchingMigration(matchProject.alignment)
+  @Override
+  protected SchemaSpace getNewSource(MatchingMigration migration) {
+    migration.project.targetSchema
+  }
 
-    // to effective mapping TODO configurable?
-    originalAlignment = EffectiveMapping.expand(originalAlignment)
-
-    //FIXME configurable if source or target is updated?
-    boolean updateSource = true
-    boolean updateTarget = false
-    boolean transferBase = true
-    MigrationOptions opts = new MigrationOptionsImpl(updateSource, updateTarget, transferBase)
-    def newAlignment = migrator.updateAligmment(originalAlignment, migration, opts)
-
-    SchemaSpace newSource
-    SchemaSpace newTarget
-
-    newSource = matchProject.targetSchema
-    newTarget = sourceProject.targetSchema
-
-    Project newProject = new Project(sourceProject.project)
-    // update I/O configurations -> new source schema
-    // remove source schema and data
-    newProject.resources.removeIf { IOConfiguration conf ->
-      conf.actionId == SchemaIO.ACTION_LOAD_SOURCE_SCHEMA || conf.actionId == InstanceIO.ACTION_LOAD_SOURCE_DATA
-    }
-    // transfer source schema from matching project
-    def sourceConfs = matchProject.project.resources.findAll { IOConfiguration conf ->
+  @Override
+  protected List<IOConfiguration> getNewSourceConfig(MatchingMigration migration) {
+    migration.project.project.resources.findAll { IOConfiguration conf ->
       conf.actionId == SchemaIO.ACTION_LOAD_TARGET_SCHEMA
-    }.collect { IOConfiguration conf ->
-      IOConfiguration clone = conf.clone()
-      clone.actionId = SchemaIO.ACTION_LOAD_SOURCE_SCHEMA
-      clone
-    }
-    newProject.resources.addAll(sourceConfs)
-
-    // migrate project (mapping relevant source types etc.)
-    ProjectMigrator.updateProject(newProject, migration, opts, sourceProject.sourceSchema, sourceProject.targetSchema)
-
-    // save target project
-    println 'Saving migrated project...'
-    ProjectCLI.saveProject(options, newProject, newAlignment, newSource, newTarget)
-
-    println 'Completed'
-
-    return 0
+    } as List
   }
 
   final String shortDescription = 'Migrate a source project based on a project providing a schema matching'
