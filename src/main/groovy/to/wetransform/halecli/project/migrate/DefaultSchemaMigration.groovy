@@ -131,7 +131,14 @@ class DefaultSchemaMigration implements AlignmentMigration {
     typeDef
   }
 
-  private EntityDefinition applyContexts(EntityDefinition entity, EntityDefinition contexts) {
+  /**
+   * Apply contexts (in the property path) from a context entity to another entity.
+   *
+   * @param entity the entity to apply the contexts to
+   * @param contexts the entity which contexts to apply to the other entity
+   * @return the entity with the contexts applied based on a best guess
+   */
+  public static EntityDefinition applyContexts(EntityDefinition entity, EntityDefinition contexts) {
     if (!entity.propertyPath || !contexts.propertyPath) {
       // return unchanged - no properties to adapt
       return entity
@@ -151,6 +158,7 @@ class DefaultSchemaMigration implements AlignmentMigration {
         // recreate context
         ChildContext copy = new ChildContext(candidate.contextName,
           candidate.index, candidate.condition, current.child)
+        path << copy
       }
     }
 
@@ -158,7 +166,7 @@ class DefaultSchemaMigration implements AlignmentMigration {
   }
 
   @Nullable
-  private ChildContext findContext(ChildContext current, Deque<ChildContext> relatedPath) {
+  private static ChildContext findContext(ChildContext current, Deque<ChildContext> relatedPath) {
     if (relatedPath.empty) {
       return current // not context information that is retainable
     }
