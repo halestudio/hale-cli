@@ -267,11 +267,11 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
     }
   }
 
-  boolean matchesTypes(Entity entity, Collection<String> types) {
-    matchesTypes(entity.definition.type, types)
+  boolean matchesTypes(Entity entity, Collection<String> types, boolean checkSubtypes = true) {
+    matchesTypes(entity.definition.type, types, checkSubtypes)
   }
 
-  boolean matchesTypes(TypeDefinition type, Collection<String> types) {
+  boolean matchesTypes(TypeDefinition type, Collection<String> types, boolean checkSubtypes = true) {
     Deque<TypeDefinition> check = new ArrayDeque<>()
     check.push(type)
 
@@ -297,9 +297,11 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
         return true
       }
 
-      // add sub-types for check
-      typeDef.subTypes.each {
-        check.push(it)
+      if (checkSubtypes) {
+        // add sub-types for check
+        typeDef.subTypes.each {
+          check.push(it)
+        }
       }
     }
 
@@ -329,7 +331,59 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
       }
     }
 
+    // check excludes
+    def reject = filterDef?.exclude?.any { Map excludeObj ->
+      matchesCell(cell, excludeObj, messages)
+    }
+    if (reject) {
+      return false
+    }
+
     true
+  }
+
+  boolean matchesCell(Cell cell, Map excludeObj, List<String> messages) {
+    if (excludeObj.typeCell) { // match type cells
+      //TODO support different kinds of matching?
+      // for now lax matching, but source and target need at least one match
+      if (AlignmentUtil.isTypeCell(cell)) {
+        def sourceTypes = excludeObj.typeCell.source
+        boolean sourceMatch = !sourceTypes // matched if no source specified
+        if (sourceTypes && cell.source) {
+          if (!(sourceTypes instanceof List)) {
+            sourceTypes = [sourceTypes]
+          }
+
+          sourceMatch = cell.source.values().any { Entity entity ->
+            matchesTypes(entity, sourceTypes, false)
+          }
+        }
+
+        def targetTypes = excludeObj.typeCell.target
+        boolean targetMatch = !targetTypes // matched if no target specified
+        if (targetTypes && cell.target) {
+          if (!(targetTypes instanceof List)) {
+            targetTypes = [targetTypes]
+          }
+
+          targetMatch = cell.target.values().any { Entity entity ->
+            matchesTypes(entity, targetTypes, false)
+          }
+        }
+
+        if (sourceMatch && targetMatch) {
+          return true
+        }
+
+      }
+
+    }
+    else {
+      // unknown definition
+      messages << "Unrecognised exclude object $excludeObj"
+    }
+
+    false
   }
 
   @CompileStatic
