@@ -35,6 +35,8 @@ version = '3.1.0-SNAPSHOT'
  */
 
 repositories {
+  // mavenLocal() //XXX for testing
+
   maven { // wetransform release repository (HALE releases and Eclipse dependencies)
     url 'https://artifactory.wetransform.to/artifactory/libs-release-local'
   }
@@ -68,6 +70,7 @@ dependencies {
   // core
   compile 'eu.esdihumboldt.unpuzzled:org.eclipse.equinox.nonosgi.registry:1.0.0'
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align.groovy:$haleVersion"
 
   // transformation
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.transform:$haleVersion"
