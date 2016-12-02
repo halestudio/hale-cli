@@ -109,12 +109,24 @@ dependencies {
   compile(group: 'eu.esdihumboldt.unpuzzled', name: 'de.fhg.igd.slf4jplus.logback.appender', version: '1.2.0.201503311443')
   compile 'org.slf4j:jul-to-slf4j:1.7.21'
 
-  // resource cache (OpenGIS schemas, INSPIRE schemas, W3C schemas, etc.)
+  // resource cache
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
-  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: '2015.10.27')
-  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: '2015.10.27')
-  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.portele.de', version: '2015.10.27')
-  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.w3.org', version: '2015.10.27')
+  def resourcesVersion = '2015.10.27'
+  // OpenGIS schemas, INSPIRE schemas, W3C schemas, etc.
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: resourcesVersion)
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: resourcesVersion)
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.portele.de', version: resourcesVersion)
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.w3.org', version: resourcesVersion)
+  // INSPIRE code lists and feature concepts
+  compile(group: 'eu.esdihumboldt.hale',
+    name: 'eu.esdihumboldt.util.resource.codelists.inspire',
+    version: resourcesVersion)
+  compile(group: 'eu.esdihumboldt.hale',
+    name: 'eu.esdihumboldt.util.resource.codelists.inspire.accept-xml',
+    version: resourcesVersion)
+  compile(group: 'eu.esdihumboldt.hale',
+    name: 'eu.esdihumboldt.util.resource.featureconcepts.inspire',
+    version: resourcesVersion)
 
   // CLI
   compile 'commons-cli:commons-cli:1.3.1'
