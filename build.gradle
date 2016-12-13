@@ -35,7 +35,7 @@ version = '3.1.0-SNAPSHOT'
  */
 
 repositories {
-  // mavenLocal() //XXX for testing
+  mavenLocal() //XXX for testing
 
   maven { // wetransform release repository (HALE releases and Eclipse dependencies)
     url 'https://artifactory.wetransform.to/artifactory/libs-release-local'
@@ -100,6 +100,9 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.html.svg:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.postgresql:$haleVersion"
+
+  // code list formats
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.codelist.xml:$haleVersion"
 
   // converters
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.core:$haleVersion"
