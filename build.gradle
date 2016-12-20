@@ -24,10 +24,10 @@ sourceCompatibility = '1.8'
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '3.0.0'
+  haleVersion = '3.1.0'
 }
 
-version = '3.0.0'
+version = '3.1.0'
 //TODO define versioning strategy, specifically in respect to the hale version used
 
 /*
@@ -70,6 +70,7 @@ dependencies {
   // core
   compile 'eu.esdihumboldt.unpuzzled:org.eclipse.equinox.nonosgi.registry:1.0.0'
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align.groovy:$haleVersion"
 
   // transformation
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.transform:$haleVersion"

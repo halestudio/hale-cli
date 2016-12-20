@@ -20,5 +20,34 @@
             id="hale-cli.groovysh"
             name="groovysh">
       </command>
+      <group
+            description="Data processing"
+            id="data"
+            name="data">
+      </group>
+      <command
+            class="to.wetransform.halecli.data.SplitCommand"
+            group="data"
+            id="hale-cli.data.split"
+            name="split">
+      </command>
+      <group
+            description="Migrate projects to use a different schema or schema elements"
+            id="project.migrate"
+            name="migrate"
+            parent="project">
+      </group>
+      <command
+            class="to.wetransform.halecli.project.migrate.MigrateMatchingCommand"
+            group="project.migrate"
+            id="hale-cli.project.migrate.matching"
+            name="matching">
+      </command>
+      <command
+            class="to.wetransform.halecli.project.migrate.ReplaceSourceCommand"
+            group="project.migrate"
+            id="hale-cli.project.migrate.source"
+            name="source">
+      </command>
    </extension>
 </plugin>
