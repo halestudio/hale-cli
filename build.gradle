@@ -27,7 +27,7 @@ project.ext {
   haleVersion = '3.0.0'
 }
 
-version = '3.0.0-SNAPSHOT'
+version = '3.0.0'
 //TODO define versioning strategy, specifically in respect to the hale version used
 
 /*
