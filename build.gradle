@@ -24,10 +24,10 @@ sourceCompatibility = '1.8'
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '3.2.0-SNAPSHOT'
+  haleVersion = '3.3.0-SNAPSHOT'
 }
 
-version = '3.2.0-SNAPSHOT'
+version = '3.3.0-SNAPSHOT'
 //TODO define versioning strategy, specifically in respect to the hale version used
 
 /*
