@@ -106,7 +106,6 @@ dependencies {
 
   // Schematron validation
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.schematron:$haleVersion"
-  compile "org.opengis.cite:schema-utils:1.8"
   
   // converters
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.core:$haleVersion"
