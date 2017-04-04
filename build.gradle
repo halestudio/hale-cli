@@ -104,6 +104,9 @@ dependencies {
   // code list formats
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.codelist.xml:$haleVersion"
 
+  // Schematron validation
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.schematron:$haleVersion"
+  
   // converters
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.core:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.wkt:$haleVersion"
