@@ -42,8 +42,11 @@ class MatchingMigration implements AlignmentMigration {
 
   final ProjectTransformationEnvironment project
 
-  MatchingMigration(ProjectTransformationEnvironment project) {
+  final boolean reverse
+
+  MatchingMigration(ProjectTransformationEnvironment project, boolean reverse = false) {
     this.project = project
+    this.reverse = reverse
   }
 
   protected Optional<EntityDefinition> findMatch(EntityDefinition entity) {
@@ -57,10 +60,14 @@ class MatchingMigration implements AlignmentMigration {
       if (cells.size() == 1) {
         Cell cell = cells.iterator().next()
 
-        // replace by target
-        //XXX also support other way round?
-        if (cell.target) {
+        if (cell.target && !reverse) {
+          // replace by target
           Entity e = cell.target.values().iterator().next()
+          Optional.ofNullable(e.definition)
+        }
+        else if (cell.source && reverse) {
+          // replace by source
+          Entity e = cell.source.values().iterator().next()
           Optional.ofNullable(e.definition)
         }
         else {

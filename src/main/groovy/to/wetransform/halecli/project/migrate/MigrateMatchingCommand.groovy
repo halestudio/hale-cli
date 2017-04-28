@@ -34,6 +34,7 @@ import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode;
 import groovy.util.CliBuilder;
 import groovy.util.OptionAccessor;
 import to.wetransform.halecli.util.ProjectCLI;;;;
@@ -43,13 +44,14 @@ import to.wetransform.halecli.util.ProjectCLI;;;;
  *
  * @author Simon Templer
  */
-@CompileStatic
 class MigrateMatchingCommand extends AbstractMigrateCommand<MatchingMigration> {
 
   @Override
   protected void addOptions(CliBuilder cli) {
     // options for loading matching command
     ProjectCLI.loadProjectOptions(cli, 'matching-project', 'The project defining a schema matching')
+
+    cli._(longOpt: 'reverse', 'If the matching project has the schema to be migrated to as source')
   }
 
   @Override
@@ -58,7 +60,9 @@ class MigrateMatchingCommand extends AbstractMigrateCommand<MatchingMigration> {
     ProjectTransformationEnvironment matchProject = ProjectCLI.loadProject(options, 'matching-project')
     assert matchProject
 
-    new MatchingMigration(matchProject)
+    boolean reverse = options.reverse
+
+    new MatchingMigration(matchProject, reverse)
   }
 
   @Override
@@ -68,8 +72,11 @@ class MigrateMatchingCommand extends AbstractMigrateCommand<MatchingMigration> {
 
   @Override
   protected List<IOConfiguration> getNewSourceConfig(MatchingMigration migration, OptionAccessor options) {
+    boolean reverse = options.reverse
+    def actionId = reverse ? SchemaIO.ACTION_LOAD_SOURCE_SCHEMA : SchemaIO.ACTION_LOAD_TARGET_SCHEMA
+
     migration.project.project.resources.findAll { IOConfiguration conf ->
-      conf.actionId == SchemaIO.ACTION_LOAD_TARGET_SCHEMA
+      conf.actionId == actionId
     } as List
   }
 
