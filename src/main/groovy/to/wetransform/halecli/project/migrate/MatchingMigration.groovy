@@ -38,7 +38,7 @@ import groovy.transform.CompileStatic;;;
  * @author Simon Templer
  */
 @CompileStatic
-class MatchingMigration implements AlignmentMigration {
+class MatchingMigration extends AbstractMigration {
 
   final ProjectTransformationEnvironment project
 
@@ -50,6 +50,11 @@ class MatchingMigration implements AlignmentMigration {
   }
 
   protected Optional<EntityDefinition> findMatch(EntityDefinition entity) {
+    if (reverse) {
+      // match to target
+      entity = AlignmentUtil.getAllDefaultEntity(entity, true)
+      entity = AlignmentUtil.applySchemaSpace(entity, SchemaSpaceID.TARGET)
+    }
     Collection<? extends Cell> cells = project.alignment.getCells(entity)
 
     if (cells.empty) {
@@ -80,101 +85,6 @@ class MatchingMigration implements AlignmentMigration {
         Optional.empty()
       }
     }
-  }
-
-  @Override
-  Optional<EntityDefinition> entityReplacement(EntityDefinition entity) {
-    def defaultEntity = AlignmentUtil.getAllDefaultEntity(entity)
-
-    def matchedEntity = findMatch(defaultEntity)
-
-    // special case handling
-    if (!matchedEntity.isPresent()) {
-      matchedEntity = findParentMatch(defaultEntity)
-      if (matchedEntity.present) {
-        println "Inaccurate match of $entity to ${matchedEntity.get()} via parent entity"
-      }
-    }
-
-    if (matchedEntity.present) {
-      // entity contained contexts -> translate them if possible
-
-      if (entity.filter) {
-        // apply filter to entity
-        //TODO replacements in filter?
-        //FIXME mark unsafe
-
-        // add filter to match
-        matchedEntity = matchedEntity.map { EntityDefinition match ->
-          AlignmentUtil.createEntity(match.type, match.propertyPath,
-            SchemaSpaceID.SOURCE, entity.filter)
-        }
-      }
-
-      if (entity.propertyPath && entity != defaultEntity) {
-        // likely a context was present
-        matchedEntity = matchedEntity.map {
-          applyContexts(it, entity)
-        }
-      }
-    }
-
-    if (!matchedEntity.isPresent()) {
-      println "No match for entity $entity found"
-    }
-
-    return matchedEntity
-  }
-
-  private EntityDefinition applyContexts(EntityDefinition entity, EntityDefinition contexts) {
-    if (!entity.propertyPath || !contexts.propertyPath) {
-      // return unchanged - no properties to adapt
-      return entity
-    }
-
-    if (entity.propertyPath.size() == 1) {
-      // special handling if the property depth is only one
-
-      // prefer first instance context
-      Integer contextName = contexts.propertyPath.findResult { it.contextName }
-      // prefer first index context
-      Integer index = contexts.propertyPath.findResult { it.index }
-      // prefer last condition
-      Condition condition = contexts.propertyPath.reverse().findResult { it.condition }
-
-      ChildContext pathContext = new ChildContext(contextName, index, condition,
-        entity.propertyPath[0].child)
-
-      List<ChildContext> path = [pathContext]
-
-      return new PropertyEntityDefinition(entity.type, path, entity.schemaSpace, entity.filter)
-    }
-    else {
-      // use best guess (top to bottom)
-      //FIXME more cases? improve handling
-
-      return DefaultSchemaMigration.applyContexts(entity, contexts)
-    }
-  }
-
-  protected Optional<EntityDefinition> findParentMatch(EntityDefinition entity) {
-    //XXX only allow parent matches for specific cases right now
-    if (!(entity.definition instanceof PropertyDefinition) ||
-      !((PropertyDefinition) entity.definition).propertyType.getConstraint(GeometryType).isGeometry()) {
-      // not a geometry
-      return Optional.empty()
-    }
-
-    while (entity != null) {
-      entity = AlignmentUtil.getParent(entity)
-
-      def matchedEntity = findMatch(entity);
-      if (matchedEntity.present) {
-        return matchedEntity
-      }
-    }
-
-    return Optional.empty()
   }
 
 }

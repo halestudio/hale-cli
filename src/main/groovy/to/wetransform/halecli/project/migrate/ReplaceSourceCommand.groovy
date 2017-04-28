@@ -47,7 +47,7 @@ import to.wetransform.halecli.util.SchemaCLI;;;;;
  * @author Simon Templer
  */
 @CompileStatic
-class ReplaceSourceCommand extends AbstractMigrateCommand<DefaultSchemaMigration> {
+class ReplaceSourceCommand extends AbstractMigrationCommand<DefaultSchemaMigration> {
 
   @Override
   protected void addOptions(CliBuilder cli) {

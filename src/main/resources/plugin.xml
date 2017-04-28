@@ -44,6 +44,12 @@
             name="matching">
       </command>
       <command
+            class="to.wetransform.halecli.project.merge.MergeCommand"
+            group="project"
+            id="hale-cli.project.merge"
+            name="merge">
+      </command>
+      <command
             class="to.wetransform.halecli.project.migrate.ReplaceSourceCommand"
             group="project.migrate"
             id="hale-cli.project.migrate.source"

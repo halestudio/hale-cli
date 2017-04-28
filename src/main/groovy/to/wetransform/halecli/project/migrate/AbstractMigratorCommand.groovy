@@ -41,9 +41,12 @@ import to.wetransform.halecli.util.ProjectCLI;;;;
  *
  * @author Simon Templer
  */
-abstract class AbstractMigrateCommand<T extends AlignmentMigration> implements Command {
+abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends AlignmentMigration>
+    implements Command {
 
   protected abstract void addOptions(CliBuilder cli)
+
+  protected abstract M createMigrator(ServiceProvider serviceProvider, OptionAccessor options)
 
   protected abstract T createMigration(OptionAccessor options)
 
@@ -79,7 +82,7 @@ abstract class AbstractMigrateCommand<T extends AlignmentMigration> implements C
 
     //TODO do matching
     ServiceProvider serviceProvider = sourceProject.serviceProvider
-    AlignmentMigrator migrator = new DefaultAlignmentMigrator(serviceProvider)
+    AlignmentMigrator migrator = createMigrator(serviceProvider, options)
 
     Alignment originalAlignment = sourceProject.alignment
 

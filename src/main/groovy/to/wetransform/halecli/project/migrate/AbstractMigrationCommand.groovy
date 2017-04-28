@@ -34,55 +34,26 @@ import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode;
-import groovy.util.CliBuilder;
 import groovy.util.OptionAccessor;
 import to.wetransform.halecli.util.ProjectCLI;;;;
 
 /**
- * Command that migrates a project to a different schema.
+ * Base class for commands migrating a project to a different schema.
  *
  * @author Simon Templer
  */
-class MigrateMatchingCommand extends AbstractMigrationCommand<MatchingMigration> {
+abstract class AbstractMigrationCommand<T extends AlignmentMigration> extends AbstractMigratorCommand<DefaultAlignmentMigrator, T> {
 
-  @Override
-  protected void addOptions(CliBuilder cli) {
-    // options for loading matching command
-    ProjectCLI.loadProjectOptions(cli, 'matching-project', 'The project defining a schema matching')
+  protected abstract void addOptions(CliBuilder cli)
 
-    cli._(longOpt: 'reverse', 'If the matching project has the schema to be migrated to as source')
+  protected abstract T createMigration(OptionAccessor options)
+
+  protected DefaultAlignmentMigrator createMigrator(ServiceProvider serviceProvider, OptionAccessor options) {
+    new DefaultAlignmentMigrator(serviceProvider)
   }
 
-  @Override
-  protected MatchingMigration createMigration(OptionAccessor options) {
-    println 'Loading matching project...'
-    ProjectTransformationEnvironment matchProject = ProjectCLI.loadProject(options, 'matching-project')
-    assert matchProject
+  protected abstract SchemaSpace getNewSource(T migration, OptionAccessor options)
 
-    boolean reverse = options.reverse
-
-    new MatchingMigration(matchProject, reverse)
-  }
-
-  @Override
-  protected SchemaSpace getNewSource(MatchingMigration migration, OptionAccessor options) {
-    boolean reverse = options.reverse
-    reverse ? migration.project.sourceSchema : migration.project.targetSchema
-  }
-
-  @Override
-  protected List<IOConfiguration> getNewSourceConfig(MatchingMigration migration, OptionAccessor options) {
-    boolean reverse = options.reverse
-    def actionId = reverse ? SchemaIO.ACTION_LOAD_SOURCE_SCHEMA : SchemaIO.ACTION_LOAD_TARGET_SCHEMA
-
-    migration.project.project.resources.findAll { IOConfiguration conf ->
-      conf.actionId == actionId
-    } as List
-  }
-
-  final String shortDescription = 'Migrate a source project based on a project providing a schema matching'
-
-  final boolean experimental = true
+  protected abstract List<IOConfiguration> getNewSourceConfig(T migration, OptionAccessor options)
 
 }
