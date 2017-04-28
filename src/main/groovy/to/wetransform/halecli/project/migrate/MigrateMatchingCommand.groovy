@@ -66,8 +66,9 @@ class MigrateMatchingCommand extends AbstractMigrateCommand<MatchingMigration> {
   }
 
   @Override
-  protected SchemaSpace getNewSource(MatchingMigration migration) {
-    migration.project.targetSchema
+  protected SchemaSpace getNewSource(MatchingMigration migration, OptionAccessor options) {
+    boolean reverse = options.reverse
+    reverse ? migration.project.sourceSchema : migration.project.targetSchema
   }
 
   @Override

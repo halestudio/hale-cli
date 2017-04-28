@@ -47,7 +47,7 @@ abstract class AbstractMigrateCommand<T extends AlignmentMigration> implements C
 
   protected abstract T createMigration(OptionAccessor options)
 
-  protected abstract SchemaSpace getNewSource(T migration)
+  protected abstract SchemaSpace getNewSource(T migration, OptionAccessor options)
 
   protected abstract List<IOConfiguration> getNewSourceConfig(T migration, OptionAccessor options)
 
@@ -99,7 +99,7 @@ abstract class AbstractMigrateCommand<T extends AlignmentMigration> implements C
     SchemaSpace newSource
     SchemaSpace newTarget
 
-    newSource = getNewSource(migration)
+    newSource = getNewSource(migration, options)
     newTarget = sourceProject.targetSchema
 
     Project newProject = new Project(sourceProject.project)

@@ -70,7 +70,7 @@ class ReplaceSourceCommand extends AbstractMigrateCommand<DefaultSchemaMigration
   }
 
   @Override
-  protected SchemaSpace getNewSource(DefaultSchemaMigration migration) {
+  protected SchemaSpace getNewSource(DefaultSchemaMigration migration, OptionAccessor options) {
     migration.newSchema
   }
 
