@@ -4,13 +4,31 @@ See the [change log guidelines](http://keepachangelog.com/) for information on h
 
 ## [Unreleased]
 
+## [3.3.0]
+
+### Fixed
+
+- Work around command line length restriction issue on Windows
+
+### Added
+
+- Added dependency for Schematron validation
+- Added dependency for collector functions
+
+### Changed
+
+- Upgrade hale dependencies to 3.3
+
 ## [3.2.0]
+
+### Changed
 
 - Upgrade hale dependencies to 3.2
 
 ## [3.1.0]
 
 ### Added
+
 - Added command to split a XML/GML data set, respecting local XLink references and leaving them intact (`hale data split`)
 - Added experimental commands for migrating hale projects to a different schema (`hale project migrate`)
 
@@ -19,6 +37,7 @@ See the [change log guidelines](http://keepachangelog.com/) for information on h
 Initial release based on hale studio 3.0.0.
 
 ### Added
+
 - Transformation command from hale studio (`hale transform`)
 - Command for launching a Groovy shell (`hale groovysh`)
 - Command to list hale projects (`hale project list`)
@@ -27,6 +46,7 @@ Initial release based on hale studio 3.0.0.
 - Command to generate JSON representations of hale alignments (`hale project alignment export-json`)
 - Experimental command to filter to create a copy of a hale project with a filtered alignment (`hale project alignment filter`)
 
-[Unreleased]: https://github.com/halestudio/hale/compare/v3.2.0...HEAD
+[Unreleased]: https://github.com/halestudio/hale/compare/v3.3.0...HEAD
+[3.3.0]: https://github.com/halestudio/hale/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/halestudio/hale/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/halestudio/hale/compare/v3.0.0...v3.1.0
