@@ -87,6 +87,7 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.numeric:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.string:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.custom:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.collector:$haleVersion"
 
   // formats
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xml:$haleVersion"
