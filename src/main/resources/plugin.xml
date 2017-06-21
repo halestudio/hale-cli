@@ -31,6 +31,12 @@
             id="hale-cli.data.split"
             name="split">
       </command>
+      <command
+            class="to.wetransform.halecli.data.RewriteCommand"
+            group="data"
+            id="hale-cli.data.rewrite"
+            name="rewrite">
+      </command>
       <group
             description="Migrate projects to use a different schema or schema elements"
             id="project.migrate"
