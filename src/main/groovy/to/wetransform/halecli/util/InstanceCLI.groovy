@@ -29,6 +29,7 @@ import com.google.common.io.Files
 
 import eu.esdihumboldt.hale.app.transform.ConsoleProgressMonitor;
 import eu.esdihumboldt.hale.common.core.io.HaleIO
+import eu.esdihumboldt.hale.common.core.io.impl.LogProgressIndicator
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
 import eu.esdihumboldt.hale.common.core.io.supplier.DefaultInputSupplier;
 import eu.esdihumboldt.hale.common.core.io.supplier.LocatableInputSupplier
@@ -140,7 +141,7 @@ class InstanceCLI {
     instanceWriter.setTargetSchema(targetSchema)
     instanceWriter.setInstances(instances)
 
-    IOReport report = instanceWriter.execute(null)
+    IOReport report = instanceWriter.execute(new LogProgressIndicator())
     //TODO report?
 
     return report

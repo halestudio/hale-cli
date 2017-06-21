@@ -77,4 +77,35 @@ class RewriteCommandTest {
     }
   }
 
+  @Test
+  void testRewriteGuessSchema() {
+
+    def args = ['data', 'rewrite'];
+
+    args << '--data'
+    args << getClass().getClassLoader().getResource("testdata/inspire.gml")
+
+    def targetFile = File.createTempFile('rewrite', '.gml')
+    args << '--target'
+    args << targetFile.absolutePath
+    args << '--target-writer'
+    args << 'eu.esdihumboldt.hale.io.gml.writer'
+    args << '--target-setting'
+    args << 'xml.pretty=true'
+
+    try {
+      int code = new Runner('hale').run(args as String[])
+
+      // expecting a successful execution
+      assertEquals(0, code)
+
+      assertTrue(targetFile.exists())
+      assertTrue(targetFile.size() > 0)
+      //TODO check file content?
+
+    } finally {
+      targetFile.delete()
+    }
+  }
+
 }
