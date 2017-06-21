@@ -16,6 +16,7 @@
 package to.wetransform.halecli.data
 
 import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail
+import static to.wetransform.halecli.util.HaleIOHelper.*
 
 import java.io.File;
 import java.util.Iterator;
@@ -50,7 +51,8 @@ import eu.esdihumboldt.hale.common.instance.orient.storage.LocalOrientDB
 import eu.esdihumboldt.hale.common.instance.orient.storage.StoreInstancesJob;
 import eu.esdihumboldt.hale.common.schema.model.Schema;
 import eu.esdihumboldt.hale.common.schema.model.TypeIndex
-import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace;
+import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
+import eu.esdihumboldt.util.cli.CLIUtil;
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic
@@ -87,7 +89,19 @@ class RewriteCommand implements Command {
     }
 
     // handle schema
-    Schema schema = SchemaCLI.loadSchema(options)
+    Schema schema
+    if (options.schema) {
+      schema = SchemaCLI.loadSchema(options)
+    }
+    if (!schema && options.data) {
+      // try to guess schema from the source
+      URI dataLoc = CLIUtil.fileOrUri(options.data)
+      URI schemaLoc = guessSchema(dataLoc)
+      if (schemaLoc) {
+        println "Guessed schema location as $schemaLoc"
+        schema = SchemaCLI.loadSchema(schemaLoc, [:], null)
+      }
+    }
     assert schema
 
     // handle source data
