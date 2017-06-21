@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 wetransform GmbH
+ * Copyright (c) 2017 wetransform GmbH
  *
  * All rights reserved. This program and the accompanying materials are made
  * available under the terms of the GNU Lesser General Public License as
@@ -58,20 +58,17 @@ import to.wetransform.halecli.util.InstanceCLI
 import to.wetransform.halecli.util.SchemaCLI
 
 /**
- * Splits a GML source file and creates multiple target files.
+ * Reads a source file and writes it.
  *
  * @author Simon Templer
  */
-class SplitCommand implements Command {
+class RewriteCommand implements Command {
 
   @Override
   public int run(List<String> args, CommandContext context) {
     CliBuilder cli = new CliBuilder(usage : "${context.baseCommand} [options] [...]")
 
     cli._(longOpt: 'help', 'Show this help')
-
-    // threshold for splitting instances
-    cli._(longOpt: 'threshold', args: 1, argName: 'max-number', 'The maximum number of instances to put in a part (if possible)')
 
     // options for schema
     SchemaCLI.loadSchemaOptions(cli)
@@ -80,8 +77,7 @@ class SplitCommand implements Command {
     InstanceCLI.loadOptions(cli)
 
     // options for target data
-    cli._(longOpt: 'target', args: 1, required: true, argName: 'target-folder', 'The target folder to write the parts too')
-    //TODO more options
+    InstanceCLI.saveOptions(cli)
 
     OptionAccessor options = cli.parse(args)
 
@@ -98,107 +94,43 @@ class SplitCommand implements Command {
     InstanceCollection source = InstanceCLI.load(options, schema)
     assert source
 
-    // store in temporary database
-    //XXX reason is that sources may have slow InstanceReference resolving (e.g. XML/GML)
-    LocalOrientDB db = InstanceCLI.loadTempDatabase(source, schema)
+    // create target writer
+    InstanceWriter writer = InstanceCLI.getWriter(options)
+    assert writer
+
+    // store in temporary database (if necessary)
+    LocalOrientDB db
+    if (!writer.passthrough) {
+      db = InstanceCLI.loadTempDatabase(source, schema)
+    }
     try {
       // replace source with database
-      source = new BrowseOrientInstanceCollection(db, schema, DataSet.SOURCE);
+      if (db != null) {
+        source = new BrowseOrientInstanceCollection(db, schema, DataSet.SOURCE);
+      }
       // Note: It is important that OrientDB caches are disabled
       // via system properties to have a decent performance
 
-      println "Building reference graph..."
+      // write instances
+      DefaultSchemaSpace schemaSpace = new DefaultSchemaSpace()
+      schemaSpace.addSchema(schema)
+      IOReport report = InstanceCLI.save(writer, source, schemaSpace)
 
-      // create a reference graph
-      ReferenceGraph<String> rg = new ReferenceGraph<String>(new XMLInspector(),
-          source)
-
-      // partition the graph
-      int threshold = (options.threshold ?: 10000) as int
-      Iterator<InstanceCollection> parts = rg.partition(threshold);
-
-      // target
-      def target = options.target as File
-      if (!target) {
-        throw new IllegalStateException('Please provide a target folder')
-      }
-      if (target.exists()) {
-        if (!target.isDirectory()) {
-          throw new IllegalStateException('Target is not a folder')
-        }
-      }
-      else {
-        target.mkdirs()
+      if (!report.isSuccess()) {
+        //TODO common way to deal with reports
+        throw new IllegalStateException('Writing target file failed: ' + report.summary)
       }
 
-      int partCount = 0
-      while (parts.hasNext()) {
-        partCount++
-
-        def instances = parts.next()
-
-        //FIXME right now only GML as target supported, with default settings
-        File targetFile = new File(target, "part_${partCount}.gml")
-
-        def size = instances.size()
-        if (size >= 0) {
-          println "Writing part with $size instances to $targetFile"
-        }
-        else {
-          println "Writing part with undefined size to $targetFile"
-        }
-
-        saveGml(instances, targetFile, schema)
-      }
-      println "Total $partCount parts"
     } finally {
-      db.delete()
+      if (db != null) {
+        db.delete()
+      }
     }
 
     return 0
   }
 
-  @CompileStatic
-  private void saveGml(InstanceCollection instances, File targetFile, Schema schema) {
-    def target = new FileIOSupplier(targetFile)
-
-    // create I/O provider
-    InstanceWriter instanceWriter = null
-    String customProvider = 'eu.esdihumboldt.hale.io.gml.writer'
-    if (customProvider != null) {
-      // use specified provider
-      instanceWriter = HaleIO.createIOProvider(InstanceWriter, null, customProvider);
-      if (instanceWriter == null) {
-        fail("Could not find instance writer with ID " + customProvider);
-      }
-    }
-    if (instanceWriter == null) {
-      // find applicable reader
-      instanceWriter = HaleIO.findIOProvider(InstanceWriter, target, targetFile.name);
-    }
-    if (instanceWriter == null) {
-      throw fail("Could not determine instance reader to use for source data");
-    }
-
-    //FIXME apply custom settings
-    instanceWriter.setParameter('xml.pretty', Value.of((Boolean)true))
-
-    DefaultSchemaSpace schemaSpace = new DefaultSchemaSpace()
-    schemaSpace.addSchema(schema)
-    instanceWriter.targetSchema = schemaSpace
-    instanceWriter.target = target
-    instanceWriter.instances = instances
-
-    IOReport report = instanceWriter.execute(null)
-    //TODO report?
-
-    if (!report.isSuccess()) {
-      //TODO common way to deal with reports
-      throw new IllegalStateException('Writing target file failed: ' + report.summary)
-    }
-  }
-
-  final String shortDescription = 'Split a source file (GML) into portions'
+  final String shortDescription = 'Read a data source and write it with specific settings'
 
   final boolean experimental = true
 
