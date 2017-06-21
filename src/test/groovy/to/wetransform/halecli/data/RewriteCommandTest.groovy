@@ -108,4 +108,35 @@ class RewriteCommandTest {
     }
   }
 
+  @Test
+  void testRewriteNoPassthrough() {
+
+    def args = ['data', 'rewrite'];
+
+    args << '--data'
+    args << getClass().getClassLoader().getResource("testdata/inspire.gml")
+
+    def targetFile = File.createTempFile('rewrite', '.gml')
+    args << '--target'
+    args << targetFile.absolutePath
+    args << '--target-writer'
+    args << 'eu.esdihumboldt.hale.io.wfs.fc.write-2.0'
+    args << '--target-setting'
+    args << 'skipFeatureCount=false'
+
+    try {
+      int code = new Runner('hale').run(args as String[])
+
+      // expecting a successful execution
+      assertEquals(0, code)
+
+      assertTrue(targetFile.exists())
+      assertTrue(targetFile.size() > 0)
+      //TODO check file content?
+
+    } finally {
+      targetFile.delete()
+    }
+  }
+
 }

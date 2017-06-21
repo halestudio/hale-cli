@@ -33,7 +33,9 @@ import eu.esdihumboldt.hale.common.core.io.impl.LogProgressIndicator
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
 import eu.esdihumboldt.hale.common.core.io.supplier.DefaultInputSupplier;
 import eu.esdihumboldt.hale.common.core.io.supplier.LocatableInputSupplier
-import eu.esdihumboldt.hale.common.core.io.supplier.LocatableOutputSupplier;
+import eu.esdihumboldt.hale.common.core.io.supplier.LocatableOutputSupplier
+import eu.esdihumboldt.hale.common.core.report.ReportHandler;
+import eu.esdihumboldt.hale.common.core.service.ServiceProvider;
 import eu.esdihumboldt.hale.common.instance.io.InstanceReader
 import eu.esdihumboldt.hale.common.instance.io.InstanceWriter;
 import eu.esdihumboldt.hale.common.instance.model.InstanceCollection
@@ -156,9 +158,12 @@ class InstanceCLI {
     LocalOrientDB db = new LocalOrientDB(tmpDir);
     tmpDir.deleteOnExit();
 
+    ServiceProvider serviceProvider = null
+    ReportHandler reportHandler = null
+
     // run store instance job first...
     Job storeJob = new StoreInstancesJob("Load source instances into temporary database",
-        db, instances, null) {
+        db, instances, serviceProvider, reportHandler, false) {
 
       @Override
       protected void onComplete() {
