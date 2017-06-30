@@ -54,8 +54,7 @@ class SchemaCLI {
     if (location) {
       URI loc = CLIUtil.fileOrUri(location)
 
-      def settings = options."${argName}-settings"
-      settings = settings ? settings.toSpreadMap() : [:]
+      def settings = getSettings(options, argName)
 
       String customProvider = options."${argName}-reader" ?: null
 
@@ -64,6 +63,11 @@ class SchemaCLI {
     else {
       return null
     }
+  }
+
+  static Map<String, String> getSettings(OptionAccessor options, String argName = 'schema') {
+    def settings = options."${argName}-settings"
+    settings ? settings.toSpreadMap() : [:]
   }
 
   static IOConfiguration getSchemaIOConfig(OptionAccessor options, String argName = 'schema',

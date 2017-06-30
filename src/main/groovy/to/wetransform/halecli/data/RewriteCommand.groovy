@@ -99,7 +99,7 @@ class RewriteCommand implements Command {
       URI schemaLoc = guessSchema(dataLoc)
       if (schemaLoc) {
         println "Guessed schema location as $schemaLoc"
-        schema = SchemaCLI.loadSchema(schemaLoc, [:], null)
+        schema = SchemaCLI.loadSchema(schemaLoc, SchemaCLI.getSettings(options), null)
       }
     }
     assert schema
