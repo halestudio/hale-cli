@@ -16,6 +16,7 @@
 package to.wetransform.halecli.util
 
 import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail;
+import static to.wetransform.halecli.util.HaleIOHelper.*
 
 import java.io.InputStream;
 
@@ -43,7 +44,7 @@ class SchemaCLI {
   static void loadSchemaOptions(CliBuilder cli, String argName = 'schema', String descr = 'Schema to load') {
     cli._(longOpt: argName, args:1, argName:'file-or-URL', descr)
     cli._(longOpt: argName + '-setting', args:2, valueSeparator:'=', argName:'setting=value',
-      'Setting for schema reader')
+      'Setting for schema reader (optional, repeatable)')
     cli._(longOpt: argName + '-reader', args:1, argName: 'provider-id',
       'Identifier of schema reader to use')
   }
@@ -53,8 +54,7 @@ class SchemaCLI {
     if (location) {
       URI loc = CLIUtil.fileOrUri(location)
 
-      def settings = options."${argName}-settings"
-      settings = settings ? settings.toSpreadMap() : [:]
+      def settings = getSettings(options, argName)
 
       String customProvider = options."${argName}-reader" ?: null
 
@@ -65,42 +65,9 @@ class SchemaCLI {
     }
   }
 
-  @CompileStatic
-  static Pair<SchemaReader, String> prepareSchemaReader(URI loc,
-      Map<String, String> settings, String customProvider) {
-    LocatableInputSupplier<? extends InputStream> sourceIn = new DefaultInputSupplier(loc)
-
-    // create I/O provider
-    SchemaReader schemaReader = null
-    String providerId = null
-    if (customProvider) {
-      // use specified provider
-      schemaReader = HaleIO.createIOProvider(SchemaReader.class, null, customProvider);
-      if (schemaReader == null) {
-        fail("Could not find schema reader with ID " + customProvider);
-      }
-      providerId = customProvider
-    }
-    if (schemaReader == null) {
-      // find applicable reader
-      def providerInfo = HaleIO.findIOProviderAndId(SchemaReader.class, sourceIn, loc.getPath());
-      if (providerInfo) {
-        schemaReader = providerInfo.first
-        providerId = providerInfo.second
-      }
-    }
-    if (schemaReader == null) {
-      throw fail("Could not determine instance reader to use for source data");
-    }
-
-    // apply custom settings
-    settings.each { setting, value ->
-      schemaReader.setParameter(setting, Value.simple(value))
-    }
-
-    schemaReader.setSource(sourceIn);
-
-    new Pair<>(schemaReader, providerId)
+  static Map<String, String> getSettings(OptionAccessor options, String argName = 'schema') {
+    def settings = options."${argName}-settings"
+    settings ? settings.toSpreadMap() : [:]
   }
 
   static IOConfiguration getSchemaIOConfig(OptionAccessor options, String argName = 'schema',
@@ -124,7 +91,7 @@ class SchemaCLI {
   @CompileStatic
   static IOConfiguration getSchemaIOConfig(URI loc, Map<String, String> settings,
       String customProvider, boolean isSource) {
-    Pair<SchemaReader, String> readerInfo = prepareSchemaReader(loc, settings, customProvider)
+    Pair<SchemaReader, String> readerInfo = prepareReader(loc, SchemaReader, settings, customProvider)
     SchemaReader schemaReader = readerInfo.first
 
     IOConfiguration conf = new IOConfiguration()
@@ -138,7 +105,7 @@ class SchemaCLI {
 
   @CompileStatic
   static Schema loadSchema(URI loc, Map<String, String> settings, String customProvider) {
-    Pair<SchemaReader, String> readerInfo = prepareSchemaReader(loc, settings, customProvider)
+    Pair<SchemaReader, String> readerInfo = prepareReader(loc, SchemaReader, settings, customProvider)
     SchemaReader schemaReader = readerInfo.first
 
     println "Loading schema from ${loc}..."

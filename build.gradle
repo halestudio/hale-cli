@@ -24,10 +24,10 @@ sourceCompatibility = '1.8'
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '3.3.0-SNAPSHOT'
+  haleVersion = '3.4.0-SNAPSHOT'
 }
 
-version = '3.3.0-SNAPSHOT'
+version = '3.4.0-SNAPSHOT'
 //TODO define versioning strategy, specifically in respect to the hale version used
 
 /*
@@ -87,6 +87,7 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.numeric:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.string:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.custom:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.collector:$haleVersion"
 
   // formats
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xml:$haleVersion"
@@ -304,6 +305,17 @@ uploadArchives {
       }
 
     }
+  }
+}
+
+
+// Workaround for gradle application plugin 'the input line is too long' error on Windows
+// see https://gist.github.com/jlmelville/2bfe9277e9e2c0ff79b6
+tasks.withType(CreateStartScripts).each { task ->
+  task.doLast {
+      String text = task.windowsScript.text
+      text = text.replaceFirst(/(set CLASSPATH=%APP_HOME%\\lib\\).*/, { "${it[1]}*" })
+      task.windowsScript.write text
   }
 }
 
