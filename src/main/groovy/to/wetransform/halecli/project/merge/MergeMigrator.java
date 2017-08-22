@@ -15,6 +15,7 @@
 
 package to.wetransform.halecli.project.merge;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +25,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.esdihumboldt.hale.common.align.extension.function.FunctionUtil;
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration;
 import eu.esdihumboldt.hale.common.align.migrate.CellMigrator;
 import eu.esdihumboldt.hale.common.align.migrate.MigrationOptions;
@@ -52,11 +54,20 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
 
   private TargetIndex targetIndex;
 
+  private final MergeStatistics statistics;
+
   /**
    * @param serviceProvider the service provider if available
    */
-  public MergeMigrator(@Nullable ServiceProvider serviceProvider) {
+  public MergeMigrator(@Nullable ServiceProvider serviceProvider, boolean collectStatistics) {
     super(serviceProvider);
+
+    if (collectStatistics) {
+      statistics = new MergeStatistics();
+    }
+    else {
+      statistics = null;
+    }
   }
 
   protected CellMigrator getCellMigrator(String transformationIdentifier) {
@@ -81,27 +92,7 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
       // check cell sources - how are they represented in the matching?
       Collection<? extends Entity> sources = originalCell.getSource().values();
 
-      //DEBUG print all combinations of transformation functions
-      /*
-      String targetFunction = FunctionUtil.getFunction(originalCell.getTransformationIdentifier(), serviceProvider).getDisplayName();
-      List<String> sourceFunctions = new ArrayList<>();
-      for (Entity source : sources) {
-        List<Cell> matches = targetIndex.getCellsForTarget(source.getDefinition());
-        if (matches.size() > 1) {
-          log.warn("Mutiple match cells");
-        }
-        else if (matches.isEmpty()) {
-          log.error("No match for source " + source.getDefinition());
-        }
-        else {
-          String sourceFunction = matches.get(0).getTransformationIdentifier();
-          sourceFunction = FunctionUtil.getFunction(sourceFunction, serviceProvider).getDisplayName();
-          sourceFunctions.add(sourceFunction);
-        }
-      }
-      System.out.println("| " + targetFunction + ": " + sourceFunctions.stream().collect(Collectors.joining(", ")) + " |");
-      */
-      //DEBUG
+      collectStatistics(originalCell, sources);
 
       //FIXME for now just look at the case w/ one source
       EntityDefinition source = sources.iterator().next().getDefinition();
@@ -150,6 +141,56 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
       }
     }
     else throw new IllegalStateException();
+  }
+
+  /**
+   * @param sources
+   * @param originalCell
+   *
+   */
+  private void collectStatistics(Cell originalCell, Collection<? extends Entity> sources) {
+    if (statistics == null) {
+      return;
+    }
+
+    String targetFunction = FunctionUtil.getFunction(originalCell.getTransformationIdentifier(), serviceProvider).getDisplayName();
+    List<List<String>> sourceFunctions = new ArrayList<>();
+    boolean incomplete = false;
+    for (Entity source : sources) {
+      List<Cell> matches = targetIndex.getCellsForTarget(source.getDefinition());
+      if (matches.size() > 1) {
+        log.warn("Mutiple match cells");
+        statistics.addMultiMatch();
+      }
+      else if (matches.isEmpty()) {
+        log.error("No match for source " + source.getDefinition());
+        incomplete = true;
+        statistics.addNoMatch(source.getDefinition());
+      }
+
+      if (!matches.isEmpty()) {
+        List<String> matchFunctions = new ArrayList<>();
+        for (Cell match : matches) {
+          String sourceFunction = match.getTransformationIdentifier();
+          sourceFunction = FunctionUtil.getFunction(sourceFunction, serviceProvider).getDisplayName();
+          matchFunctions.add(sourceFunction);
+        }
+        sourceFunctions.add(matchFunctions);
+      }
+    }
+    if (!sourceFunctions.isEmpty()) {
+      statistics.addMatch(targetFunction, sourceFunctions);
+    }
+    if (incomplete) {
+      statistics.addIncomplete();
+    }
+    statistics.addCell();
+
+    // System.out.println("| " + targetFunction + ": " + sourceFunctions.stream().collect(Collectors.joining(", ")) + " |");
+  }
+
+  public MergeStatistics getStatistics() {
+    return statistics;
   }
 
   private boolean isDirectMatch(Cell match) {

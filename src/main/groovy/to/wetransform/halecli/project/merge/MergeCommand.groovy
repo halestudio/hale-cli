@@ -48,14 +48,44 @@ import to.wetransform.halecli.util.ProjectCLI;;;;
  */
 class MergeCommand extends AbstractMigratorCommand<MergeMigrator, MatchingMigration> {
 
+  private File statisticsFile
+
+  private MergeMigrator migrator
+
+  @Override
+  protected void init(OptionAccessor options) {
+    super.init(options)
+
+    def statLoc = options.'statistics'
+    if (statLoc) {
+      statisticsFile = new File(statLoc)
+    }
+  }
+
+  @Override
+  protected void wrapup() {
+    if (statisticsFile && migrator?.statistics) {
+      statisticsFile.withWriter {
+        migrator.statistics.writeTo(it)
+      }
+    }
+
+    super.wrapup()
+  }
+
+  @Override
   protected MergeMigrator createMigrator(ServiceProvider serviceProvider, OptionAccessor options) {
-    new MergeMigrator(serviceProvider)
+    migrator = new MergeMigrator(serviceProvider, !!statisticsFile)
+    migrator
   }
 
   @Override
   protected void addOptions(CliBuilder cli) {
     // options for loading matching command
     ProjectCLI.loadProjectOptions(cli, 'matching-project', 'The project defining a schema matching')
+
+    // option for collecting statistics
+    cli._(longOpt: 'statistics', args:1, argName:'file', 'File to write merge statistics to')
   }
 
   @Override

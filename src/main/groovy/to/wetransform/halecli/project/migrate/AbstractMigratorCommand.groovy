@@ -75,6 +75,8 @@ abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends Al
       return 0
     }
 
+    init(options)
+
     // load projects
     println 'Loading source project...'
     ProjectTransformationEnvironment sourceProject = ProjectCLI.loadProject(options, 'source-project')
@@ -126,9 +128,19 @@ abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends Al
     println 'Saving migrated project...'
     ProjectCLI.saveProject(options, newProject, newAlignment, newSource, newTarget)
 
+    wrapup()
+
     println 'Completed'
 
     return 0
+  }
+
+  protected void init(OptionAccessor options) {
+    // override me
+  }
+
+  protected void wrapup() {
+    // override me
   }
 
 }
