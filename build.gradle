@@ -150,7 +150,8 @@ dependencies {
 
 configurations.all {
   // ensure SNAPSHOTs are updated every time if needed
-  resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+  //resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+  resolutionStrategy.cacheChangingModulesFor 7200, 'minutes'
 }
 
 mainClassName = 'to.wetransform.halecli.CLI'

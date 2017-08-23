@@ -50,6 +50,21 @@ class MergeStatistics {
   private int cells = 0
 
   /**
+   * Collects the number of matched sources in the new source schema that have associated conditions.
+   */
+  private int conditionNewSource = 0
+
+  /**
+   * Collects the number of sources in the old source schema that have associated conditions.
+   */
+  private int conditionOldSource = 0
+
+  /**
+   * Collects the number of matches where both old and new source have conditions that need to be combined.
+   */
+  private int matchConditionCombination = 0
+
+  /**
    * Collects matches.
    */
   private final Map<String, Object> matches = [:]
@@ -72,6 +87,12 @@ class MergeStatistics {
     stats.multiMatches = multiMatches
 
     stats.incomplete = incomplete
+
+    stats.conditionNewSource = conditionNewSource
+
+    stats.conditionOldSource = conditionOldSource
+
+    stats.matchConditionCombination = matchConditionCombination
 
     stats.cells = cells
 
@@ -99,6 +120,18 @@ class MergeStatistics {
 
   public void addCell() {
     cells++
+  }
+
+  public void addConditionOldSource() {
+    conditionOldSource++
+  }
+
+  public void addConditionNewSource() {
+    conditionNewSource++
+  }
+
+  public void addMatchConditionCombination() {
+    matchConditionCombination++
   }
 
 }

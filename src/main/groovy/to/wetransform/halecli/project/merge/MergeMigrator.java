@@ -33,6 +33,7 @@ import eu.esdihumboldt.hale.common.align.migrate.impl.DefaultAlignmentMigrator;
 import eu.esdihumboldt.hale.common.align.migrate.impl.MigrationOptionsImpl;
 import eu.esdihumboldt.hale.common.align.model.Cell;
 import eu.esdihumboldt.hale.common.align.model.CellUtil;
+import eu.esdihumboldt.hale.common.align.model.ChildContext;
 import eu.esdihumboldt.hale.common.align.model.Entity;
 import eu.esdihumboldt.hale.common.align.model.EntityDefinition;
 import eu.esdihumboldt.hale.common.align.model.MutableCell;
@@ -157,6 +158,12 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
     List<List<String>> sourceFunctions = new ArrayList<>();
     boolean incomplete = false;
     for (Entity source : sources) {
+      boolean hasOldSourceCondition = false;
+      if (hasConditions(source)) {
+        statistics.addConditionOldSource();
+        hasOldSourceCondition = true;
+      }
+
       List<Cell> matches = targetIndex.getCellsForTarget(source.getDefinition());
       if (matches.size() > 1) {
         log.warn("Mutiple match cells");
@@ -174,6 +181,23 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
           String sourceFunction = match.getTransformationIdentifier();
           sourceFunction = FunctionUtil.getFunction(sourceFunction, serviceProvider).getDisplayName();
           matchFunctions.add(sourceFunction);
+
+          boolean hasNewSourceCondition = false;
+
+          if (match.getSource() != null) {
+            //XXX also report multiple sources?
+
+            for (Entity matchSource : match.getSource().values()) {
+              if (hasConditions(matchSource)) {
+                statistics.addConditionNewSource();
+                hasNewSourceCondition = true;
+              }
+            }
+          }
+
+          if (hasOldSourceCondition && hasNewSourceCondition) {
+            statistics.addMatchConditionCombination();
+          }
         }
         sourceFunctions.add(matchFunctions);
       }
@@ -187,6 +211,26 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
     statistics.addCell();
 
     // System.out.println("| " + targetFunction + ": " + sourceFunctions.stream().collect(Collectors.joining(", ")) + " |");
+  }
+
+  private boolean hasConditions(Entity source) {
+    //XXX what about index conditions?
+
+    EntityDefinition def = source.getDefinition();
+
+    if (def.getFilter() != null) {
+      return true;
+    }
+
+    if (def.getPropertyPath() != null) {
+      for (ChildContext child : def.getPropertyPath()) {
+        if (child.getCondition() != null && child.getCondition().getFilter() != null) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   public MergeStatistics getStatistics() {
