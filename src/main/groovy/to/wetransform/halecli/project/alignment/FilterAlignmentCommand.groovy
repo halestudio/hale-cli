@@ -15,8 +15,9 @@
 
 package to.wetransform.halecli.project.alignment
 
-import javax.xml.namespace.QName;
+import javax.xml.namespace.QName
 
+import eu.esdihumboldt.hale.common.align.migrate.util.MigrationUtil;
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.align.model.AlignmentUtil;
 import eu.esdihumboldt.hale.common.align.model.BaseAlignmentCell;
@@ -28,6 +29,7 @@ import eu.esdihumboldt.hale.common.align.model.MutableAlignment
 import eu.esdihumboldt.hale.common.align.model.MutableCell
 import eu.esdihumboldt.hale.common.align.model.TransformationMode;
 import eu.esdihumboldt.hale.common.align.model.impl.DefaultAlignment
+import eu.esdihumboldt.hale.common.align.model.impl.DefaultCell;
 import eu.esdihumboldt.hale.common.core.io.ExportProvider;
 import eu.esdihumboldt.hale.common.core.io.Value
 import eu.esdihumboldt.hale.common.core.io.ValueList;
@@ -171,6 +173,36 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
       messages << "Deactivated $rejected rejected alignment cells"
     }
     else {
+      result = new DefaultAlignment(alignment);
+
+      // remove base alignment cells keeping custom functions
+      MigrationUtil.removeBaseCells(result);
+      // remove other cells
+      result.clearCells();
+
+      int removed = 0
+      int retained = 0
+
+      for (Cell cell : alignment.getCells()) {
+        if (acceptCell(cell, filterDef, messages)) {
+          // transfer cell unchanged
+          MutableCell cellNew = new DefaultCell(cell);
+          MigrationUtil.removeIdPrefix(cellNew, true, true);
+          result.addCell(cellNew);
+          retained++;
+        }
+        else {
+          removed++;
+        }
+      }
+
+      messages << "Removed $removed cells"
+      messages << "Retained $retained cells from original project"
+    }
+    /*
+    XXX case that retains base alignments contained in the original alignment
+    not working properly currently
+    else {
       result = new DefaultAlignment(alignment)
       //FIXME problem is that every cell in result then is a MutableCell,
       // because a DefaultCell is created in the copy constructor
@@ -226,6 +258,7 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
         messages << "Deactivated $baseRejected rejected base alignment cells"
       }
     }
+    */
 
     ValueList msgList = new ValueList()
     messages.each {
