@@ -172,6 +172,9 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
     }
     else {
       result = new DefaultAlignment(alignment)
+      //FIXME problem is that every cell in result then is a MutableCell,
+      // because a DefaultCell is created in the copy constructor
+
       def originalCells = new ArrayList<>(result.cells)
       originalCells.each { Cell cell ->
         if (cell instanceof MutableCell) {
@@ -196,13 +199,15 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
             removed++
           }
         }
-        else if (cell instanceof ModifiableCell) {
+      }
+
+      result.cells.each { Cell cell ->
+        if (!(cell instanceof MutableCell) && (cell instanceof ModifiableCell)) {
           if (acceptCell(cell, filterDef, messages)) {
             baseAccepted ++
           }
           else {
             String cellTypes = cellTypesName(cell)
-            //FIXME test if this works or if it must be done on the result's cell
             deactivate(cell)
             messages << "Deactivated base alignment cell ${cell.id} (types $cellTypes)"
             baseRejected++
