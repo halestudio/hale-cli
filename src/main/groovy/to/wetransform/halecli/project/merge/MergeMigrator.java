@@ -17,6 +17,7 @@ package to.wetransform.halecli.project.merge;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,17 +26,20 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.esdihumboldt.hale.common.align.extension.function.FunctionDefinition;
 import eu.esdihumboldt.hale.common.align.extension.function.FunctionUtil;
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration;
 import eu.esdihumboldt.hale.common.align.migrate.CellMigrator;
 import eu.esdihumboldt.hale.common.align.migrate.MigrationOptions;
 import eu.esdihumboldt.hale.common.align.migrate.impl.DefaultAlignmentMigrator;
 import eu.esdihumboldt.hale.common.align.migrate.impl.MigrationOptionsImpl;
+import eu.esdihumboldt.hale.common.align.model.Alignment;
 import eu.esdihumboldt.hale.common.align.model.Cell;
 import eu.esdihumboldt.hale.common.align.model.CellUtil;
 import eu.esdihumboldt.hale.common.align.model.ChildContext;
 import eu.esdihumboldt.hale.common.align.model.Entity;
 import eu.esdihumboldt.hale.common.align.model.EntityDefinition;
+import eu.esdihumboldt.hale.common.align.model.MutableAlignment;
 import eu.esdihumboldt.hale.common.align.model.MutableCell;
 import eu.esdihumboldt.hale.common.align.model.functions.RenameFunction;
 import eu.esdihumboldt.hale.common.align.model.functions.RetypeFunction;
@@ -73,6 +77,20 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
 
   protected CellMigrator getCellMigrator(String transformationIdentifier) {
     return this;
+  }
+
+  @Override
+  public MutableAlignment updateAligmment(Alignment originalAlignment, AlignmentMigration migration,
+      MigrationOptions options) {
+    if (migration instanceof MatchingMigration) {
+      MatchingMigration mig = (MatchingMigration) migration;
+
+      collectAlignmentStatistics(mig.getProject().getAlignment(), true);
+    }
+
+    collectAlignmentStatistics(originalAlignment, false);
+
+    return super.updateAligmment(originalAlignment, migration, options);
   }
 
   @Override
@@ -145,9 +163,27 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
   }
 
   /**
-   * @param sources
-   * @param originalCell
+   * Collect statistics on an alignment.
    *
+   * @param alignment the alignment
+   * @param migrationAlignment if the alignment is the migration alignment
+   */
+  private void collectAlignmentStatistics(Alignment alignment, boolean migrationAlignment) {
+    alignment.getCells().forEach(cell -> {
+      String function = cell.getTransformationIdentifier();
+      FunctionDefinition<?> fun = FunctionUtil.getFunction(function, serviceProvider);
+
+      boolean noSource = cell.getSource() == null || cell.getSource().isEmpty();
+
+      statistics.addFunctionUse(fun, migrationAlignment, noSource);
+    });
+  }
+
+  /**
+   * Collect statistics related to the given cell to migrate.
+   *
+   * @param sources the cell sources
+   * @param originalCell the cell to migrate
    */
   private void collectStatistics(Cell originalCell, Collection<? extends Entity> sources) {
     if (statistics == null) {
@@ -172,6 +208,7 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
       else if (matches.isEmpty()) {
         log.error("No match for source " + source.getDefinition());
         incomplete = true;
+        sourceFunctions.add(Collections.singletonList("<No match>"));
         statistics.addNoMatch(source.getDefinition());
       }
 

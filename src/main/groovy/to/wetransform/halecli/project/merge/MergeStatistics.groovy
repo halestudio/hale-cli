@@ -15,8 +15,10 @@
 
 package to.wetransform.halecli.project.merge
 
-import java.util.List;
+import java.util.List
 
+import eu.esdihumboldt.hale.common.align.extension.function.FunctionDefinition
+import eu.esdihumboldt.hale.common.align.extension.function.FunctionUtil;
 import eu.esdihumboldt.hale.common.align.helper.EntityDefinitionComparator
 import eu.esdihumboldt.hale.common.align.model.EntityDefinition;
 import groovy.json.JsonOutput;
@@ -69,6 +71,16 @@ class MergeStatistics {
    */
   private final Map<String, Object> matches = [:]
 
+  /**
+   * Collects functions used in original alignment.
+   */
+  private final Map<String, Object> functions = [:]
+
+  /**
+   * Collects functions used in migration alignment.
+   */
+  private final Map<String, Object> migrationFunctions = [:]
+
   void addNoMatch(EntityDefinition entity) {
     noMatch.add(entity)
   }
@@ -95,6 +107,10 @@ class MergeStatistics {
     stats.matchConditionCombination = matchConditionCombination
 
     stats.cells = cells
+
+    stats.functions = functions
+
+    stats.mergeFunctions = migrationFunctions
 
     w.write(JsonOutput.prettyPrint(JsonOutput.toJson(stats)))
   }
@@ -132,6 +148,34 @@ class MergeStatistics {
 
   public void addMatchConditionCombination() {
     matchConditionCombination++
+  }
+
+  /**
+   * Add the use of a specific function (in a cell).
+   * @param fun the function definition
+   * @param migrationFunction if the function usage is from the migration alignment
+   */
+  public void addFunctionUse(FunctionDefinition fun, boolean migrationFunction, boolean noSource) {
+    def map = migrationFunction ? migrationFunctions : functions
+
+    String name = fun.displayName
+
+    def entry = map[name]
+    if (entry == null) {
+      entry = [
+        count: 1,
+        id: fun.id,
+        noSource: 0,
+        augmenation: fun.augmentation
+      ]
+      map[name] = entry
+    }
+    else {
+      entry.count++
+    }
+    if (noSource) {
+      entry.noSource++
+    }
   }
 
 }
