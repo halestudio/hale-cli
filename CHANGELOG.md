@@ -46,7 +46,7 @@ Initial release based on hale studio 3.0.0.
 - Command to generate JSON representations of hale alignments (`hale project alignment export-json`)
 - Experimental command to filter to create a copy of a hale project with a filtered alignment (`hale project alignment filter`)
 
-[Unreleased]: https://github.com/halestudio/hale/compare/3.3.0...HEAD
-[3.3.0]: https://github.com/halestudio/hale/compare/3.2.0...3.3.0
-[3.2.0]: https://github.com/halestudio/hale/compare/3.1.0...3.2.0
-[3.1.0]: https://github.com/halestudio/hale/compare/3.0.0...3.1.0
+[Unreleased]: https://github.com/halestudio/hale-cli/compare/v3.3.0...HEAD
+[3.3.0]: https://github.com/halestudio/hale-cli/compare/v3.2.0...v3.3.0
+[3.2.0]: https://github.com/halestudio/hale-cli/compare/v3.1.0...v3.2.0
+[3.1.0]: https://github.com/halestudio/hale-cli/compare/v3.0.0...v3.1.0
