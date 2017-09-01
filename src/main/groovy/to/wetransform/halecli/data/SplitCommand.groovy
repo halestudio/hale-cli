@@ -58,8 +58,9 @@ import to.wetransform.halecli.util.InstanceCLI
 import to.wetransform.halecli.util.SchemaCLI
 
 /**
- * @author simon
+ * Splits a GML source file and creates multiple target files.
  *
+ * @author Simon Templer
  */
 class SplitCommand implements Command {
 
@@ -99,7 +100,7 @@ class SplitCommand implements Command {
 
     // store in temporary database
     //XXX reason is that sources may have slow InstanceReference resolving (e.g. XML/GML)
-    LocalOrientDB db = loadTempDatabase(source, schema)
+    LocalOrientDB db = InstanceCLI.loadTempDatabase(source, schema)
     try {
       // replace source with database
       source = new BrowseOrientInstanceCollection(db, schema, DataSet.SOURCE);
@@ -197,30 +198,7 @@ class SplitCommand implements Command {
     }
   }
 
-  @CompileStatic
-  private LocalOrientDB loadTempDatabase(InstanceCollection instances, TypeIndex schema) {
-    // create db
-    File tmpDir = Files.createTempDir();
-    LocalOrientDB db = new LocalOrientDB(tmpDir);
-    tmpDir.deleteOnExit();
-
-    // run store instance job first...
-    Job storeJob = new StoreInstancesJob("Load source instances into temporary database",
-        db, instances, null) {
-
-      @Override
-      protected void onComplete() {
-        // do nothing
-      }
-
-    };
-
-    storeJob.run(new ConsoleProgressMonitor())
-
-    db
-  }
-
-  final String shortDescription = 'Split a source file into portions'
+  final String shortDescription = 'Split a source file (GML) into portions'
 
   final boolean experimental = true
 
