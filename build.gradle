@@ -217,7 +217,7 @@ docker {
   url = project.hasProperty('dockerHost') ? dockerHost : 'http://localdocker:2375'
 
   registryCredentials {
-    url = 'https://index.docker.io/v1'
+    url = 'https://index.docker.io/v1/'
     username = project.hasProperty('dockerHubUsername') ? dockerHubUsername : ''
     password = project.hasProperty('dockerHubPassword') ? dockerHubPassword : ''
     email = project.hasProperty('dockerHubEmail') ? dockerHubEmail : ''
