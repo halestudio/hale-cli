@@ -21,6 +21,7 @@ import java.util.List;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
+import eu.esdihumboldt.hale.common.align.merge.MergeIndex;
 import eu.esdihumboldt.hale.common.align.model.Alignment;
 import eu.esdihumboldt.hale.common.align.model.AlignmentUtil;
 import eu.esdihumboldt.hale.common.align.model.Cell;
@@ -31,7 +32,7 @@ import eu.esdihumboldt.hale.common.align.model.EntityDefinition;
 /**
  * @author Simon Templer
  */
-public class TargetIndex {
+public class TargetIndex implements MergeIndex {
 
   private final ListMultimap<EntityDefinition, Cell> cells;
 

@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.Nullable;
 
@@ -28,24 +27,24 @@ import org.slf4j.LoggerFactory;
 
 import eu.esdihumboldt.hale.common.align.extension.function.FunctionDefinition;
 import eu.esdihumboldt.hale.common.align.extension.function.FunctionUtil;
+import eu.esdihumboldt.hale.common.align.merge.MergeCellMigrator;
+import eu.esdihumboldt.hale.common.align.merge.impl.DefaultMergeCellMigrator;
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration;
 import eu.esdihumboldt.hale.common.align.migrate.CellMigrator;
 import eu.esdihumboldt.hale.common.align.migrate.MigrationOptions;
 import eu.esdihumboldt.hale.common.align.migrate.impl.DefaultAlignmentMigrator;
-import eu.esdihumboldt.hale.common.align.migrate.impl.MigrationOptionsImpl;
+import eu.esdihumboldt.hale.common.align.migrate.util.MigrationUtil;
 import eu.esdihumboldt.hale.common.align.model.Alignment;
 import eu.esdihumboldt.hale.common.align.model.Cell;
-import eu.esdihumboldt.hale.common.align.model.CellUtil;
 import eu.esdihumboldt.hale.common.align.model.ChildContext;
 import eu.esdihumboldt.hale.common.align.model.Entity;
 import eu.esdihumboldt.hale.common.align.model.EntityDefinition;
 import eu.esdihumboldt.hale.common.align.model.MutableAlignment;
 import eu.esdihumboldt.hale.common.align.model.MutableCell;
-import eu.esdihumboldt.hale.common.align.model.functions.RenameFunction;
-import eu.esdihumboldt.hale.common.align.model.functions.RetypeFunction;
+import eu.esdihumboldt.hale.common.align.model.impl.DefaultAlignment;
 import eu.esdihumboldt.hale.common.align.model.impl.DefaultCell;
+import eu.esdihumboldt.hale.common.core.report.SimpleLog;
 import eu.esdihumboldt.hale.common.core.service.ServiceProvider;
-import to.wetransform.halecli.project.migrate.AbstractMigration;
 import to.wetransform.halecli.project.migrate.MatchingMigration;
 
 /**
@@ -53,7 +52,7 @@ import to.wetransform.halecli.project.migrate.MatchingMigration;
  *
  * @author Simon Templer
  */
-public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigrator {
+public class MergeMigrator extends DefaultAlignmentMigrator {
 
   private static final Logger log = LoggerFactory.getLogger(MergeMigrator.class);
 
@@ -75,13 +74,9 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
     }
   }
 
-  protected CellMigrator getCellMigrator(String transformationIdentifier) {
-    return this;
-  }
-
   @Override
   public MutableAlignment updateAligmment(Alignment originalAlignment, AlignmentMigration migration,
-      MigrationOptions options) {
+      MigrationOptions options, SimpleLog log) {
     if (migration instanceof MatchingMigration) {
       MatchingMigration mig = (MatchingMigration) migration;
 
@@ -90,14 +85,60 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
 
     collectAlignmentStatistics(originalAlignment, false);
 
-    return super.updateAligmment(originalAlignment, migration, options);
+    //XXX the following is copied and adapted from the base class
+
+    MutableAlignment result = new DefaultAlignment(originalAlignment);
+
+    // XXX TODO adapt custom functions?!
+//      result.getCustomPropertyFunctions();
+
+    Collection<? extends Cell> cellList = new ArrayList<>(result.getCells());
+    for (Cell cell : cellList) {
+      // XXX
+      if (cell instanceof MutableCell) {
+        Iterable<MutableCell> newCells = mergeCell(cell, migration, options, log);
+        result.removeCell(cell);
+        for (MutableCell newCell : newCells) {
+          MigrationUtil.removeIdPrefix(newCell, options.transferBase(),
+              options.transferBase());
+          if (newCell != null) {
+            result.addCell(newCell);
+          }
+        }
+      }
+      else {
+        // XXX can we deal with other cases? (Base alignment cells)
+        if (options.transferBase()) {
+          // include base alignment cell as mutable mapping cell
+          Iterable<MutableCell> newCells = mergeCell(cell, migration, options, log);
+          result.removeCell(cell);
+          for (MutableCell newCell : newCells) {
+            MigrationUtil.removeIdPrefix(newCell, true, true);
+            if (newCell != null) {
+              result.addCell(newCell);
+            }
+          }
+        }
+      }
+    }
+
+    if (options.transferBase()) {
+      MigrationUtil.removeBaseCells(result);
+    }
+    else {
+      // does something need to be done to correctly retain base
+      // alignments?
+    }
+
+    return result;
   }
 
-  @Override
-  public MutableCell updateCell(Cell originalCell, AlignmentMigration migration, MigrationOptions options) {
+  protected Iterable<MutableCell> mergeCell(Cell originalCell, AlignmentMigration migration,
+      MigrationOptions options, SimpleLog log) {
+
     if (originalCell.getSource() == null || originalCell.getSource().isEmpty()) {
       // cells w/ source can be copied w/ changes
-      return new DefaultCell(originalCell);
+      return Collections.singleton(new DefaultCell(originalCell));
     }
 
     if (migration instanceof MatchingMigration) {
@@ -113,51 +154,18 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
 
       collectStatistics(originalCell, sources);
 
-      //FIXME for now just look at the case w/ one source
-      EntityDefinition source = sources.iterator().next().getDefinition();
-      List<Cell> matches = targetIndex.getCellsForTarget(source);
-      if (!matches.isEmpty()) {
-        //FIXME for now looking only at the case w/ one cell
-        Cell match = matches.get(0);
-        if (matches.size() > 1) {
-          log.warn("Mutiple match cells, looking only at the first one");
-        }
-
-        // if the matching is a Retype/Rename, replace source of this cell
-        if (isDirectMatch(match)) {
-          MigrationOptions replaceSource = new MigrationOptionsImpl(true, false, options.transferBase());
-          return super.getCellMigrator(originalCell.getTransformationIdentifier())
-            .updateCell(originalCell, migration, replaceSource);
-        }
-        // if the cell is a Retype/Rename, replace the target of matching cell
-        else if (isDirectMatch(originalCell)) {
-          //FIXME respect any conditions/contexts on the original source?
-          //XXX at least try to transfer them
-          MigrationOptions replaceTarget = new MigrationOptionsImpl(false, true, options.transferBase());
-          AlignmentMigration cellMigration = new AbstractMigration() {
-
-            @Override
-            protected Optional<EntityDefinition> findMatch(EntityDefinition entity) {
-              Entity target = CellUtil.getFirstEntity(originalCell.getTarget());
-              if (target != null) {
-                return Optional.ofNullable(target.getDefinition());
-              }
-              return Optional.empty();
-            }
-          };
-          return super.getCellMigrator(match.getTransformationIdentifier())
-            .updateCell(match, cellMigration, replaceTarget);
-        }
-        // otherwise, use custom logic to try to combine cells
-        else {
-          log.warn("Unsupported combination: " + match.getTransformationIdentifier() + " / " + originalCell.getTransformationIdentifier());
-          return new DefaultCell(originalCell);
-        }
+      CellMigrator cellMigrator = super.getCellMigrator(originalCell.getTransformationIdentifier());
+      MergeCellMigrator merger;
+      if (cellMigrator instanceof MergeCellMigrator) {
+        // function explicitly supports merge
+        merger = (MergeCellMigrator) cellMigrator;
       }
       else {
-        // no match -> copy as-is
-        return new DefaultCell(originalCell);
+        // use default behavior
+        merger = new DefaultMergeCellMigrator();
       }
+
+      return merger.mergeCell(originalCell, targetIndex, migration, this::getCellMigrator, log);
     }
     else throw new IllegalStateException();
   }
@@ -272,11 +280,6 @@ public class MergeMigrator extends DefaultAlignmentMigrator implements CellMigra
 
   public MergeStatistics getStatistics() {
     return statistics;
-  }
-
-  private boolean isDirectMatch(Cell match) {
-    return match.getTransformationIdentifier().equals(RetypeFunction.ID) ||
-        match.getTransformationIdentifier().equals(RenameFunction.ID);
   }
 
 }

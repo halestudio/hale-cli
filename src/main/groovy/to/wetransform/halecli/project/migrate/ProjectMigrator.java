@@ -27,6 +27,7 @@ import eu.esdihumboldt.hale.common.align.model.impl.TypeEntityDefinition;
 import eu.esdihumboldt.hale.common.core.io.project.ComplexConfigurationService;
 import eu.esdihumboldt.hale.common.core.io.project.ProjectIO;
 import eu.esdihumboldt.hale.common.core.io.project.model.Project;
+import eu.esdihumboldt.hale.common.core.report.SimpleLog;
 import eu.esdihumboldt.hale.common.schema.SchemaSpaceID;
 import eu.esdihumboldt.hale.common.schema.io.SchemaIO;
 import eu.esdihumboldt.hale.common.schema.model.TypeIndex;
@@ -40,22 +41,23 @@ public class ProjectMigrator {
 
   public static void updateProject(Project project, AlignmentMigration migration,
       MigrationOptions options, @Nullable TypeIndex oldSourceSchema,
-      @Nullable TypeIndex oldTargetSchema) {
+      @Nullable TypeIndex oldTargetSchema, SimpleLog log) {
     ComplexConfigurationService conf = ProjectIO.createProjectConfigService(project);
 
     // mapping relevant types
     if (oldSourceSchema != null && options.updateSource()) {
-      updateMappingRelevantTypes(conf, SchemaSpaceID.SOURCE, oldSourceSchema, migration);
+      updateMappingRelevantTypes(conf, SchemaSpaceID.SOURCE, oldSourceSchema, migration, log);
     }
     if (oldTargetSchema != null && options.updateTarget()) {
-      updateMappingRelevantTypes(conf, SchemaSpaceID.TARGET, oldTargetSchema, migration);
+      updateMappingRelevantTypes(conf, SchemaSpaceID.TARGET, oldTargetSchema, migration, log);
     }
 
     //TODO what else?
   }
 
   private static void updateMappingRelevantTypes(ComplexConfigurationService config,
-      SchemaSpaceID schemaSpace, TypeIndex oldSchema, AlignmentMigration migration) {
+      SchemaSpaceID schemaSpace, TypeIndex oldSchema, AlignmentMigration migration,
+      SimpleLog log) {
     String confName = SchemaIO.getMappingRelevantTypesParameterName(schemaSpace);
 
     List<String> typeNames = config.getList(confName).stream()
@@ -63,7 +65,7 @@ public class ProjectMigrator {
         .map(name -> oldSchema.getType(name))
         .filter(type -> type != null)
         .map(type -> new TypeEntityDefinition(type, schemaSpace, null))
-        .map(entity -> migration.entityReplacement(entity))
+        .map(entity -> migration.entityReplacement(entity, log))
         .filter(option -> option.isPresent())
         .map(option -> option.get().getType().getName().toString())
         .collect(Collectors.toList());

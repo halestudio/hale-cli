@@ -17,6 +17,7 @@ package to.wetransform.halecli.project.migrate
 
 import java.util.Optional
 
+import eu.esdihumboldt.hale.common.align.merge.impl.AbstractMigration;
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.align.model.AlignmentUtil

@@ -25,7 +25,8 @@ import eu.esdihumboldt.hale.common.align.migrate.impl.MigrationOptionsImpl
 import eu.esdihumboldt.hale.common.align.migrate.util.EffectiveMapping;
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
-import eu.esdihumboldt.hale.common.core.io.project.model.Project;
+import eu.esdihumboldt.hale.common.core.io.project.model.Project
+import eu.esdihumboldt.hale.common.core.report.SimpleLog;
 import eu.esdihumboldt.hale.common.core.service.ServiceProvider;
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.hale.common.instance.io.InstanceIO;
@@ -77,6 +78,8 @@ abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends Al
 
     init(options)
 
+    SimpleLog log = SimpleLog.CONSOLE_LOG //TODO use report or other kind of log?
+
     // load projects
     println 'Loading source project...'
     ProjectTransformationEnvironment sourceProject = ProjectCLI.loadProject(options, 'source-project')
@@ -99,7 +102,7 @@ abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends Al
     boolean updateTarget = false
     boolean transferBase = true
     MigrationOptions opts = new MigrationOptionsImpl(updateSource, updateTarget, transferBase)
-    def newAlignment = migrator.updateAligmment(originalAlignment, migration, opts)
+    def newAlignment = migrator.updateAligmment(originalAlignment, migration, opts, log)
 
     SchemaSpace newSource
     SchemaSpace newTarget
@@ -122,7 +125,8 @@ abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends Al
     newProject.resources.addAll(sourceConfs)
 
     // migrate project (mapping relevant source types etc.)
-    ProjectMigrator.updateProject(newProject, migration, opts, sourceProject.sourceSchema, sourceProject.targetSchema)
+    ProjectMigrator.updateProject(newProject, migration, opts, sourceProject.sourceSchema,
+      sourceProject.targetSchema, log)
 
     // save target project
     println 'Saving migrated project...'
