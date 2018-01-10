@@ -17,6 +17,7 @@ package to.wetransform.halecli.project.merge
 
 import java.util.List
 
+import eu.esdihumboldt.hale.common.align.merge.impl.MatchingMigration;
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration;
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigrator
 import eu.esdihumboldt.hale.common.align.migrate.MigrationOptions;
@@ -37,8 +38,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode;
 import groovy.util.CliBuilder;
 import groovy.util.OptionAccessor
-import to.wetransform.halecli.project.migrate.AbstractMigratorCommand;
-import to.wetransform.halecli.project.migrate.MatchingMigration
+import to.wetransform.halecli.project.migrate.AbstractMigratorCommand
 import to.wetransform.halecli.util.ProjectCLI;;;;
 
 /**

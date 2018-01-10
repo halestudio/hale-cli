@@ -29,6 +29,7 @@ import eu.esdihumboldt.hale.common.align.extension.function.FunctionDefinition;
 import eu.esdihumboldt.hale.common.align.extension.function.FunctionUtil;
 import eu.esdihumboldt.hale.common.align.merge.MergeCellMigrator;
 import eu.esdihumboldt.hale.common.align.merge.impl.DefaultMergeCellMigrator;
+import eu.esdihumboldt.hale.common.align.merge.impl.MatchingMigration;
 import eu.esdihumboldt.hale.common.align.merge.impl.TargetIndex;
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration;
 import eu.esdihumboldt.hale.common.align.migrate.CellMigrator;
@@ -46,7 +47,6 @@ import eu.esdihumboldt.hale.common.align.model.impl.DefaultAlignment;
 import eu.esdihumboldt.hale.common.align.model.impl.DefaultCell;
 import eu.esdihumboldt.hale.common.core.report.SimpleLog;
 import eu.esdihumboldt.hale.common.core.service.ServiceProvider;
-import to.wetransform.halecli.project.migrate.MatchingMigration;
 
 /**
  * Alignment migrator for alignment merge.
