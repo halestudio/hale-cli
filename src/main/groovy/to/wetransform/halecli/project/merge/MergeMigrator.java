@@ -29,6 +29,7 @@ import eu.esdihumboldt.hale.common.align.extension.function.FunctionDefinition;
 import eu.esdihumboldt.hale.common.align.extension.function.FunctionUtil;
 import eu.esdihumboldt.hale.common.align.merge.MergeCellMigrator;
 import eu.esdihumboldt.hale.common.align.merge.impl.DefaultMergeCellMigrator;
+import eu.esdihumboldt.hale.common.align.merge.impl.TargetIndex;
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration;
 import eu.esdihumboldt.hale.common.align.migrate.CellMigrator;
 import eu.esdihumboldt.hale.common.align.migrate.MigrationOptions;
