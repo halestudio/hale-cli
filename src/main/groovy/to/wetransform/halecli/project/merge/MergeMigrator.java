@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import eu.esdihumboldt.hale.common.align.extension.function.FunctionDefinition;
 import eu.esdihumboldt.hale.common.align.extension.function.FunctionUtil;
 import eu.esdihumboldt.hale.common.align.merge.MergeCellMigrator;
+import eu.esdihumboldt.hale.common.align.merge.extension.MigratorExtension;
 import eu.esdihumboldt.hale.common.align.merge.impl.DefaultMergeCellMigrator;
 import eu.esdihumboldt.hale.common.align.merge.impl.MatchingMigration;
 import eu.esdihumboldt.hale.common.align.merge.impl.TargetIndex;
@@ -155,15 +156,22 @@ public class MergeMigrator extends DefaultAlignmentMigrator {
 
       collectStatistics(originalCell, sources);
 
-      CellMigrator cellMigrator = super.getCellMigrator(originalCell.getTransformationIdentifier());
       MergeCellMigrator merger;
-      if (cellMigrator instanceof MergeCellMigrator) {
-        // function explicitly supports merge
-        merger = (MergeCellMigrator) cellMigrator;
+      try {
+        merger = MigratorExtension.getInstance().getMigrator(originalCell.getTransformationIdentifier()).orElse(null);
+      } catch (Exception e) {
+        throw new IllegalStateException("Unable to initialize migrator for function " + originalCell.getTransformationIdentifier(), e);
       }
-      else {
-        // use default behavior
-        merger = new DefaultMergeCellMigrator();
+      if (merger == null) {
+        CellMigrator cellMigrator = super.getCellMigrator(originalCell.getTransformationIdentifier());
+        if (cellMigrator instanceof MergeCellMigrator) {
+          // function explicitly supports merge
+          merger = (MergeCellMigrator) cellMigrator;
+        }
+        else {
+          // use default behavior
+          merger = new DefaultMergeCellMigrator();
+        }
       }
 
       return merger.mergeCell(originalCell, targetIndex, migration, this::getCellMigrator, log);
