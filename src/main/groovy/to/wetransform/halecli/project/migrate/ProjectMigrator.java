@@ -60,17 +60,21 @@ public class ProjectMigrator {
       SimpleLog log) {
     String confName = SchemaIO.getMappingRelevantTypesParameterName(schemaSpace);
 
-    List<String> typeNames = config.getList(confName).stream()
-        .map(name -> QName.valueOf(name))
-        .map(name -> oldSchema.getType(name))
-        .filter(type -> type != null)
-        .map(type -> new TypeEntityDefinition(type, schemaSpace, null))
-        .map(entity -> migration.entityReplacement(entity, log))
-        .filter(option -> option.isPresent())
-        .map(option -> option.get().getType().getName().toString())
-        .collect(Collectors.toList());
+    List<String> cfg = config.getList(confName);
 
-    config.setList(confName, typeNames);
+    if (cfg != null) {
+      List<String> typeNames = cfg.stream()
+          .map(name -> QName.valueOf(name))
+          .map(name -> oldSchema.getType(name))
+          .filter(type -> type != null)
+          .map(type -> new TypeEntityDefinition(type, schemaSpace, null))
+          .map(entity -> migration.entityReplacement(entity, log))
+          .filter(option -> option.isPresent())
+          .map(option -> option.get().getType().getName().toString())
+          .collect(Collectors.toList());
+
+      config.setList(confName, typeNames);
+    }
   }
 
 }
