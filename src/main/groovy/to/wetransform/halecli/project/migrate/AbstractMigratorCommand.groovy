@@ -25,7 +25,8 @@ import eu.esdihumboldt.hale.common.align.migrate.impl.MigrationOptionsImpl
 import eu.esdihumboldt.hale.common.align.migrate.util.EffectiveMapping;
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
-import eu.esdihumboldt.hale.common.core.io.project.model.Project;
+import eu.esdihumboldt.hale.common.core.io.project.model.Project
+import eu.esdihumboldt.hale.common.core.report.SimpleLog;
 import eu.esdihumboldt.hale.common.core.service.ServiceProvider;
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.hale.common.instance.io.InstanceIO;
@@ -41,13 +42,16 @@ import to.wetransform.halecli.util.ProjectCLI;;;;
  *
  * @author Simon Templer
  */
-abstract class AbstractMigrateCommand<T extends AlignmentMigration> implements Command {
+abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends AlignmentMigration>
+    implements Command {
 
   protected abstract void addOptions(CliBuilder cli)
 
+  protected abstract M createMigrator(ServiceProvider serviceProvider, OptionAccessor options)
+
   protected abstract T createMigration(OptionAccessor options)
 
-  protected abstract SchemaSpace getNewSource(T migration)
+  protected abstract SchemaSpace getNewSource(T migration, OptionAccessor options)
 
   protected abstract List<IOConfiguration> getNewSourceConfig(T migration, OptionAccessor options)
 
@@ -72,6 +76,10 @@ abstract class AbstractMigrateCommand<T extends AlignmentMigration> implements C
       return 0
     }
 
+    init(options)
+
+    SimpleLog log = SimpleLog.CONSOLE_LOG //TODO use report or other kind of log?
+
     // load projects
     println 'Loading source project...'
     ProjectTransformationEnvironment sourceProject = ProjectCLI.loadProject(options, 'source-project')
@@ -79,7 +87,7 @@ abstract class AbstractMigrateCommand<T extends AlignmentMigration> implements C
 
     //TODO do matching
     ServiceProvider serviceProvider = sourceProject.serviceProvider
-    AlignmentMigrator migrator = new DefaultAlignmentMigrator(serviceProvider)
+    AlignmentMigrator migrator = createMigrator(serviceProvider, options)
 
     Alignment originalAlignment = sourceProject.alignment
 
@@ -94,12 +102,12 @@ abstract class AbstractMigrateCommand<T extends AlignmentMigration> implements C
     boolean updateTarget = false
     boolean transferBase = true
     MigrationOptions opts = new MigrationOptionsImpl(updateSource, updateTarget, transferBase)
-    def newAlignment = migrator.updateAligmment(originalAlignment, migration, opts)
+    def newAlignment = migrator.updateAligmment(originalAlignment, migration, opts, log)
 
     SchemaSpace newSource
     SchemaSpace newTarget
 
-    newSource = getNewSource(migration)
+    newSource = getNewSource(migration, options)
     newTarget = sourceProject.targetSchema
 
     Project newProject = new Project(sourceProject.project)
@@ -117,15 +125,26 @@ abstract class AbstractMigrateCommand<T extends AlignmentMigration> implements C
     newProject.resources.addAll(sourceConfs)
 
     // migrate project (mapping relevant source types etc.)
-    ProjectMigrator.updateProject(newProject, migration, opts, sourceProject.sourceSchema, sourceProject.targetSchema)
+    ProjectMigrator.updateProject(newProject, migration, opts, sourceProject.sourceSchema,
+      sourceProject.targetSchema, log)
 
     // save target project
     println 'Saving migrated project...'
     ProjectCLI.saveProject(options, newProject, newAlignment, newSource, newTarget)
 
+    wrapup()
+
     println 'Completed'
 
     return 0
+  }
+
+  protected void init(OptionAccessor options) {
+    // override me
+  }
+
+  protected void wrapup() {
+    // override me
   }
 
 }
