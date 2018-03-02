@@ -101,7 +101,7 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.html.svg:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.postgresql:$haleVersion"
-
+  
   // code list formats
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.codelist.xml:$haleVersion"
 

@@ -61,5 +61,16 @@
             id="hale-cli.project.migrate.source"
             name="source">
       </command>
+      <group
+            description="Schema processing"
+            id="schema"
+            name="schema">
+      </group>
+      <command
+            class="to.wetransform.halecli.schema.RewriteCommand"
+            group="schema"
+            id="hale-cli.schema.rewrite"
+            name="rewrite">
+      </command>
    </extension>
 </plugin>
