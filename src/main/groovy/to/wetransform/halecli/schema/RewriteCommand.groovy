@@ -18,6 +18,7 @@ package to.wetransform.halecli.schema
 import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail
 import static to.wetransform.halecli.util.HaleIOHelper.*
 import to.wetransform.halecli.util.SchemaCLI
+import eu.esdihumboldt.hale.common.cli.HaleCLIUtil;
 import eu.esdihumboldt.hale.common.schema.model.Schema
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
@@ -32,6 +33,8 @@ class RewriteCommand implements Command {
   @Override
   public int run(List<String> args, CommandContext context) {
     CliBuilder cli = new CliBuilder(usage : "${context.baseCommand} [options] [...]")
+
+    HaleCLIUtil.defaultOptions(cli, true)
 
     cli._(longOpt: 'help', 'Show this help')
 

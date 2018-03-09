@@ -24,6 +24,7 @@ import eu.esdihumboldt.hale.common.align.migrate.impl.DefaultAlignmentMigrator
 import eu.esdihumboldt.hale.common.align.migrate.impl.MigrationOptionsImpl
 import eu.esdihumboldt.hale.common.align.migrate.util.EffectiveMapping;
 import eu.esdihumboldt.hale.common.align.model.Alignment
+import eu.esdihumboldt.hale.common.cli.HaleCLIUtil;
 import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
 import eu.esdihumboldt.hale.common.core.io.project.model.Project
 import eu.esdihumboldt.hale.common.core.report.SimpleLog;
@@ -59,6 +60,8 @@ abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends Al
   public int run(List<String> args, CommandContext context) {
     CliBuilder cli = new CliBuilder(usage : "${context.baseCommand} [options] [...]")
 
+    HaleCLIUtil.defaultOptions(cli, true)
+
     cli._(longOpt: 'help', 'Show this help')
 
     // options for projects to load
@@ -75,6 +78,8 @@ abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends Al
       cli.usage()
       return 0
     }
+
+    def reports = HaleCLIUtil.createReportHandler(options)
 
     init(options)
 
@@ -130,7 +135,7 @@ abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends Al
 
     // save target project
     println 'Saving migrated project...'
-    ProjectCLI.saveProject(options, newProject, newAlignment, newSource, newTarget)
+    ProjectCLI.saveProject(options, newProject, newAlignment, newSource, newTarget, reports)
 
     wrapup()
 
