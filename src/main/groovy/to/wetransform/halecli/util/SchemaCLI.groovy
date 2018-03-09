@@ -20,8 +20,9 @@ import static to.wetransform.halecli.util.HaleIOHelper.*
 
 import java.io.InputStream
 import java.net.URI;
-import java.util.Map;
+import java.util.Map
 
+import eu.esdihumboldt.hale.common.cli.HaleCLIUtil;
 import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.Value
 import eu.esdihumboldt.hale.common.core.io.impl.LogProgressIndicator;
@@ -29,6 +30,7 @@ import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
 import eu.esdihumboldt.hale.common.core.io.supplier.DefaultInputSupplier;
 import eu.esdihumboldt.hale.common.core.io.supplier.LocatableInputSupplier;
+import eu.esdihumboldt.hale.common.core.report.ReportHandler
 import eu.esdihumboldt.hale.common.instance.io.InstanceReader
 import eu.esdihumboldt.hale.common.instance.io.InstanceWriter;
 import eu.esdihumboldt.hale.common.instance.model.InstanceCollection;
@@ -60,6 +62,8 @@ class SchemaCLI {
   }
 
   static Schema loadSchema(OptionAccessor options, String argName = 'schema') {
+    def reports = HaleCLIUtil.createReportHandler(options)
+
     def location = options."$argName"
     if (location) {
       URI loc = CLIUtil.fileOrUri(location)
@@ -68,7 +72,7 @@ class SchemaCLI {
 
       String customProvider = options."${argName}-reader" ?: null
 
-      return loadSchema(loc, settings, customProvider)
+      return loadSchema(loc, settings, customProvider, reports)
     }
     else {
       return null
@@ -114,14 +118,14 @@ class SchemaCLI {
   }
 
   @CompileStatic
-  static Schema loadSchema(URI loc, Map<String, String> settings, String customProvider) {
+  static Schema loadSchema(URI loc, Map<String, String> settings, String customProvider, ReportHandler reports) {
     Pair<SchemaReader, String> readerInfo = prepareReader(loc, SchemaReader, settings, customProvider)
     SchemaReader schemaReader = readerInfo.first
 
     println "Loading schema from ${loc}..."
 
     IOReport report = schemaReader.execute(null)
-    //TODO report?
+    reports?.publishReport(report)
 
     schemaReader.getSchema()
   }
@@ -174,7 +178,7 @@ class SchemaCLI {
     writer.setSchemas(schemas)
 
     IOReport report = writer.execute(new LogProgressIndicator())
-    //TODO report?
+    HaleCLIUtil.createReportHandler(options).publishReport(report)
 
     return report
   }

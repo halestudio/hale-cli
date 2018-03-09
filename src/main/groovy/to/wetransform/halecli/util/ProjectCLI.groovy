@@ -44,7 +44,7 @@ class ProjectCLI {
     def location = options."$argName"
     if (location) {
       URI loc = CLIUtil.fileOrUri(location)
-      return loadProject(loc)
+      return loadProject(loc, HaleCLIUtil.createReportHandler(options))
     }
     else {
       return null
@@ -52,8 +52,7 @@ class ProjectCLI {
   }
 
   @CompileStatic
-  static ProjectTransformationEnvironment loadProject(URI loc) {
-    ReportHandler reports = HaleCLIUtil.createReportHandler()
+  static ProjectTransformationEnvironment loadProject(URI loc, ReportHandler reports) {
     new ProjectTransformationEnvironment(null, new DefaultInputSupplier(
       loc), reports)
   }
@@ -66,10 +65,12 @@ class ProjectCLI {
     Alignment alignment, SchemaSpace sourceSchema, SchemaSpace targetSchema,
     String argName = 'target') {
 
+    def reports = HaleCLIUtil.createReportHandler(options)
+
     def location = options."$argName"
     if (location) {
       URI loc = CLIUtil.fileOrUri(location)
-      saveProject(new File(loc), project, alignment, sourceSchema, targetSchema)
+      saveProject(new File(loc), project, alignment, sourceSchema, targetSchema, reports)
     }
     else {
       //XXX
@@ -78,7 +79,7 @@ class ProjectCLI {
 
   @CompileStatic
   static void saveProject(File targetFile, Project project, Alignment alignment,
-    SchemaSpace sourceSchema, SchemaSpace targetSchema) {
+    SchemaSpace sourceSchema, SchemaSpace targetSchema, ReportHandler reports) {
 
     String fileName = targetFile.name
     String extension = 'halex'
@@ -89,8 +90,6 @@ class ProjectCLI {
     }
 
     def output = new FileIOSupplier(targetFile)
-
-    ReportHandler reports = HaleCLIUtil.createReportHandler()
 
     ProjectHelper.saveProject(project, alignment, sourceSchema,
       targetSchema, output, reports, extension)

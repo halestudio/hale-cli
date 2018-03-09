@@ -30,11 +30,13 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import com.google.common.io.Files
 
-import eu.esdihumboldt.hale.app.transform.ConsoleProgressMonitor;
+import eu.esdihumboldt.hale.app.transform.ConsoleProgressMonitor
+import eu.esdihumboldt.hale.common.cli.HaleCLIUtil;
 import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.Value;
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
 import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier
+import eu.esdihumboldt.hale.common.core.report.ReportHandler
 import eu.esdihumboldt.hale.common.headless.transform.AbstractTransformationJob;
 import eu.esdihumboldt.hale.common.instance.graph.reference.ReferenceGraph;
 import eu.esdihumboldt.hale.common.instance.graph.reference.impl.XMLInspector
@@ -68,6 +70,8 @@ class SplitCommand implements Command {
   public int run(List<String> args, CommandContext context) {
     CliBuilder cli = new CliBuilder(usage : "${context.baseCommand} [options] [...]")
 
+    HaleCLIUtil.defaultOptions(cli, true)
+
     cli._(longOpt: 'help', 'Show this help')
 
     // threshold for splitting instances
@@ -98,9 +102,11 @@ class SplitCommand implements Command {
     InstanceCollection source = InstanceCLI.load(options, schema)
     assert source
 
+    def reports = HaleCLIUtil.createReportHandler(options)
+
     // store in temporary database
     //XXX reason is that sources may have slow InstanceReference resolving (e.g. XML/GML)
-    LocalOrientDB db = InstanceCLI.loadTempDatabase(source, schema)
+    LocalOrientDB db = InstanceCLI.loadTempDatabase(source, schema, reports)
     try {
       // replace source with database
       source = new BrowseOrientInstanceCollection(db, schema, DataSet.SOURCE);
@@ -148,7 +154,7 @@ class SplitCommand implements Command {
           println "Writing part with undefined size to $targetFile"
         }
 
-        saveGml(instances, targetFile, schema)
+        saveGml(instances, targetFile, schema, reports)
       }
       println "Total $partCount parts"
     } finally {
@@ -159,7 +165,8 @@ class SplitCommand implements Command {
   }
 
   @CompileStatic
-  private void saveGml(InstanceCollection instances, File targetFile, Schema schema) {
+  private void saveGml(InstanceCollection instances, File targetFile, Schema schema,
+      ReportHandler reports) {
     def target = new FileIOSupplier(targetFile)
 
     // create I/O provider
@@ -190,7 +197,7 @@ class SplitCommand implements Command {
     instanceWriter.instances = instances
 
     IOReport report = instanceWriter.execute(null)
-    //TODO report?
+    reports?.publishReport(report)
 
     if (!report.isSuccess()) {
       //TODO common way to deal with reports
