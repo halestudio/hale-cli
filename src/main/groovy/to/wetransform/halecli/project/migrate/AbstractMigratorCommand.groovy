@@ -135,7 +135,7 @@ abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends Al
 
     // save target project
     println 'Saving migrated project...'
-    ProjectCLI.saveProject(options, newProject, newAlignment, newSource, newTarget, reports)
+    ProjectCLI.saveProject(options, newProject, newAlignment, newSource, newTarget)
 
     wrapup()
 
