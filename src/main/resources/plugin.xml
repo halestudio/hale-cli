@@ -72,5 +72,17 @@
             id="hale-cli.schema.rewrite"
             name="rewrite">
       </command>
+      <group
+            description="Generate hale projects"
+            id="project.generate"
+            name="generate"
+            parent="project">
+      </group>
+      <command
+            class="to.wetransform.halecli.project.match.postnas.PostNASMatchSchemas"
+            group="project.generate"
+            id="hale-cli.project.generate.postnas-matching"
+            name="postnas-matching">
+      </command>
    </extension>
 </plugin>
