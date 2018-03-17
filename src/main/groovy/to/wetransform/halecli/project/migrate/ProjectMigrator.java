@@ -15,12 +15,14 @@
 
 package to.wetransform.halecli.project.migrate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import eu.esdihumboldt.hale.common.align.merge.impl.MatchingMigration;
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration;
 import eu.esdihumboldt.hale.common.align.migrate.MigrationOptions;
 import eu.esdihumboldt.hale.common.align.model.impl.TypeEntityDefinition;
@@ -68,9 +70,17 @@ public class ProjectMigrator {
           .map(name -> oldSchema.getType(name))
           .filter(type -> type != null)
           .map(type -> new TypeEntityDefinition(type, schemaSpace, null))
-          .map(entity -> migration.entityReplacement(entity, log))
-          .filter(option -> option.isPresent())
-          .map(option -> option.get().getType().getName().toString())
+
+          .flatMap(entity -> {
+            if (migration instanceof MatchingMigration) {
+              return ((MatchingMigration) migration).findMatches(entity).orElse(Collections.emptyList()).stream();
+            }
+            else {
+              return migration.entityReplacement(entity, log).map(e -> Collections.singletonList(e)).orElse(Collections.emptyList()).stream();
+            }
+          })
+
+          .map(option -> option.getType().getName().toString())
           .collect(Collectors.toList());
 
       config.setList(confName, typeNames);
