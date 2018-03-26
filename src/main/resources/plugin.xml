@@ -72,5 +72,11 @@
             id="hale-cli.schema.rewrite"
             name="rewrite">
       </command>
+      <command
+            class="to.wetransform.halecli.project.alignment.ExportAlignmentCommand"
+            group="project.alignment"
+            id="hale-cli.project.alignment.export"
+            name="export">
+      </command>
    </extension>
 </plugin>
