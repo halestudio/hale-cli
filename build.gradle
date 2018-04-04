@@ -71,6 +71,7 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align.groovy:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align.merge:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.referencing:$haleVersion"
 
   // transformation
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.transform:$haleVersion"
