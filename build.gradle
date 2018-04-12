@@ -100,8 +100,11 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.json:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xls:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.html.svg:$haleVersion"
+  
+  // database support
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.postgresql:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.mssql:$haleVersion"
   
   // code list formats
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.codelist.xml:$haleVersion"
