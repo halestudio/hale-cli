@@ -2,6 +2,24 @@
 All notable changes to this project will be documented in this file.
 See the [change log guidelines](http://keepachangelog.com/) for information on how to structure the file.
 
+## [3.4.0]
+
+### Added
+
+- Alignment merge command
+- PostNAS matching project command
+- MSSQL database support
+- Rewrite command for schemas
+
+### Changed
+
+- Upgrade hale dependencies to 3.4.0
+- When filtering cells by type, drop partial matches if Join focus is no match
+
+### Fixed
+
+- Fixed Docker image build problems
+
 ## [3.3.2]
 
 ### Changed
@@ -64,6 +82,7 @@ Initial release based on hale studio 3.0.0.
 - Command to generate JSON representations of hale alignments (`hale project alignment export-json`)
 - Experimental command to filter to create a copy of a hale project with a filtered alignment (`hale project alignment filter`)
 
+[3.4.0]: https://github.com/halestudio/hale-cli/compare/v3.3.2...v3.4.0
 [3.3.2]: https://github.com/halestudio/hale-cli/compare/v3.3.1...v3.3.2
 [3.3.1]: https://github.com/halestudio/hale-cli/compare/v3.3.0...v3.3.1
 [3.3.0]: https://github.com/halestudio/hale-cli/compare/v3.2.0...v3.3.0

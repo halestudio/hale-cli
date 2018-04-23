@@ -17,7 +17,6 @@ package to.wetransform.halecli.project.migrate
 
 import java.util.List
 
-import eu.esdihumboldt.hale.common.align.merge.impl.DefaultSchemaMigration;
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration;
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigrator
 import eu.esdihumboldt.hale.common.align.migrate.MigrationOptions;
@@ -30,58 +29,31 @@ import eu.esdihumboldt.hale.common.core.io.project.model.Project;
 import eu.esdihumboldt.hale.common.core.service.ServiceProvider;
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.hale.common.instance.io.InstanceIO;
-import eu.esdihumboldt.hale.common.schema.io.SchemaIO
-import eu.esdihumboldt.hale.common.schema.model.Schema;
-import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
-import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace;
+import eu.esdihumboldt.hale.common.schema.io.SchemaIO;
+import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic
-import groovy.util.CliBuilder;
 import groovy.util.OptionAccessor;
-import to.wetransform.halecli.util.ProjectCLI
-import to.wetransform.halecli.util.SchemaCLI;;;;;
+import to.wetransform.halecli.util.ProjectCLI;;;;
 
 /**
- * Command that migrates a project to a different schema.
+ * Base class for commands migrating a project to a different schema.
  *
  * @author Simon Templer
  */
-@CompileStatic
-class ReplaceSourceCommand extends AbstractMigrationCommand<DefaultSchemaMigration> {
+abstract class AbstractMigrationCommand<T extends AlignmentMigration> extends AbstractMigratorCommand<DefaultAlignmentMigrator, T> {
 
-  @Override
-  protected void addOptions(CliBuilder cli) {
-    // options for loading new source schema
-    SchemaCLI.loadSchemaOptions(cli, 'schema', 'The new source schema for the project')
+  protected abstract void addOptions(CliBuilder cli)
+
+  protected abstract T createMigration(OptionAccessor options)
+
+  protected DefaultAlignmentMigrator createMigrator(ServiceProvider serviceProvider, OptionAccessor options) {
+    new DefaultAlignmentMigrator(serviceProvider)
   }
 
-  @Override
-  protected DefaultSchemaMigration createMigration(OptionAccessor options) {
-    println 'Loading new source schema...'
-    Schema newSource = SchemaCLI.loadSchema(options, 'schema')
-    assert newSource
+  protected abstract SchemaSpace getNewSource(T migration, OptionAccessor options)
 
-    //TODO support multiple schemas?
-
-    DefaultSchemaSpace schemaSpace = new DefaultSchemaSpace()
-    schemaSpace.addSchema(newSource)
-
-    new DefaultSchemaMigration(schemaSpace)
-  }
-
-  @Override
-  protected SchemaSpace getNewSource(DefaultSchemaMigration migration, OptionAccessor options) {
-    migration.newSchema
-  }
-
-  @Override
-  protected List<IOConfiguration> getNewSourceConfig(DefaultSchemaMigration migration, OptionAccessor options) {
-    [SchemaCLI.getSchemaIOConfig(options, 'schema', true)]
-  }
-
-  final String shortDescription = 'Migrate a source project to a new source schema'
-
-  final boolean experimental = true
+  protected abstract List<IOConfiguration> getNewSourceConfig(T migration, OptionAccessor options)
 
 }

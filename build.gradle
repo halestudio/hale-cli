@@ -24,11 +24,10 @@ sourceCompatibility = '1.8'
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '3.3.2'
+  haleVersion = '3.4.0'
 }
 
-version = '3.3.2'
-//TODO define versioning strategy, specifically in respect to the hale version used
+version = '3.4.0'
 
 /*
  * Dependencies
@@ -71,6 +70,8 @@ dependencies {
   compile 'eu.esdihumboldt.unpuzzled:org.eclipse.equinox.nonosgi.registry:1.0.0'
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align.groovy:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align.merge:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.referencing:$haleVersion"
 
   // transformation
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.transform:$haleVersion"
@@ -99,15 +100,18 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.json:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xls:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.html.svg:$haleVersion"
+  
+  // database support
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.postgresql:$haleVersion"
-
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.mssql:$haleVersion"
+  
   // code list formats
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.codelist.xml:$haleVersion"
 
   // Schematron validation
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.schematron:$haleVersion"
-  
+
   // converters
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.core:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.wkt:$haleVersion"
@@ -137,6 +141,9 @@ dependencies {
   compile(group: 'eu.esdihumboldt.hale',
     name: 'eu.esdihumboldt.util.resource.featureconcepts.inspire',
     version: resourcesVersion)
+
+  // user / customer specific
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.adv.merge:$haleVersion"
 
   // CLI
   compile 'commons-cli:commons-cli:1.3.1'

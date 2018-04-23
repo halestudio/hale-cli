@@ -73,6 +73,7 @@ class ProjectHelper {
       throw new IllegalStateException("Error writing project file.", e)
     }
     if (report != null) {
+      reports?.publishReport(report)
       if (!report.isSuccess() || report.errors) {
         throw new IllegalStateException("Error writing project file.")
       }

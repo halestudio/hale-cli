@@ -17,6 +17,7 @@ package to.wetransform.halecli.project.alignment
 
 import javax.xml.namespace.QName
 
+import eu.esdihumboldt.cst.functions.groovy.GroovyJoin
 import eu.esdihumboldt.hale.common.align.migrate.util.MigrationUtil;
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.align.model.AlignmentUtil;
@@ -28,6 +29,8 @@ import eu.esdihumboldt.hale.common.align.model.ModifiableCell;
 import eu.esdihumboldt.hale.common.align.model.MutableAlignment
 import eu.esdihumboldt.hale.common.align.model.MutableCell
 import eu.esdihumboldt.hale.common.align.model.TransformationMode;
+import eu.esdihumboldt.hale.common.align.model.functions.JoinFunction
+import eu.esdihumboldt.hale.common.align.model.functions.join.JoinParameter
 import eu.esdihumboldt.hale.common.align.model.impl.DefaultAlignment
 import eu.esdihumboldt.hale.common.align.model.impl.DefaultCell;
 import eu.esdihumboldt.hale.common.core.io.ExportProvider;
@@ -364,6 +367,28 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
         return false
       }
       else if (misMatches) {
+        // special case: Join or Groovy Join
+        if (cell.transformationIdentifier) {
+          switch (cell.transformationIdentifier) {
+            case JoinFunction.ID:
+            case GroovyJoin.ID:
+              // check if mismatch is on first type in Join order -> then don't keep cell
+              def joinParam = CellUtil.getFirstParameter(cell, JoinFunction.PARAMETER_JOIN).as(JoinParameter)
+              if (joinParam && joinParam.getTypes()) {
+                def firstType = joinParam.getTypes()[0]
+                boolean notFound = misMatches.any { Entity entity ->
+                  entity.definition == firstType
+                }
+                if (notFound) {
+                  messages << "Cell ${cell.id} has a partial source type match but is dropped because the join focus (${firstType.definition.displayName}) is no match"
+                  return false
+                }
+              }
+            default:
+              break
+          }
+        }
+
         def name = entitiesTypesName(misMatches)
         messages << "Only partial source type match for cell ${cell.id} (also found types $name)"
       }
