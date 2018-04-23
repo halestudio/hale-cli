@@ -31,7 +31,8 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import com.google.common.io.Files
 
-import eu.esdihumboldt.hale.app.transform.ConsoleProgressMonitor;
+import eu.esdihumboldt.hale.app.transform.ConsoleProgressMonitor
+import eu.esdihumboldt.hale.common.cli.HaleCLIUtil;
 import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.Value;
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
@@ -70,6 +71,8 @@ class RewriteCommand implements Command {
   public int run(List<String> args, CommandContext context) {
     CliBuilder cli = new CliBuilder(usage : "${context.baseCommand} [options] [...]")
 
+    HaleCLIUtil.defaultOptions(cli, true)
+
     cli._(longOpt: 'help', 'Show this help')
 
     // options for schema
@@ -88,6 +91,8 @@ class RewriteCommand implements Command {
       return 0
     }
 
+    def reports = HaleCLIUtil.createReportHandler(options)
+
     // handle schema
     Schema schema
     if (options.schema) {
@@ -99,7 +104,7 @@ class RewriteCommand implements Command {
       URI schemaLoc = guessSchema(dataLoc)
       if (schemaLoc) {
         println "Guessed schema location as $schemaLoc"
-        schema = SchemaCLI.loadSchema(schemaLoc, SchemaCLI.getSettings(options), null)
+        schema = SchemaCLI.loadSchema(schemaLoc, SchemaCLI.getSettings(options), null, reports)
       }
     }
     assert schema
@@ -115,7 +120,7 @@ class RewriteCommand implements Command {
     // store in temporary database (if necessary)
     LocalOrientDB db
     if (!writer.passthrough) {
-      db = InstanceCLI.loadTempDatabase(source, schema)
+      db = InstanceCLI.loadTempDatabase(source, schema, reports)
     }
     try {
       // replace source with database
@@ -128,10 +133,10 @@ class RewriteCommand implements Command {
       // write instances
       DefaultSchemaSpace schemaSpace = new DefaultSchemaSpace()
       schemaSpace.addSchema(schema)
-      IOReport report = InstanceCLI.save(writer, source, schemaSpace)
+      IOReport report = InstanceCLI.save(writer, source, schemaSpace,
+        reports)
 
       if (!report.isSuccess()) {
-        //TODO common way to deal with reports
         throw new IllegalStateException('Writing target file failed: ' + report.summary)
       }
 

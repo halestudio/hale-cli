@@ -27,7 +27,8 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import com.google.common.io.Files
 
-import eu.esdihumboldt.hale.app.transform.ConsoleProgressMonitor;
+import eu.esdihumboldt.hale.app.transform.ConsoleProgressMonitor
+import eu.esdihumboldt.hale.common.cli.HaleCLIUtil;
 import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.impl.LogProgressIndicator
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
@@ -66,6 +67,8 @@ class InstanceCLI {
   }
 
   static InstanceCollection load(OptionAccessor options, TypeIndex schema, String argName = 'data') {
+    def reports = HaleCLIUtil.createReportHandler(options)
+
     def location = options."$argName"
     if (location) {
       URI loc = CLIUtil.fileOrUri(location)
@@ -75,7 +78,7 @@ class InstanceCLI {
 
       String customProvider = options."${argName}-reader" ?: null
 
-      return load(loc, settings, customProvider, schema)
+      return load(loc, settings, customProvider, schema, reports)
     }
     else {
       return null
@@ -84,7 +87,7 @@ class InstanceCLI {
 
   @CompileStatic
   static InstanceCollection load(URI loc, Map<String, String> settings, String customProvider,
-      TypeIndex schema) {
+      TypeIndex schema, ReportHandler reports) {
 
     Pair<InstanceReader, String> readerInfo = prepareReader(loc, InstanceReader, settings, customProvider)
     InstanceReader instanceReader = readerInfo.first
@@ -94,7 +97,7 @@ class InstanceCLI {
     println "Loading data from ${loc}..."
 
     IOReport report = instanceReader.execute(null)
-    //TODO report?
+    reports?.publishReport(report)
 
     instanceReader.getInstances()
   }
@@ -136,7 +139,8 @@ class InstanceCLI {
   }
 
   @CompileStatic
-  static IOReport save(InstanceWriter instanceWriter, InstanceCollection instances, SchemaSpace targetSchema) {
+  static IOReport save(InstanceWriter instanceWriter, InstanceCollection instances, SchemaSpace targetSchema,
+      ReportHandler reports) {
     def loc = instanceWriter.getTarget()?.location
     println "Writing instances to ${loc}..."
 
@@ -144,7 +148,7 @@ class InstanceCLI {
     instanceWriter.setInstances(instances)
 
     IOReport report = instanceWriter.execute(new LogProgressIndicator())
-    //TODO report?
+    reports?.publishReport(report)
 
     return report
   }
@@ -152,18 +156,18 @@ class InstanceCLI {
   // other helpers
 
   @CompileStatic
-  static LocalOrientDB loadTempDatabase(InstanceCollection instances, TypeIndex schema) {
+  static LocalOrientDB loadTempDatabase(InstanceCollection instances, TypeIndex schema,
+      ReportHandler reports = null) {
     // create db
     File tmpDir = Files.createTempDir();
     LocalOrientDB db = new LocalOrientDB(tmpDir);
     tmpDir.deleteOnExit();
 
     ServiceProvider serviceProvider = null
-    ReportHandler reportHandler = null
 
     // run store instance job first...
     Job storeJob = new StoreInstancesJob("Load source instances into temporary database",
-        db, instances, serviceProvider, reportHandler, false) {
+        db, instances, serviceProvider, reports, false) {
 
       @Override
       protected void onComplete() {

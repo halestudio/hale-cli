@@ -13,7 +13,7 @@
  *     wetransform GmbH <http://www.wetransform.to>
  */
 
-package to.wetransform.halecli.project.migrate
+package to.wetransform.halecli.project.merge
 
 import java.util.List
 
@@ -37,7 +37,8 @@ import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode;
 import groovy.util.CliBuilder;
-import groovy.util.OptionAccessor;
+import groovy.util.OptionAccessor
+import to.wetransform.halecli.project.migrate.AbstractMigratorCommand
 import to.wetransform.halecli.util.ProjectCLI;;;;
 
 /**
@@ -45,14 +46,46 @@ import to.wetransform.halecli.util.ProjectCLI;;;;
  *
  * @author Simon Templer
  */
-class MigrateMatchingCommand extends AbstractMigrationCommand<MatchingMigration> {
+class MergeCommand extends AbstractMigratorCommand<MergeMigrator, MatchingMigration> {
+
+  private File statisticsFile
+
+  private MergeMigrator migrator
+
+  @Override
+  protected void init(OptionAccessor options) {
+    super.init(options)
+
+    def statLoc = options.'statistics'
+    if (statLoc) {
+      statisticsFile = new File(statLoc)
+    }
+  }
+
+  @Override
+  protected void wrapup() {
+    if (statisticsFile && migrator?.statistics) {
+      statisticsFile.withWriter {
+        migrator.statistics.writeTo(it)
+      }
+    }
+
+    super.wrapup()
+  }
+
+  @Override
+  protected MergeMigrator createMigrator(ServiceProvider serviceProvider, OptionAccessor options) {
+    migrator = new MergeMigrator(serviceProvider, !!statisticsFile)
+    migrator
+  }
 
   @Override
   protected void addOptions(CliBuilder cli) {
     // options for loading matching command
     ProjectCLI.loadProjectOptions(cli, 'matching-project', 'The project defining a schema matching')
 
-    cli._(longOpt: 'reverse', 'If the matching project has the schema to be migrated to as source')
+    // option for collecting statistics
+    cli._(longOpt: 'statistics', args:1, argName:'file', 'File to write merge statistics to')
   }
 
   @Override
@@ -61,28 +94,26 @@ class MigrateMatchingCommand extends AbstractMigrationCommand<MatchingMigration>
     ProjectTransformationEnvironment matchProject = ProjectCLI.loadProject(options, 'matching-project')
     assert matchProject
 
-    boolean reverse = options.reverse
+    //TODO customize migration?
 
-    new MatchingMigration(matchProject, reverse)
+    new MatchingMigration(matchProject, true)
   }
 
   @Override
   protected SchemaSpace getNewSource(MatchingMigration migration, OptionAccessor options) {
-    boolean reverse = options.reverse
-    reverse ? migration.project.sourceSchema : migration.project.targetSchema
+    migration.project.sourceSchema
   }
 
   @Override
   protected List<IOConfiguration> getNewSourceConfig(MatchingMigration migration, OptionAccessor options) {
-    boolean reverse = options.reverse
-    def actionId = reverse ? SchemaIO.ACTION_LOAD_SOURCE_SCHEMA : SchemaIO.ACTION_LOAD_TARGET_SCHEMA
+    def actionId = SchemaIO.ACTION_LOAD_SOURCE_SCHEMA
 
     migration.project.project.resources.findAll { IOConfiguration conf ->
       conf.actionId == actionId
     } as List
   }
 
-  final String shortDescription = 'Migrate a source project based on a project providing a schema matching'
+  final String shortDescription = "Migrate a source project based on a project providing a schema mapping to the project's source"
 
   final boolean experimental = true
 
