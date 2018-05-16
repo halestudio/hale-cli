@@ -49,12 +49,9 @@ repositories {
   }
 
   maven { // HALE artifactory (dependencies for HALE)
-    url 'http://artifactory.esdi-humboldt.eu/artifactory/libs-release/'
+    url 'https://artifactory.wetransform.to/artifactory/ext-release-local'
   }
 
-  maven {
-    url 'http://repo.opengeo.org'
-  }
   jcenter()
 }
 
