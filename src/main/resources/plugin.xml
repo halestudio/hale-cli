@@ -84,5 +84,11 @@
             id="hale-cli.project.generate.postnas-matching"
             name="postnas-matching">
       </command>
+      <command
+            class="to.wetransform.halecli.project.ExportProjectCommand"
+            group="project"
+            id="project.export"
+            name="export">
+      </command>
    </extension>
 </plugin>
