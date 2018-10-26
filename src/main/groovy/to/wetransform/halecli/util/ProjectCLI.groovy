@@ -19,13 +19,19 @@ import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail
 import to.wetransform.halecli.project.ProjectHelper
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
+import eu.esdihumboldt.hale.common.core.io.HaleIO
+import eu.esdihumboldt.hale.common.core.io.extension.IOProviderDescriptor
+import eu.esdihumboldt.hale.common.core.io.project.ProjectWriter
 import eu.esdihumboldt.hale.common.core.io.project.model.Project
 import eu.esdihumboldt.hale.common.core.io.supplier.DefaultInputSupplier
 import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier
 import eu.esdihumboldt.hale.common.core.io.supplier.LocatableOutputSupplier;
+import eu.esdihumboldt.hale.common.core.io.supplier.NoStreamOutputSupplier
 import eu.esdihumboldt.hale.common.core.report.ReportHandler
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
+import eu.esdihumboldt.hale.io.haleconnect.HaleConnectUrnBuilder
+import eu.esdihumboldt.hale.io.haleconnect.project.HaleConnectProjectWriter
 import eu.esdihumboldt.util.cli.CLIUtil
 import groovy.transform.CompileStatic
 
@@ -70,10 +76,25 @@ class ProjectCLI {
     def location = options."$argName"
     if (location) {
       URI loc = CLIUtil.fileOrUri(location)
-      saveProject(new File(loc), project, alignment, sourceSchema, targetSchema, reports)
+      File file
+      try {
+        file = new File(loc)
+      } catch (e) {}
+      if (file) {
+        saveProject(file, project, alignment, sourceSchema, targetSchema, reports)
+      }
+      else {
+        if (HaleConnectUrnBuilder.SCHEME_HALECONNECT == loc.getScheme()) {
+          // save to hale connect
+          saveToHaleConnect(loc, project, alignment, sourceSchema, targetSchema, reports)
+        }
+        else {
+          fail("Invalid target location: $loc")
+        }
+      }
     }
     else {
-      //XXX
+      fail('No target location provided for saving project')
     }
   }
 
@@ -93,6 +114,21 @@ class ProjectCLI {
 
     ProjectHelper.saveProject(project, alignment, sourceSchema,
       targetSchema, output, reports, extension)
+
+    //TODO feedback?
+  }
+
+  @CompileStatic
+  static void saveToHaleConnect(URI location, Project project, Alignment alignment,
+    SchemaSpace sourceSchema, SchemaSpace targetSchema, ReportHandler reports) {
+
+    def output = new NoStreamOutputSupplier(location)
+
+    IOProviderDescriptor writerFactory = HaleIO.findIOProviderFactory(
+      ProjectWriter.class, null, HaleConnectProjectWriter.ID);
+
+    ProjectHelper.saveProject(project, alignment, sourceSchema,
+      targetSchema, output, reports, writerFactory)
 
     //TODO feedback?
   }
