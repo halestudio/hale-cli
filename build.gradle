@@ -55,6 +55,11 @@ repositories {
   jcenter()
 }
 
+configurations {
+  // exclude Saxon9 custom dependency by schema-utils (schematron validation)
+  compile.exclude group: 'org.opengis.cite.saxon', module: 'saxon9'
+}
+
 dependencies {
   // HALE
 
@@ -111,6 +116,9 @@ dependencies {
 
   // Schematron validation
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.schematron:$haleVersion"
+  // replacement for omitted Saxon dependency
+  // tested w/ schematron validation in https://github.com/wetransform/exp-schematron/tree/exp/saxon-he
+  compile 'net.sf.saxon:Saxon-HE:9.7.0-20'
 
   // converters
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.core:$haleVersion"
