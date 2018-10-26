@@ -103,6 +103,9 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.postgresql:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.mssql:$haleVersion"
   
+  // hale connect
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.haleconnect:$haleVersion"
+  
   // code list formats
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.codelist.xml:$haleVersion"
 

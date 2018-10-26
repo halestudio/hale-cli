@@ -47,9 +47,18 @@ class ProjectHelper {
       ProjectWriter.class, null, "project.$extension")
     IOProviderDescriptor factory = HaleIO.findIOProviderFactory(
       ProjectWriter.class, projectType, null);
+
+    saveProject(project, alignment, sourceSchema, targetSchema, output, reports, factory)
+  }
+
+  static void saveProject(Project project, Alignment alignment, SchemaSpace sourceSchema,
+    SchemaSpace targetSchema, LocatableOutputSupplier<? extends OutputStream> output,
+    ReportHandler reports, IOProviderDescriptor writerFactory) {
+
+    // write project
     ProjectWriter projectWriter
     try {
-      projectWriter = (ProjectWriter) factory.createExtensionObject()
+      projectWriter = (ProjectWriter) writerFactory.createExtensionObject()
     } catch (Exception e1) {
       throw new IllegalStateException("Failed to create project writer", e1)
     }
@@ -58,7 +67,7 @@ class ProjectHelper {
     // store (incomplete) save configuration
     IOConfiguration saveConf = new IOConfiguration()
     projectWriter.storeConfiguration(saveConf.getProviderConfiguration())
-    saveConf.setProviderId(factory.getIdentifier())
+    saveConf.setProviderId(writerFactory.getIdentifier())
     project.setSaveConfiguration(saveConf)
 
     SaveProjectAdvisor advisor = new SaveProjectAdvisor(project, alignment, sourceSchema,

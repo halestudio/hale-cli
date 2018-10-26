@@ -36,6 +36,7 @@ import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic
+import to.wetransform.halecli.util.HaleConnectCLI
 import to.wetransform.halecli.util.ProjectCLI;;;;
 
 /**
@@ -51,6 +52,8 @@ class ExportProjectCommand implements Command {
 
     HaleCLIUtil.defaultOptions(cli, true)
 
+    HaleConnectCLI.loginOptions(cli)
+
     cli._(longOpt: 'help', 'Show this help')
 
     // options for projects to load
@@ -64,6 +67,8 @@ class ExportProjectCommand implements Command {
       cli.usage()
       return 0
     }
+
+    HaleConnectCLI.login(options)
 
     def reports = HaleCLIUtil.createReportHandler(options)
 
