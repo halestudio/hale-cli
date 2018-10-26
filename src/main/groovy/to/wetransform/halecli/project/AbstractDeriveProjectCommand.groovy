@@ -106,7 +106,7 @@ abstract class AbstractDeriveProjectCommand extends AbstractProjectEnvironmentCo
     def output = new FileIOSupplier(projectOut)
 
     ProjectHelper.saveProject(project, result.alignment, projectEnv.sourceSchema,
-      projectEnv.targetSchema, output, reports, extension)
+      projectEnv.targetSchema, output, reports, extension, projectLocation)
 
     true
   }
