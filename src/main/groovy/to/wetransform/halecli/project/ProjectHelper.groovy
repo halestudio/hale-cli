@@ -21,12 +21,16 @@ import to.wetransform.halecli.project.advisor.SaveProjectAdvisor
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.extension.IOProviderDescriptor
+import eu.esdihumboldt.hale.common.core.io.project.FixedProjectInfoService
+import eu.esdihumboldt.hale.common.core.io.project.ProjectInfoService
 import eu.esdihumboldt.hale.common.core.io.project.ProjectWriter
 import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration
 import eu.esdihumboldt.hale.common.core.io.project.model.Project
 import eu.esdihumboldt.hale.common.core.io.report.IOReport
 import eu.esdihumboldt.hale.common.core.io.supplier.LocatableOutputSupplier
 import eu.esdihumboldt.hale.common.core.report.ReportHandler
+import eu.esdihumboldt.hale.common.core.service.ServiceManager
+import eu.esdihumboldt.hale.common.core.service.ServiceProvider
 import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
 import groovy.transform.CompileStatic
 
@@ -40,7 +44,7 @@ class ProjectHelper {
 
   static void saveProject(Project project, Alignment alignment, SchemaSpace sourceSchema,
     SchemaSpace targetSchema, LocatableOutputSupplier<? extends OutputStream> output,
-    ReportHandler reports, String extension) {
+    ReportHandler reports, String extension, URI projectLoadLocation) {
 
     // write project
     IContentType projectType = HaleIO.findContentType(
@@ -48,12 +52,13 @@ class ProjectHelper {
     IOProviderDescriptor factory = HaleIO.findIOProviderFactory(
       ProjectWriter.class, projectType, null);
 
-    saveProject(project, alignment, sourceSchema, targetSchema, output, reports, factory)
+    saveProject(project, alignment, sourceSchema, targetSchema, output,
+      reports, factory, projectLoadLocation)
   }
 
   static void saveProject(Project project, Alignment alignment, SchemaSpace sourceSchema,
     SchemaSpace targetSchema, LocatableOutputSupplier<? extends OutputStream> output,
-    ReportHandler reports, IOProviderDescriptor writerFactory) {
+    ReportHandler reports, IOProviderDescriptor writerFactory, URI projectLoadLocation) {
 
     // write project
     ProjectWriter projectWriter
@@ -70,8 +75,25 @@ class ProjectHelper {
     saveConf.setProviderId(writerFactory.getIdentifier())
     project.setSaveConfiguration(saveConf)
 
+    // service provider
+    // XXX what services are needed for project export?
+    ServiceProvider projectScope = new ServiceManager(ServiceManager.SCOPE_PROJECT);
+    ProjectInfoService projectInfo = new FixedProjectInfoService(project, projectLoadLocation)
+    ServiceProvider serviceProvider = new ServiceProvider() {
+
+      @Override
+      public <T> T getService(Class<T> serviceInterface) {
+        if (ProjectInfoService.metaClass.equals(serviceInterface)) {
+          return projectInfo;
+        }
+        return projectScope.getService(serviceInterface);
+      }
+
+    }
+
     SaveProjectAdvisor advisor = new SaveProjectAdvisor(project, alignment, sourceSchema,
-      targetSchema);
+      targetSchema, projectLoadLocation);
+    advisor.setServiceProvider(serviceProvider);
     advisor.prepareProvider(projectWriter)
     advisor.updateConfiguration(projectWriter)
     // HeadlessIO.executeProvider(projectWriter, advisor, null, reports);
