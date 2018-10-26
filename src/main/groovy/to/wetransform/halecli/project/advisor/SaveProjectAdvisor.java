@@ -15,6 +15,7 @@
 
 package to.wetransform.halecli.project.advisor;
 
+import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,13 +44,17 @@ public class SaveProjectAdvisor extends AbstractIOAdvisor<ProjectWriter> impleme
 
   private final Project project;
 
+  private final URI projectLoadLocation;
+
   public SaveProjectAdvisor(Project project, Alignment alignment,
-      SchemaSpace sourceSchema, SchemaSpace targetSchema) {
+      SchemaSpace sourceSchema, SchemaSpace targetSchema, URI projectLoadLocation) {
     super();
     this.project = project;
+    this.projectLoadLocation = projectLoadLocation;
 
     advisors.put("eu.esdihumboldt.hale.io.align.write",
-        new SaveAlignmentAdvisor(project, alignment, sourceSchema, targetSchema));
+        new SaveAlignmentAdvisor(project, alignment, sourceSchema, targetSchema,
+            projectLoadLocation));
   }
 
   @Override
@@ -71,9 +76,9 @@ public class SaveProjectAdvisor extends AbstractIOAdvisor<ProjectWriter> impleme
     }
 
     provider.setProjectFiles(projectFiles);
-//    if (projectLocation != null) {
-//      provider.setPreviousTarget(projectLocation);
-//    }
+    if (projectLoadLocation != null) {
+      provider.setPreviousTarget(projectLoadLocation);
+    }
   }
 
   @Override

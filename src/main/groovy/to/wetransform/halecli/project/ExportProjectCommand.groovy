@@ -79,7 +79,8 @@ class ExportProjectCommand implements Command {
 
     // save project
     println 'Exporting project...'
-    ProjectCLI.saveProject(options, sourceProject.project, sourceProject.alignment, sourceProject.sourceSchema, sourceProject.targetSchema)
+    ProjectCLI.saveProject(options, sourceProject.project, sourceProject.alignment,
+      sourceProject.sourceSchema, sourceProject.targetSchema, sourceProject.loadLocation)
 
     println 'Completed'
 

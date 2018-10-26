@@ -15,6 +15,8 @@
 
 package to.wetransform.halecli.project.advisor;
 
+import java.net.URI;
+
 import eu.esdihumboldt.hale.common.align.io.AlignmentWriter;
 import eu.esdihumboldt.hale.common.align.model.Alignment;
 import eu.esdihumboldt.hale.common.core.io.impl.AbstractIOAdvisor;
@@ -29,18 +31,20 @@ import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
  */
 public class SaveAlignmentAdvisor extends AbstractIOAdvisor<AlignmentWriter> {
 
-  private ProjectInfo projectInfo;
-  private Alignment alignment;
-  private SchemaSpace sourceSchema;
-  private SchemaSpace targetSchema;
+  private final ProjectInfo projectInfo;
+  private final Alignment alignment;
+  private final SchemaSpace sourceSchema;
+  private final SchemaSpace targetSchema;
+  private final URI projectLoadLocation;
 
   public SaveAlignmentAdvisor(ProjectInfo projectInfo, Alignment alignment, SchemaSpace sourceSchema,
-      SchemaSpace targetSchema) {
+      SchemaSpace targetSchema, URI projectLoadLocation) {
     super();
     this.projectInfo = projectInfo;
     this.alignment = alignment;
     this.sourceSchema = sourceSchema;
     this.targetSchema = targetSchema;
+    this.projectLoadLocation = projectLoadLocation;
   }
 
   @Override
@@ -51,7 +55,9 @@ public class SaveAlignmentAdvisor extends AbstractIOAdvisor<AlignmentWriter> {
     provider.setSourceSchema(sourceSchema);
     provider.setAlignment(alignment);
     if (provider instanceof ProjectInfoAware) {
-      ((ProjectInfoAware) provider).setProjectInfo(projectInfo);
+      ProjectInfoAware aware = (ProjectInfoAware) provider;
+      aware.setProjectInfo(projectInfo);
+      aware.setProjectLocation(projectLoadLocation);
     }
   }
 

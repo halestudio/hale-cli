@@ -82,7 +82,7 @@ abstract class MatchSchemasCommand implements Command {
     project.resources << SchemaCLI.getSchemaIOConfig(options, 'target-schema', false)
 
     println 'Saving generated project...'
-    ProjectCLI.saveProject(options, project, alignment, sourceSS, targetSS)
+    ProjectCLI.saveProject(options, project, alignment, sourceSS, targetSS, null)
     println 'Completed'
 
     return 0
