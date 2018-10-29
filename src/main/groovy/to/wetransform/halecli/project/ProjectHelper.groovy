@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.content.IContentType
 import to.wetransform.halecli.project.advisor.SaveProjectAdvisor
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.core.io.HaleIO
+import eu.esdihumboldt.hale.common.core.io.Value
 import eu.esdihumboldt.hale.common.core.io.extension.IOProviderDescriptor
 import eu.esdihumboldt.hale.common.core.io.project.FixedProjectInfoService
 import eu.esdihumboldt.hale.common.core.io.project.ProjectInfoService
@@ -44,7 +45,8 @@ class ProjectHelper {
 
   static void saveProject(Project project, Alignment alignment, SchemaSpace sourceSchema,
     SchemaSpace targetSchema, LocatableOutputSupplier<? extends OutputStream> output,
-    ReportHandler reports, String extension, URI projectLoadLocation) {
+    ReportHandler reports, String extension, URI projectLoadLocation,
+    Map<String, String> settings = [:]) {
 
     // write project
     IContentType projectType = HaleIO.findContentType(
@@ -53,12 +55,13 @@ class ProjectHelper {
       ProjectWriter.class, projectType, null);
 
     saveProject(project, alignment, sourceSchema, targetSchema, output,
-      reports, factory, projectLoadLocation)
+      reports, factory, projectLoadLocation, settings)
   }
 
   static void saveProject(Project project, Alignment alignment, SchemaSpace sourceSchema,
     SchemaSpace targetSchema, LocatableOutputSupplier<? extends OutputStream> output,
-    ReportHandler reports, IOProviderDescriptor writerFactory, URI projectLoadLocation) {
+    ReportHandler reports, IOProviderDescriptor writerFactory, URI projectLoadLocation,
+    Map<String, String> settings = [:]) {
 
     // write project
     ProjectWriter projectWriter
@@ -68,6 +71,11 @@ class ProjectHelper {
       throw new IllegalStateException("Failed to create project writer", e1)
     }
     projectWriter.setTarget(output)
+
+    // apply custom settings
+    settings.each { setting, value ->
+      projectWriter.setParameter(setting, Value.simple(value))
+    }
 
     // store (incomplete) save configuration
     IOConfiguration saveConf = new IOConfiguration()
