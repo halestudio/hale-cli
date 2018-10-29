@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
+	<turboFilter class="eu.esdihumboldt.hale.util.nonosgi.logging.NonOSGiLoggingFilter" />
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<filter class="de.fhg.igd.slf4jplus.logback.appender.FlattenFilter" />
