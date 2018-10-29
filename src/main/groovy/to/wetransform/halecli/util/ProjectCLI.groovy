@@ -65,6 +65,9 @@ class ProjectCLI {
 
   static void saveProjectOptions(CliBuilder cli, String argName = 'target', String descr = 'Target project file') {
     cli._(longOpt: argName, args:1, argName:'file', descr)
+    cli._(longOpt: argName + '-setting', args:2, valueSeparator:'=', argName:'setting=value',
+      'Setting for target writer (optional, repeatable)')
+    //TODO also support provider ID?
   }
 
   static void saveProject(OptionAccessor options, Project project,
@@ -72,6 +75,9 @@ class ProjectCLI {
     URI projectLoadLocation, String argName = 'target') {
 
     def reports = HaleCLIUtil.createReportHandler(options)
+
+    def settings = options."${argName}-settings"
+    settings = settings ? settings.toSpreadMap() : [:]
 
     def location = options."$argName"
     if (location) {
@@ -82,13 +88,13 @@ class ProjectCLI {
       } catch (e) {}
       if (file) {
         saveProject(file, project, alignment, sourceSchema, targetSchema,
-          reports, projectLoadLocation)
+          reports, projectLoadLocation, settings)
       }
       else {
         if (HaleConnectUrnBuilder.SCHEME_HALECONNECT == loc.getScheme()) {
           // save to hale connect
           saveToHaleConnect(loc, project, alignment, sourceSchema, targetSchema,
-            reports, projectLoadLocation)
+            reports, projectLoadLocation, settings)
         }
         else {
           fail("Invalid target location: $loc")
@@ -103,7 +109,7 @@ class ProjectCLI {
   @CompileStatic
   static void saveProject(File targetFile, Project project, Alignment alignment,
     SchemaSpace sourceSchema, SchemaSpace targetSchema, ReportHandler reports,
-    URI projectLoadLocation) {
+    URI projectLoadLocation, Map<String, String> settings = [:]) {
 
     String fileName = targetFile.name
     String extension = 'halex'
@@ -116,7 +122,7 @@ class ProjectCLI {
     def output = new FileIOSupplier(targetFile)
 
     ProjectHelper.saveProject(project, alignment, sourceSchema,
-      targetSchema, output, reports, extension, projectLoadLocation)
+      targetSchema, output, reports, extension, projectLoadLocation, settings)
 
     //TODO feedback?
   }
@@ -124,7 +130,7 @@ class ProjectCLI {
   @CompileStatic
   static void saveToHaleConnect(URI location, Project project, Alignment alignment,
     SchemaSpace sourceSchema, SchemaSpace targetSchema, ReportHandler reports,
-    URI projectLoadLocation) {
+    URI projectLoadLocation, Map<String, String> settings = [:]) {
 
     def output = new NoStreamOutputSupplier(location)
 
@@ -132,7 +138,8 @@ class ProjectCLI {
       ProjectWriter.class, null, HaleConnectProjectWriter.ID);
 
     ProjectHelper.saveProject(project, alignment, sourceSchema,
-      targetSchema, output, reports, writerFactory, projectLoadLocation)
+      targetSchema, output, reports, writerFactory, projectLoadLocation,
+      settings)
 
     //TODO feedback?
   }
