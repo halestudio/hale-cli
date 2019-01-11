@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 See the [change log guidelines](http://keepachangelog.com/) for information on how to structure the file.
 
+## [Unreleased]
+
 ## [3.5.0]
 
 ### Added
@@ -100,6 +102,7 @@ Initial release based on hale studio 3.0.0.
 - Command to generate JSON representations of hale alignments (`hale project alignment export-json`)
 - Experimental command to filter to create a copy of a hale project with a filtered alignment (`hale project alignment filter`)
 
+[Unreleased]: https://github.com/halestudio/hale-cli/compare/v3.5.0...HEAD
 [3.5.0]: https://github.com/halestudio/hale-cli/compare/v3.4.0...v3.5.0
 [3.4.0]: https://github.com/halestudio/hale-cli/compare/v3.3.2...v3.4.0
 [3.3.2]: https://github.com/halestudio/hale-cli/compare/v3.3.1...v3.3.2
