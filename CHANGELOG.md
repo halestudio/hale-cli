@@ -4,6 +4,24 @@ See the [change log guidelines](http://keepachangelog.com/) for information on h
 
 ## [Unreleased]
 
+## [3.5.0]
+
+### Added
+
+- Added command for exporting projects
+- Extent project export command with hale connect project export
+- Added support for specifying settings for project writers
+
+### Changed
+
+- Upgrade hale dependencies to 3.5
+- Replaced Saxon dependency with official Saxon HE artifact
+
+### Fixed
+
+- Provide project information to advisors when saving a project
+- Suppress irrelevant error messages caused by Eclipse client platform update
+
 ## [3.4.0]
 
 ### Added
@@ -84,7 +102,8 @@ Initial release based on hale studio 3.0.0.
 - Command to generate JSON representations of hale alignments (`hale project alignment export-json`)
 - Experimental command to filter to create a copy of a hale project with a filtered alignment (`hale project alignment filter`)
 
-[Unreleased]: https://github.com/halestudio/hale-cli/compare/v3.4.0...HEAD
+[Unreleased]: https://github.com/halestudio/hale-cli/compare/v3.5.0...HEAD
+[3.5.0]: https://github.com/halestudio/hale-cli/compare/v3.4.0...v3.5.0
 [3.4.0]: https://github.com/halestudio/hale-cli/compare/v3.3.2...v3.4.0
 [3.3.2]: https://github.com/halestudio/hale-cli/compare/v3.3.1...v3.3.2
 [3.3.1]: https://github.com/halestudio/hale-cli/compare/v3.3.0...v3.3.1
