@@ -224,7 +224,7 @@ distributions {
 
 docker {
   javaApplication {
-    baseImage = 'isuper/java-oracle:server_jre_8'
+    baseImage = 'openjdk:8-jre-slim'
     maintainer = 'Simon Templer "simon@wetransform.to"'
     tag = "wetransform/${project.name}:${project.version}"
   }
