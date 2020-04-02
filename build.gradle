@@ -133,7 +133,7 @@ dependencies {
 
   // resource cache
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
-  def resourcesVersion = '2015.10.27'
+  def resourcesVersion = '2018.8.7'
   // OpenGIS schemas, INSPIRE schemas, W3C schemas, etc.
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: resourcesVersion)
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: resourcesVersion)
