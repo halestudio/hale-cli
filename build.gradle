@@ -151,6 +151,11 @@ dependencies {
     name: 'eu.esdihumboldt.util.resource.featureconcepts.inspire',
     version: resourcesVersion)
 
+  // More resources with different version
+  resourcesVersion = '2020.6.29'
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.adv-online.de', version: resourcesVersion)
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.xplanung.de', version: resourcesVersion)
+
   // user / customer specific
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.adv.merge:$haleVersion"
 
