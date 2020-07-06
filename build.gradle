@@ -24,10 +24,10 @@ sourceCompatibility = '1.8'
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '4.0.0-SNAPSHOT'
+  haleVersion = '4.0.0'
 }
 
-version = '4.0.0-SNAPSHOT'
+version = '4.0.0'
 
 /*
  * Dependencies
