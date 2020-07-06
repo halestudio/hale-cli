@@ -339,6 +339,6 @@ tasks.withType(CreateStartScripts).each { task ->
 /*
  * Gradle wrapper
  */
-task wrapper(type: Wrapper) {
-  gradleVersion = '2.14'
+wrapper {
+  gradleVersion = '3.5'
 }
