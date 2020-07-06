@@ -45,7 +45,7 @@ repositories {
 
   // this needs to be defined before jcenter/MavenCentral for retrieving JAI
   maven {
-    url 'http://download.osgeo.org/webdav/geotools/'
+    url 'https://repo.osgeo.org/repository/release/'
   }
 
   maven { // HALE artifactory (dependencies for HALE)
