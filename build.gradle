@@ -12,7 +12,7 @@ plugins {
   id 'application'
   id 'maven'
   id 'osgi'
-  id 'com.bmuschko.docker-java-application' version '3.2.1'
+  id 'com.bmuschko.docker-java-application' version '3.6.2'
   id "nebula.ospackage-application" version "3.6.1"
   id 'org.ajoberstar.grgit' version '1.5.0'
 }
@@ -24,10 +24,10 @@ sourceCompatibility = '1.8'
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '3.5.0'
+  haleVersion = '4.0.0'
 }
 
-version = '3.5.0'
+version = '4.0.0'
 
 /*
  * Dependencies
@@ -45,7 +45,7 @@ repositories {
 
   // this needs to be defined before jcenter/MavenCentral for retrieving JAI
   maven {
-    url 'http://download.osgeo.org/webdav/geotools/'
+    url 'https://repo.osgeo.org/repository/release/'
   }
 
   maven { // HALE artifactory (dependencies for HALE)
@@ -101,6 +101,7 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.wfs:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.json:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xls:$haleVersion"
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.geopackage:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.html.svg:$haleVersion"
   
   // database support
@@ -133,7 +134,7 @@ dependencies {
 
   // resource cache
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
-  def resourcesVersion = '2015.10.27'
+  def resourcesVersion = '2018.8.7'
   // OpenGIS schemas, INSPIRE schemas, W3C schemas, etc.
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: resourcesVersion)
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: resourcesVersion)
@@ -149,6 +150,11 @@ dependencies {
   compile(group: 'eu.esdihumboldt.hale',
     name: 'eu.esdihumboldt.util.resource.featureconcepts.inspire',
     version: resourcesVersion)
+
+  // More resources with different version
+  resourcesVersion = '2020.6.29'
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.adv-online.de', version: resourcesVersion)
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.xplanung.de', version: resourcesVersion)
 
   // user / customer specific
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.adv.merge:$haleVersion"
@@ -224,7 +230,7 @@ distributions {
 
 docker {
   javaApplication {
-    baseImage = 'isuper/java-oracle:server_jre_8'
+    baseImage = 'openjdk:8-jre-slim'
     maintainer = 'Simon Templer "simon@wetransform.to"'
     tag = "wetransform/${project.name}:${project.version}"
   }
@@ -338,6 +344,6 @@ tasks.withType(CreateStartScripts).each { task ->
 /*
  * Gradle wrapper
  */
-task wrapper(type: Wrapper) {
-  gradleVersion = '2.14'
+wrapper {
+  gradleVersion = '3.5'
 }
