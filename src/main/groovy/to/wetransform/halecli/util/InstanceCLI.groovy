@@ -37,6 +37,7 @@ import eu.esdihumboldt.hale.common.core.io.supplier.LocatableInputSupplier
 import eu.esdihumboldt.hale.common.core.io.supplier.LocatableOutputSupplier
 import eu.esdihumboldt.hale.common.core.report.ReportHandler;
 import eu.esdihumboldt.hale.common.core.service.ServiceProvider;
+import eu.esdihumboldt.hale.common.headless.transform.filter.InstanceFilterDefinition
 import eu.esdihumboldt.hale.common.instance.io.InstanceReader
 import eu.esdihumboldt.hale.common.instance.io.InstanceWriter;
 import eu.esdihumboldt.hale.common.instance.model.InstanceCollection
@@ -58,12 +59,72 @@ import groovy.util.OptionAccessor
  */
 class InstanceCLI {
 
-  static void loadOptions(CliBuilder cli, String argName = 'data', String descr = 'Data to load') {
+  static void loadOptions(CliBuilder cli, String argName = 'data', String descr = 'Data to load', boolean allowFilter = true) {
     cli._(longOpt: argName, args:1, argName:'file-or-URL', descr)
     cli._(longOpt: argName + '-setting', args:2, valueSeparator:'=', argName:'setting=value',
       'Setting for instance reader (optional, repeatable)')
     cli._(longOpt: argName + '-reader', args:1, argName: 'provider-id',
       'Identifier of instance reader to use (otherwise auto-detect)')
+
+    // filter options
+    if (allowFilter) {
+      filterOptions(cli, argName)
+    }
+  }
+
+  static void filterOptions(CliBuilder cli, String argName) {
+    def prefix = argName ? argName + '-' : ''
+    cli._(longOpt: prefix + 'filter', args: 1, argName: 'filter',
+      'Filter expression that is checked against all objects read from the source. The filter language can be specified at the beginning of the filter expression, followed by a colon. If no language is provided explicitly, the expression is assumed to be CQL. If multiple filters are provided an object must only match one of them.')
+    cli._(longOpt: prefix + 'exclude', args: 1, argName: 'filter',
+      'All objects matching the filter will be exlcuded.')
+    cli._(longOpt: prefix + 'filter-on', args: 2, valueSeparator:'=', argName: 'type=filter',
+      'Filter on a specific type only. You can specify the type\'s name with or without namespace. If you want to specify the namespace, wrap it in curly braces and prepend it to the type name.')
+    cli._(longOpt: prefix + 'exclude-type', args: 1, argName: 'type',
+      'Exclude a specific type')
+  }
+
+  static InstanceFilterDefinition createFilter(OptionAccessor options, String argName) {
+    def prefix = argName ? argName + '-' : ''
+    InstanceFilterDefinition res = null
+
+    def filter = options."${prefix}filters" // magic "s" at the end yields a list
+    if (filter) {
+      if (!res) res = new InstanceFilterDefinition();
+
+      filter.each {
+        res.addUnconditionalFilter(it)
+      }
+    }
+
+    filter = options."${prefix}excludes"
+    if (filter) {
+      if (!res) res = new InstanceFilterDefinition();
+
+      filter.each {
+        res.addExcludeFilter(it)
+      }
+    }
+
+    filter = options."${prefix}filter-ons"
+    if (filter) {
+      if (!res) res = new InstanceFilterDefinition();
+
+      filter.toSpreadMap().each { key, value ->
+        res.addTypeFilter(key, value)
+      }
+    }
+
+    filter = options."${prefix}exclude-types"
+    if (filter) {
+      if (!res) res = new InstanceFilterDefinition();
+
+      filter.each {
+        res.addExcludedType(it)
+      }
+    }
+
+    return res
   }
 
   static InstanceCollection load(OptionAccessor options, TypeIndex schema, String argName = 'data') {
@@ -78,7 +139,9 @@ class InstanceCLI {
 
       String customProvider = options."${argName}-reader" ?: null
 
-      return load(loc, settings, customProvider, schema, reports)
+      InstanceFilterDefinition filter = createFilter(options, argName)
+
+      return load(loc, settings, customProvider, schema, reports, filter)
     }
     else {
       return null
@@ -87,7 +150,7 @@ class InstanceCLI {
 
   @CompileStatic
   static InstanceCollection load(URI loc, Map<String, String> settings, String customProvider,
-      TypeIndex schema, ReportHandler reports) {
+      TypeIndex schema, ReportHandler reports, InstanceFilterDefinition filter = null) {
 
     Pair<InstanceReader, String> readerInfo = prepareReader(loc, InstanceReader, settings, customProvider)
     InstanceReader instanceReader = readerInfo.first
@@ -99,7 +162,13 @@ class InstanceCLI {
     IOReport report = instanceReader.execute(null)
     reports?.publishReport(report)
 
-    instanceReader.getInstances()
+    InstanceCollection result = instanceReader.getInstances()
+
+    if (filter) {
+      result = result.select(filter)
+    }
+
+    return result
   }
 
   // save data
