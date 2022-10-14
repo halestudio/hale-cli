@@ -103,16 +103,16 @@ dependencies {
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xls:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.geopackage:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.html.svg:$haleVersion"
-  
+
   // database support
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.postgresql:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.mssql:$haleVersion"
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.msaccess:$haleVersion"
-  
+
   // hale connect
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.haleconnect:$haleVersion"
-  
+
   // code list formats
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.codelist.xml:$haleVersion"
 
@@ -135,7 +135,7 @@ dependencies {
 
   // resource cache
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
-  def resourcesVersion = '2018.8.7'
+  def resourcesVersion = '2022.8.16'
   // OpenGIS schemas, INSPIRE schemas, W3C schemas, etc.
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: resourcesVersion)
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: resourcesVersion)
@@ -151,9 +151,7 @@ dependencies {
   compile(group: 'eu.esdihumboldt.hale',
     name: 'eu.esdihumboldt.util.resource.featureconcepts.inspire',
     version: resourcesVersion)
-
-  // More resources with different version
-  resourcesVersion = '2020.6.29'
+  // More resources
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.adv-online.de', version: resourcesVersion)
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.xplanung.de', version: resourcesVersion)
 
