@@ -34,7 +34,7 @@ import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic
-import groovy.util.OptionAccessor;
+import groovy.cli.picocli.OptionAccessor;
 import to.wetransform.halecli.util.ProjectCLI;;;;
 
 /**
