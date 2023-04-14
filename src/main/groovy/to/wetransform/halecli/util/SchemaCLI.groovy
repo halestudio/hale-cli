@@ -43,8 +43,8 @@ import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
 import eu.esdihumboldt.util.Pair;
 import eu.esdihumboldt.util.cli.CLIUtil
 import groovy.transform.CompileStatic
-import groovy.util.CliBuilder
-import groovy.util.OptionAccessor;;;;
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
 
 /**
  * Common utility functions for setting up a CliBuilder for loading a schema.

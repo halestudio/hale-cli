@@ -36,8 +36,8 @@ import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode;
-import groovy.util.CliBuilder;
-import groovy.util.OptionAccessor
+import groovy.cli.picocli.CliBuilder;
+import groovy.cli.picocli.OptionAccessor
 import to.wetransform.halecli.project.migrate.AbstractMigratorCommand
 import to.wetransform.halecli.util.ProjectCLI;;;;
 

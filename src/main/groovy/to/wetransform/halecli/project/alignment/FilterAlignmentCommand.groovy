@@ -47,8 +47,8 @@ import eu.esdihumboldt.hale.io.xsd.constraint.XmlElements
 import eu.esdihumboldt.hale.io.xsd.model.XmlElement;
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic;
-import groovy.util.CliBuilder;
-import groovy.util.OptionAccessor;
+import groovy.cli.picocli.CliBuilder;
+import groovy.cli.picocli.OptionAccessor;
 import to.wetransform.halecli.project.AbstractDeriveProjectCommand
 import to.wetransform.halecli.project.AbstractDeriveProjectCommand.DeriveProjectResult
 
