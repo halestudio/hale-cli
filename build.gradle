@@ -20,6 +20,7 @@ plugins {
 apply plugin: 'org.standardout.eclipseconfig'
 
 sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 group = 'to.wetransform'
 

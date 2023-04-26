@@ -15,17 +15,16 @@
 
 package to.wetransform.halecli.data
 
-import static org.junit.Assert.*
-
+import eu.esdihumboldt.util.cli.Runner
 import org.junit.BeforeClass
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.contrib.java.lang.system.SystemOutRule
-
 import to.wetransform.halecli.internal.Init
-import eu.esdihumboldt.hale.common.core.HalePlatform
-import eu.esdihumboldt.util.cli.Runner
+
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
 
 /**
  * Tests for rewrite command.

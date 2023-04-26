@@ -15,34 +15,24 @@
 
 package to.wetransform.halecli.util
 
-import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail;
-import static to.wetransform.halecli.util.HaleIOHelper.*
-
-import java.io.InputStream
-import java.net.URI;
-import java.util.Map
-
-import eu.esdihumboldt.hale.common.cli.HaleCLIUtil;
-import eu.esdihumboldt.hale.common.core.io.HaleIO
-import eu.esdihumboldt.hale.common.core.io.Value
-import eu.esdihumboldt.hale.common.core.io.impl.LogProgressIndicator;
-import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
-import eu.esdihumboldt.hale.common.core.io.report.IOReport;
-import eu.esdihumboldt.hale.common.core.io.supplier.DefaultInputSupplier;
-import eu.esdihumboldt.hale.common.core.io.supplier.LocatableInputSupplier;
+import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
+import eu.esdihumboldt.hale.common.core.io.impl.LogProgressIndicator
+import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration
+import eu.esdihumboldt.hale.common.core.io.report.IOReport
 import eu.esdihumboldt.hale.common.core.report.ReportHandler
-import eu.esdihumboldt.hale.common.instance.io.InstanceReader
-import eu.esdihumboldt.hale.common.instance.io.InstanceWriter;
-import eu.esdihumboldt.hale.common.instance.model.InstanceCollection;
-import eu.esdihumboldt.hale.common.schema.io.SchemaIO;
+import eu.esdihumboldt.hale.common.schema.io.SchemaIO
 import eu.esdihumboldt.hale.common.schema.io.SchemaReader
-import eu.esdihumboldt.hale.common.schema.io.SchemaWriter;
+import eu.esdihumboldt.hale.common.schema.io.SchemaWriter
 import eu.esdihumboldt.hale.common.schema.model.Schema
-import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
+import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
 import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
-import eu.esdihumboldt.util.Pair;
+import eu.esdihumboldt.util.Pair
 import eu.esdihumboldt.util.cli.CLIUtil
+import groovy.cli.picocli.CliBuilder
 import groovy.transform.CompileStatic
+import groovy.cli.picocli.OptionAccessor
+import static to.wetransform.halecli.util.HaleIOHelper.prepareReader
+import static to.wetransform.halecli.util.HaleIOHelper.prepareWriter
 
 /**
  * Common utility functions for setting up a CliBuilder for loading a schema.

@@ -15,34 +15,17 @@
 
 package to.wetransform.halecli.project
 
-import org.eclipse.core.runtime.content.IContentType
-
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.cli.project.AbstractProjectEnvironmentCommand
-import eu.esdihumboldt.hale.common.core.io.HaleIO
-import eu.esdihumboldt.hale.common.core.io.extension.IOProviderDescriptor
-import eu.esdihumboldt.hale.common.core.io.project.ComplexConfigurationService;
-import eu.esdihumboldt.hale.common.core.io.project.ProjectIO;
-import eu.esdihumboldt.hale.common.core.io.project.ProjectWriter
-import eu.esdihumboldt.hale.common.core.io.project.extension.ProjectFileExtension
-import eu.esdihumboldt.hale.common.core.io.project.extension.ProjectFileFactory;
-import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration
-import eu.esdihumboldt.hale.common.core.io.project.model.Project;
-import eu.esdihumboldt.hale.common.core.io.project.model.ProjectFile
-import eu.esdihumboldt.hale.common.core.io.report.IOReport
-import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier;
-import eu.esdihumboldt.hale.common.core.io.supplier.LocatableOutputSupplier
-import eu.esdihumboldt.hale.common.core.report.ReportHandler;
-import eu.esdihumboldt.hale.common.core.service.ServiceProvider
-import eu.esdihumboldt.hale.common.headless.HeadlessIO;
-import eu.esdihumboldt.hale.common.headless.impl.HeadlessProjectAdvisor;
+import eu.esdihumboldt.hale.common.core.io.project.ComplexConfigurationService
+import eu.esdihumboldt.hale.common.core.io.project.ProjectIO
+import eu.esdihumboldt.hale.common.core.io.project.model.Project
+import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier
+import eu.esdihumboldt.hale.common.core.report.ReportHandler
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
-import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.cli.picocli.CliBuilder
-import eu.esdihumboldt.util.io.OutputSupplier
-import groovy.transform.CompileStatic;
-import to.wetransform.halecli.project.advisor.SaveProjectAdvisor
+import groovy.cli.picocli.OptionAccessor
 
 /**
  * Base class for command creating derived projects.
