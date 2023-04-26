@@ -37,8 +37,6 @@ import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace;
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.transform.CompileStatic
-import groovy.cli.picocli.CliBuilder;
-import groovy.cli.picocli.OptionAccessor;
 import to.wetransform.halecli.util.ProjectCLI
 import to.wetransform.halecli.util.SchemaCLI;;;;;
 
@@ -52,7 +50,7 @@ class ReplaceSourceCommand extends AbstractMigrationCommand<DefaultSchemaMigrati
 
   @Override
   protected void addOptions(CliBuilder cli) {
-    // options for loading new source schema
+// options for loading new source schema
     SchemaCLI.loadSchemaOptions(cli, 'schema', 'The new source schema for the project')
   }
 

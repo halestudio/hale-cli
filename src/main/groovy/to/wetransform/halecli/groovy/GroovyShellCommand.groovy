@@ -16,29 +16,22 @@
 
 package to.wetransform.halecli.groovy
 
-import java.util.List
-
-import org.codehaus.groovy.tools.shell.AnsiDetector;
+import eu.esdihumboldt.cst.functions.groovy.helper.HelperFunctions
+import eu.esdihumboldt.hale.common.core.HalePlatform
+import eu.esdihumboldt.hale.common.core.io.HaleIO
+import eu.esdihumboldt.hale.common.core.io.Value
+import eu.esdihumboldt.util.cli.Command
+import eu.esdihumboldt.util.cli.CommandContext
+import groovy.transform.CompileStatic
+import groovyjarjarcommonscli.HelpFormatter
 import org.codehaus.groovy.tools.shell.Groovysh
 import org.codehaus.groovy.tools.shell.IO
-import org.codehaus.groovy.tools.shell.Main;
-import org.codehaus.groovy.tools.shell.util.HelpFormatter
+import org.codehaus.groovy.tools.shell.Main
 import org.codehaus.groovy.tools.shell.util.Logger
 import org.codehaus.groovy.tools.shell.util.MessageSource
 import org.codehaus.groovy.tools.shell.util.NoExitSecurityManager
 import org.eclipse.core.runtime.IConfigurationElement
-import org.eclipse.core.runtime.Platform;
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.AnsiConsole
-
-import eu.esdihumboldt.cst.functions.groovy.GroovyConstants
-import eu.esdihumboldt.cst.functions.groovy.helper.HelperFunctions
-import eu.esdihumboldt.hale.common.core.HalePlatform;
-import eu.esdihumboldt.hale.common.core.io.HaleIO;
-import eu.esdihumboldt.hale.common.core.io.Value;
-import eu.esdihumboldt.util.cli.Command
-import eu.esdihumboldt.util.cli.CommandContext
-import groovy.transform.CompileStatic;
+import org.eclipse.core.runtime.Platform
 
 /**
  * Groovy shell command based on Groovy shell main class.
