@@ -15,14 +15,13 @@
 
 package to.wetransform.halecli.schema
 
-import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail
-import static to.wetransform.halecli.util.HaleIOHelper.*
-import to.wetransform.halecli.util.SchemaCLI
-import eu.esdihumboldt.hale.common.cli.HaleCLIUtil;
+import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.schema.model.Schema
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
-
+import groovy.cli.picocli.CliBuilder
+import to.wetransform.halecli.util.SchemaCLI
+import groovy.cli.picocli.OptionAccessor
 /**
  * Reads a schema and writes it.
  *

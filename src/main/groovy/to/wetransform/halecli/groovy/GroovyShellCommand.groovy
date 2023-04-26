@@ -32,7 +32,8 @@ import org.codehaus.groovy.tools.shell.util.MessageSource
 import org.codehaus.groovy.tools.shell.util.NoExitSecurityManager
 import org.eclipse.core.runtime.IConfigurationElement
 import org.eclipse.core.runtime.Platform
-
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
 /**
  * Groovy shell command based on Groovy shell main class.
  *
