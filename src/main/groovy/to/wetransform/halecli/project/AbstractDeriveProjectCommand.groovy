@@ -39,9 +39,9 @@ import eu.esdihumboldt.hale.common.headless.impl.HeadlessProjectAdvisor;
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
 import eu.esdihumboldt.util.cli.CommandContext
+import groovy.cli.picocli.CliBuilder
 import eu.esdihumboldt.util.io.OutputSupplier
 import groovy.transform.CompileStatic;
-import groovy.util.CliBuilder
 import to.wetransform.halecli.project.advisor.SaveProjectAdvisor
 
 /**

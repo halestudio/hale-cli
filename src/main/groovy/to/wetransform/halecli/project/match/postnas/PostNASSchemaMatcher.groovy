@@ -15,6 +15,9 @@
 
 package to.wetransform.halecli.project.match.postnas
 
+import com.google.common.collect.ListMultimap
+import eu.esdihumboldt.hale.common.align.model.Entity
+
 import javax.xml.namespace.QName
 
 import com.google.common.collect.ArrayListMultimap
@@ -286,11 +289,11 @@ class PostNASSchemaMatcher implements SchemaMatcher {
 
     def sources = ArrayListMultimap.create()
     sources.put(null, ref)
-    cell.source = sources
+    cell.source = sources as ListMultimap<String, ? extends Entity>
 
     def targets = ArrayListMultimap.create()
     targets.put(null, target)
-    cell.target = targets
+    cell.target = targets as ListMultimap<String, ? extends Entity>
 
     cell.transformationIdentifier = functionId
 
