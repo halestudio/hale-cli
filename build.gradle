@@ -324,12 +324,11 @@ publishing {
 }
 
 // exclude distZip ands distTar artifacts
-/*FIXME update for current Gradle version
 configurations.archives.with {
-  artifacts.remove artifacts.find { it.archiveTask.is distZip }
-  artifacts.remove artifacts.find { it.archiveTask.is distTar }
+  artifacts.remove artifacts.find { it.file == 'zip' }
+  artifacts.remove artifacts.find { it.file == 'tar' }
 }
-*/
+
 
 // Workaround for gradle application plugin 'the input line is too long' error on Windows
 // see https://gist.github.com/jlmelville/2bfe9277e9e2c0ff79b6
