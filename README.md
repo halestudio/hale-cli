@@ -33,7 +33,7 @@ Build docker image:
 Run
 ---
 
-You can run the application using Gradle. However, there is no possibility to easily provide arguments.
+You can run the application using Gradle.
 
 ```
 ./gradlew run
@@ -43,6 +43,12 @@ Alternatively, you can run the start script of the built application.
 
 ```
 hale --version
+```
+
+You can provide arguments to run as string in `""` following the below syntax.
+For example pass argument `help` to run command as below
+```
+./gradlew run --args="help"
 ```
 
 If using `./gradlew installDist`, the start script can be found in `./build/install/hale/bin/`.
