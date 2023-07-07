@@ -233,7 +233,7 @@ distributions {
 
 docker {
   javaApplication {
-    baseImage = 'openjdk:8-jre-slim'
+    baseImage = 'eclipse-temurin:17-alpine'
     maintainer = 'Simon Templer "simon@wetransform.to"'
     tag = "wetransform/${project.name}:${project.version}"
   }
@@ -338,6 +338,10 @@ tasks.withType(CreateStartScripts).each { task ->
     text = text.replaceFirst(/(set CLASSPATH=%APP_HOME%\\lib\\).*/, { "${it[1]}*" })
     task.windowsScript.write text
   }
+}
+
+task uploadArchives {
+  dependsOn 'publish'
 }
 
 /*
