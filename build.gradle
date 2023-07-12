@@ -234,8 +234,9 @@ distributions {
 
 docker {
   javaApplication {
-    // https://github.com/bmuschko/gradle-docker-plugin/blob/e3bceb58c54a5eab33c78a078c0dbd21305874d2/build.gradle.kts#L43
-    baseImage = 'openjdk:8-jre-slim'
+    // https://bmuschko.github.io/gradle-docker-plugin/current/user-guide/#extension_2
+    // update base image to openjdk 17 jdk slim. other jdk like termurin, etc generates error
+    baseImage = 'eclipse-temurin:17-jre-alpine'
     maintainer = 'Simon Templer "simon@wetransform.to"'
     images = ["wetransform/${project.name}:${project.version}", "wetransform/${project.name}:latest"]
   }
