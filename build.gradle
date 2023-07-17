@@ -12,13 +12,14 @@ plugins {
   id 'application'
   id 'maven-publish'
   //id 'osgi' // discontinued - do we need it?
-  id 'com.bmuschko.docker-java-application' version '3.6.2'
+  id 'com.bmuschko.docker-java-application' version '9.3.1'
   id "nebula.ospackage-application" version "9.1.1"
   id 'org.ajoberstar.grgit' version '1.5.0'
 }
 
 apply plugin: 'org.standardout.eclipseconfig'
 
+// update to java 17
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
@@ -233,9 +234,11 @@ distributions {
 
 docker {
   javaApplication {
-    baseImage = 'openjdk:8-jre-slim'
+    // https://bmuschko.github.io/gradle-docker-plugin/current/user-guide/#extension_2
+    // update base image to openjdk 17 jdk slim. other jdk like termurin, etc generates error
+    baseImage = 'eclipse-temurin:17-jre-alpine'
     maintainer = 'Simon Templer "simon@wetransform.to"'
-    tag = "wetransform/${project.name}:${project.version}"
+    images = ["wetransform/${project.name}:${project.version}", "wetransform/${project.name}:latest"]
   }
 
   url = project.hasProperty('dockerHost') ? dockerHost : 'http://localdocker:2375'
@@ -248,31 +251,14 @@ docker {
   }
 }
 
-dockerPushImage {
-  // workaround for wrong image name used when pushing to docker hub
-  imageName = project.tasks.dockerBuildImage.getTag().split(':')[0]
-  tag = project.tasks.dockerBuildImage.getTag().split(':')[1]
-}
-
-dockerDistTar {
+dockerCreateDockerfile {
   def buildTime = java.time.ZonedDateTime.now().format(java.time.format.DateTimeFormatter.ISO_INSTANT);
   label('git.sha': grgit.head().id, 'git.branch': grgit.branch.current.name, 'build.version': version, 'build.time': buildTime)
+
 }
 
-// "latest" tag
-
-task dockerTagLatest(type: com.bmuschko.gradle.docker.tasks.image.DockerTagImage,
-    dependsOn: dockerBuildImage) {
-  imageId = "wetransform/${project.name}:${project.version}"
-  repository = "wetransform/${project.name}"
-  tag = 'latest'
-}
-
-task dockerPushLatest(type: com.bmuschko.gradle.docker.tasks.image.DockerPushImage,
-    dependsOn: dockerTagLatest) {
-  imageName = "wetransform/${project.name}"
-  tag = 'latest'
-}
+task dockerTagLatest(dependsOn: dockerBuildImage) {}
+task dockerPushLatest(dependsOn: dockerPushImage) {}
 
 /*
  * Packaging and publishing
@@ -338,6 +324,10 @@ tasks.withType(CreateStartScripts).each { task ->
     text = text.replaceFirst(/(set CLASSPATH=%APP_HOME%\\lib\\).*/, { "${it[1]}*" })
     task.windowsScript.write text
   }
+}
+
+task uploadArchives {
+  dependsOn 'publish'
 }
 
 /*
