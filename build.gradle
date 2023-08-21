@@ -175,17 +175,15 @@ configurations.all {
   // ensure SNAPSHOTs are updated every time if needed
   resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
-
+def defaultJvmArgs = ['-Dcache.level1.enabled=false',
+                                '-Dcache.level1.size=0',
+                                '-Dcache.level2.enabled=false',
+                                '-Dcache.level2.size=0',
+                                '--add-exports=java.base/sun.nio.ch=ALL-UNNAMED',
+                                '--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED']
 mainClassName = 'to.wetransform.halecli.CLI'
 applicationName = 'hale'
-applicationDefaultJvmArgs = [
-  '-Dcache.level1.enabled=false',
-  '-Dcache.level1.size=0',
-  '-Dcache.level2.enabled=false',
-  '-Dcache.level2.size=0',
-  '--add-exports=java.base/sun.nio.ch=ALL-UNNAMED',
-  '--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED'
-]
+applicationDefaultJvmArgs = defaultJvmArgs
 
 /*
  * plugin.xml and OSGi manifest
@@ -239,6 +237,9 @@ docker {
     baseImage = 'eclipse-temurin:17-jre-jammy'
     maintainer = 'Simon Templer "simon@wetransform.to"'
     images = ["wetransform/${project.name}:${project.version}", "wetransform/${project.name}:latest"]
+    // apply JAVA_OPTS to docker plugin as the default args configured in build does not apply to docker plugin
+    jvmArgs = defaultJvmArgs
+
   }
 
   url = project.hasProperty('dockerHost') ? dockerHost : 'http://localdocker:2375'
