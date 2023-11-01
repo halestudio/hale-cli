@@ -255,7 +255,7 @@ docker {
 dockerCreateDockerfile {
   def buildTime = java.time.ZonedDateTime.now().format(java.time.format.DateTimeFormatter.ISO_INSTANT);
   label('git.sha': grgit.head().id, 'git.branch': grgit.branch.current.name, 'build.version': version, 'build.time': buildTime)
-
+  instruction 'COPY hale /hale/'
 }
 
 task dockerTagLatest(dependsOn: dockerBuildImage) {}
@@ -280,6 +280,25 @@ groovydoc {
 }
 dependencies {
   jansi 'org.fusesource.jansi:jansi:1.11'
+}
+
+task dockerCopyDistResources(type: Copy) {
+  description "Copies the distribution resources to a temporary directory for image creation."
+  dependsOn installDist
+  from installDist.destinationDir.parentFile
+  into dockerCreateDockerfile.destFile.get().asFile.parentFile
+  exclude "**/lib/${jar.archiveFileName}"
+  into("app-lib") {
+    from jar
+  }
+}
+
+tasks.dockerSyncBuildContext {
+  finalizedBy dockerCopyDistResources
+}
+
+tasks.dockerBuildImage {
+  dependsOn dockerCopyDistResources
 }
 
 // package source into a jar file
