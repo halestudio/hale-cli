@@ -192,7 +192,7 @@ public class MergeMigrator extends DefaultAlignmentMigrator {
 
       boolean noSource = cell.getSource() == null || cell.getSource().isEmpty();
 
-      statistics.addFunctionUse(fun, migrationAlignment, noSource);
+      statistics.addFunctionUse(function, fun, migrationAlignment, noSource);
     });
   }
 
