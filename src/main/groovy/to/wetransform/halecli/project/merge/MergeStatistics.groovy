@@ -167,7 +167,7 @@ class MergeStatistics {
         count: 1,
         id: functionId,
         noSource: 0,
-        augmenation: fun?.augmentation
+        augmentation: fun?.augmentation
       ]
       map[name] = entry
     }
