@@ -1,6 +1,24 @@
 # Change Log
+
 All notable changes to this project will be documented in this file.
 See the [change log guidelines](http://keepachangelog.com/) for information on how to structure the file.
+
+## [5.1.0]
+
+### Added
+
+- Upgrade hale dependencies to 5.1 and Java version to 17.
+- Added support for specifying filters when loading data.
+
+### Changed
+
+- Always use the latest versions of hale offline resources like INSPIRE schemas.
+- Include support for MS Access.
+
+### Fixed
+
+- Fixed a problem that lead to alignment migration failing if collection of statistics was not enabled.
+- Fixed error when collecting merge statistics for an alignment with custom functions.
 
 ## [4.0.0]
 
@@ -111,6 +129,7 @@ Initial release based on hale studio 3.0.0.
 - Command to generate JSON representations of hale alignments (`hale project alignment export-json`)
 - Experimental command to filter to create a copy of a hale project with a filtered alignment (`hale project alignment filter`)
 
+[5.1.0]: https://github.com/halestudio/hale-cli/compare/v4.0.0...v5.1.0
 [4.0.0]: https://github.com/halestudio/hale-cli/compare/v3.5.0...v4.0.0
 [3.5.0]: https://github.com/halestudio/hale-cli/compare/v3.4.0...v3.5.0
 [3.4.0]: https://github.com/halestudio/hale-cli/compare/v3.3.2...v3.4.0
