@@ -26,11 +26,11 @@ targetCompatibility = JavaVersion.VERSION_17
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '5.1.0-SNAPSHOT'
+  haleVersion = '5.1.0'
   groovyVersion = '2.5.19'
 }
 
-version = '5.1.0-SNAPSHOT'
+version = '5.1.0'
 
 /*
  * Dependencies
