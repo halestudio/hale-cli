@@ -186,13 +186,17 @@ public class MergeMigrator extends DefaultAlignmentMigrator {
    * @param migrationAlignment if the alignment is the migration alignment
    */
   private void collectAlignmentStatistics(Alignment alignment, boolean migrationAlignment) {
+    if (statistics == null) {
+      return;
+    }
+
     alignment.getCells().forEach(cell -> {
       String function = cell.getTransformationIdentifier();
       FunctionDefinition<?> fun = FunctionUtil.getFunction(function, serviceProvider);
 
       boolean noSource = cell.getSource() == null || cell.getSource().isEmpty();
 
-      statistics.addFunctionUse(fun, migrationAlignment, noSource);
+      statistics.addFunctionUse(function, fun, migrationAlignment, noSource);
     });
   }
 

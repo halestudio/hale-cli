@@ -152,21 +152,22 @@ class MergeStatistics {
 
   /**
    * Add the use of a specific function (in a cell).
-   * @param fun the function definition
+   * @param functionId the function ID
+   * @param fun the function definition if available
    * @param migrationFunction if the function usage is from the migration alignment
    */
-  public void addFunctionUse(FunctionDefinition fun, boolean migrationFunction, boolean noSource) {
+  public void addFunctionUse(String functionId, FunctionDefinition fun, boolean migrationFunction, boolean noSource) {
     def map = migrationFunction ? migrationFunctions : functions
 
-    String name = fun.displayName
+    String name = fun?.displayName ?: functionId
 
     def entry = map[name]
     if (entry == null) {
       entry = [
         count: 1,
-        id: fun.id,
+        id: functionId,
         noSource: 0,
-        augmenation: fun.augmentation
+        augmentation: fun?.augmentation
       ]
       map[name] = entry
     }

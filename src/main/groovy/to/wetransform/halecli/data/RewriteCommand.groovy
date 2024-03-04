@@ -15,50 +15,24 @@
 
 package to.wetransform.halecli.data
 
-import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail
-import static to.wetransform.halecli.util.HaleIOHelper.*
-
-import java.io.File;
-import java.util.Iterator;
-import java.util.List
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-
-import com.google.common.io.Files
-
-import eu.esdihumboldt.hale.app.transform.ConsoleProgressMonitor
-import eu.esdihumboldt.hale.common.cli.HaleCLIUtil;
-import eu.esdihumboldt.hale.common.core.io.HaleIO
-import eu.esdihumboldt.hale.common.core.io.Value;
-import eu.esdihumboldt.hale.common.core.io.report.IOReport;
-import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier
-import eu.esdihumboldt.hale.common.headless.transform.AbstractTransformationJob;
-import eu.esdihumboldt.hale.common.instance.graph.reference.ReferenceGraph;
-import eu.esdihumboldt.hale.common.instance.graph.reference.impl.XMLInspector
+import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
+import eu.esdihumboldt.hale.common.core.io.report.IOReport
 import eu.esdihumboldt.hale.common.instance.io.InstanceWriter
-import eu.esdihumboldt.hale.common.instance.model.DataSet;
-import eu.esdihumboldt.hale.common.instance.model.Filter;
-import eu.esdihumboldt.hale.common.instance.model.Instance;
+import eu.esdihumboldt.hale.common.instance.model.DataSet
 import eu.esdihumboldt.hale.common.instance.model.InstanceCollection
-import eu.esdihumboldt.hale.common.instance.model.impl.FilteredInstanceCollection;
-import eu.esdihumboldt.hale.common.instance.orient.OInstance;
-import eu.esdihumboldt.hale.common.instance.orient.storage.BrowseOrientInstanceCollection;
+import eu.esdihumboldt.hale.common.instance.orient.storage.BrowseOrientInstanceCollection
 import eu.esdihumboldt.hale.common.instance.orient.storage.LocalOrientDB
-import eu.esdihumboldt.hale.common.instance.orient.storage.StoreInstancesJob;
-import eu.esdihumboldt.hale.common.schema.model.Schema;
-import eu.esdihumboldt.hale.common.schema.model.TypeIndex
+import eu.esdihumboldt.hale.common.schema.model.Schema
 import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
-import eu.esdihumboldt.util.cli.CLIUtil;
+import eu.esdihumboldt.util.cli.CLIUtil
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
-import groovy.transform.CompileStatic
+import groovy.cli.picocli.CliBuilder
 import to.wetransform.halecli.util.InstanceCLI
 import to.wetransform.halecli.util.SchemaCLI
+import groovy.cli.picocli.OptionAccessor
+
+import static to.wetransform.halecli.util.HaleIOHelper.guessSchema
 
 /**
  * Reads a source file and writes it.

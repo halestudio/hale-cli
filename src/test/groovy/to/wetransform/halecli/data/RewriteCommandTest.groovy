@@ -15,16 +15,16 @@
 
 package to.wetransform.halecli.data
 
-import static org.junit.Assert.*
-
+import eu.esdihumboldt.util.cli.Runner
 import org.junit.BeforeClass
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.contrib.java.lang.system.SystemOutRule
-
 import to.wetransform.halecli.internal.Init
-import eu.esdihumboldt.hale.common.core.HalePlatform
-import eu.esdihumboldt.util.cli.Runner
+
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
 
 /**
  * Tests for rewrite command.
@@ -134,6 +134,273 @@ class RewriteCommandTest {
       assertTrue(targetFile.size() > 0)
       //TODO check file content?
 
+    } finally {
+      targetFile.delete()
+    }
+  }
+
+  @Test
+  void testRewriteFilter() {
+
+    def args = ['data', 'rewrite'];
+
+    args << '--data'
+    args << getClass().getClassLoader().getResource("testdata/inspire2.gml")
+
+    args << '--data-filter'
+    args << "CQL:id = 'A1'"
+
+    def targetFile = File.createTempFile('rewrite', '.gml')
+    args << '--target'
+    args << targetFile.absolutePath
+    args << '--target-writer'
+    args << 'eu.esdihumboldt.hale.io.gml.writer'
+    args << '--target-setting'
+    args << 'xml.pretty=true'
+
+    try {
+      int code = new Runner('hale').run(args as String[])
+
+      // expecting a successful execution
+      assertEquals(0, code)
+
+      assertTrue(targetFile.exists())
+      assertTrue(targetFile.size() > 0)
+
+      def xml = new XmlSlurper().parse(targetFile)
+      def objects = xml.featureMember
+
+      assertEquals(1, objects.size())
+    } finally {
+      targetFile.delete()
+    }
+  }
+
+  @Test
+  void testRewriteFilterList() {
+
+    def args = ['data', 'rewrite'];
+
+    args << '--data'
+    args << getClass().getClassLoader().getResource("testdata/inspire2.gml")
+
+    args << '--data-filter'
+    args << "CQL:id = 'SW1'"
+
+    args << '--data-filter'
+    args << "CQL:id = 'A1'"
+
+    def targetFile = File.createTempFile('rewrite', '.gml')
+    args << '--target'
+    args << targetFile.absolutePath
+    args << '--target-writer'
+    args << 'eu.esdihumboldt.hale.io.gml.writer'
+    args << '--target-setting'
+    args << 'xml.pretty=true'
+
+    try {
+      int code = new Runner('hale').run(args as String[])
+
+      // expecting a successful execution
+      assertEquals(0, code)
+
+      assertTrue(targetFile.exists())
+      assertTrue(targetFile.size() > 0)
+
+      def xml = new XmlSlurper().parse(targetFile)
+      def objects = xml.featureMember
+
+      assertEquals(2, objects.size())
+      def wcs = objects.Watercourse
+      assertEquals(1, wcs.size())
+      def sws = objects.StandingWater
+      assertEquals(1, sws.size())
+    } finally {
+      targetFile.delete()
+    }
+  }
+
+  @Test
+  void testRewriteExcludeType() {
+
+    def args = ['data', 'rewrite'];
+
+    args << '--data'
+    args << getClass().getClassLoader().getResource("testdata/inspire2.gml")
+
+    args << '--data-exclude-type'
+    args << 'Watercourse'
+
+    def targetFile = File.createTempFile('rewrite', '.gml')
+    args << '--target'
+    args << targetFile.absolutePath
+    args << '--target-writer'
+    args << 'eu.esdihumboldt.hale.io.gml.writer'
+    args << '--target-setting'
+    args << 'xml.pretty=true'
+
+    try {
+      int code = new Runner('hale').run(args as String[])
+
+      // expecting a successful execution
+      assertEquals(0, code)
+
+      assertTrue(targetFile.exists())
+      assertTrue(targetFile.size() > 0)
+
+      def xml = new XmlSlurper().parse(targetFile)
+      def objects = xml.featureMember
+
+      assertEquals(1, objects.size())
+      def wcs = objects.Watercourse
+      assertEquals(0, wcs.size())
+      def sws = objects.StandingWater
+      assertEquals(1, sws.size())
+    } finally {
+      targetFile.delete()
+    }
+  }
+
+  @Ignore('Does not succeed due to bug in hale InstanceFilterDefinition - exclude is ignored if no other filter is present')
+  @Test
+  void testRewriteExclude() {
+
+    def args = ['data', 'rewrite'];
+
+    args << '--data'
+    args << getClass().getClassLoader().getResource("testdata/inspire2.gml")
+
+    args << '--data-exclude'
+    args << "\"id\" = 'A2'"
+
+    def targetFile = File.createTempFile('rewrite', '.gml')
+    args << '--target'
+    args << targetFile.absolutePath
+    args << '--target-writer'
+    args << 'eu.esdihumboldt.hale.io.gml.writer'
+    args << '--target-setting'
+    args << 'xml.pretty=true'
+
+    try {
+      int code = new Runner('hale').run(args as String[])
+
+      // expecting a successful execution
+      assertEquals(0, code)
+
+      assertTrue(targetFile.exists())
+      assertTrue(targetFile.size() > 0)
+
+      def xml = new XmlSlurper().parse(targetFile)
+      def objects = xml.featureMember
+
+      assertEquals(3, objects.size())
+      def wcs = objects.Watercourse
+      assertEquals(2, wcs.size())
+      def sws = objects.StandingWater
+      assertEquals(1, sws.size())
+    } finally {
+      targetFile.delete()
+    }
+  }
+
+  @Test
+  void testRewriteExcludeWorkaround() {
+
+    def args = ['data', 'rewrite'];
+
+    args << '--data'
+    args << getClass().getClassLoader().getResource("testdata/inspire2.gml")
+
+    args << '--data-exclude'
+    args << "\"id\" = 'A2'"
+
+    args << '--data-exclude-type'
+    args << 'DoesNotExist'
+
+    def targetFile = File.createTempFile('rewrite', '.gml')
+    args << '--target'
+    args << targetFile.absolutePath
+    args << '--target-writer'
+    args << 'eu.esdihumboldt.hale.io.gml.writer'
+    args << '--target-setting'
+    args << 'xml.pretty=true'
+
+    try {
+      int code = new Runner('hale').run(args as String[])
+
+      // expecting a successful execution
+      assertEquals(0, code)
+
+      assertTrue(targetFile.exists())
+      assertTrue(targetFile.size() > 0)
+
+      def xml = new XmlSlurper().parse(targetFile)
+      def objects = xml.featureMember
+
+      assertEquals(3, objects.size())
+      def wcs = objects.Watercourse
+      assertEquals(2, wcs.size())
+      def sws = objects.StandingWater
+      assertEquals(1, sws.size())
+    } finally {
+      targetFile.delete()
+    }
+  }
+
+  @Test
+  void testRewriteFilterContext() {
+
+    def args = ['data', 'rewrite'];
+
+    args << '--data'
+    args << getClass().getClassLoader().getResource("testdata/inspire2.gml")
+
+    args << '--data-filter'
+    args << '''groovy:
+      def type = instance.definition.name
+      boolean rejected = false
+      if (type) {
+        withContext { c ->
+          def typeMap = c.typeCounts
+          if (!typeMap) {
+            typeMap = [:]
+            c.typeCounts = typeMap
+          }
+          def count = typeMap[type] ?: 0
+          if (count >= 2) { // only keep max 2 per type
+            rejected = true
+          }
+          typeMap[type] = count + 1
+        }
+      }
+      !rejected
+    '''
+
+    def targetFile = File.createTempFile('rewrite', '.gml')
+    args << '--target'
+    args << targetFile.absolutePath
+    args << '--target-writer'
+    args << 'eu.esdihumboldt.hale.io.gml.writer'
+    args << '--target-setting'
+    args << 'xml.pretty=true'
+
+    try {
+      int code = new Runner('hale').run(args as String[])
+
+      // expecting a successful execution
+      assertEquals(0, code)
+
+      assertTrue(targetFile.exists())
+      assertTrue(targetFile.size() > 0)
+
+      def xml = new XmlSlurper().parse(targetFile)
+      def objects = xml.featureMember
+
+      assertEquals(3, objects.size())
+      def wcs = objects.Watercourse
+      assertEquals(2, wcs.size())
+      def sws = objects.StandingWater
+      assertEquals(1, sws.size())
     } finally {
       targetFile.delete()
     }

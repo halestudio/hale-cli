@@ -15,21 +15,17 @@
 
 package to.wetransform.halecli.project.match
 
-import java.util.List
-
-import eu.esdihumboldt.hale.common.align.model.Alignment;
-import eu.esdihumboldt.hale.common.cli.HaleCLIUtil;
+import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.core.io.project.model.Project
 import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier
-import eu.esdihumboldt.hale.common.core.report.ReportHandler;
 import eu.esdihumboldt.hale.common.schema.model.Schema
-import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace;
+import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
-import to.wetransform.halecli.project.ProjectHelper
-import to.wetransform.halecli.project.match.postnas.PostNASSchemaMatcher
-import to.wetransform.halecli.util.ProjectCLI;
-import to.wetransform.halecli.util.SchemaCLI;
+import groovy.cli.picocli.OptionAccessor
+import to.wetransform.halecli.util.ProjectCLI
+import to.wetransform.halecli.util.SchemaCLI
+import groovy.cli.picocli.CliBuilder
 
 abstract class MatchSchemasCommand implements Command {
 

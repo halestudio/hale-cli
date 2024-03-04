@@ -1,33 +1,36 @@
 buildscript {
   repositories {
-    jcenter()
+    mavenCentral()
   }
   dependencies {
-    classpath 'org.standardout:gradle-eclipseconfig:1.0.0'
+    classpath 'org.standardout:gradle-eclipseconfig:1.1.1'
   }
 }
 
 plugins {
   id 'groovy'
   id 'application'
-  id 'maven'
-  id 'osgi'
-  id 'com.bmuschko.docker-java-application' version '3.6.2'
-  id "nebula.ospackage-application" version "3.6.1"
+  id 'maven-publish'
+  //id 'osgi' // discontinued - do we need it?
+  id 'com.bmuschko.docker-java-application' version '9.3.1'
+  id "nebula.ospackage-application" version "9.1.1"
   id 'org.ajoberstar.grgit' version '1.5.0'
 }
 
 apply plugin: 'org.standardout.eclipseconfig'
 
-sourceCompatibility = '1.8'
+// update to java 17
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '4.0.0'
+  haleVersion = '5.1.0'
+  groovyVersion = '2.5.19'
 }
 
-version = '4.0.1-SNAPSHOT'
+version = '5.1.0'
 
 /*
  * Dependencies
@@ -36,11 +39,13 @@ version = '4.0.1-SNAPSHOT'
 repositories {
   // mavenLocal() //XXX for testing
 
+  // merge both snapshot and release repositories to virtual repository named local
+  // because gradle was reporting error if it encountered dependencies from snapshots
+  // but libs-release-local was placed before snapshots here in the hierarchy and also
+  // vice-versa case when dependencies were encountered from release but snapshots
+  // was placed before release
   maven { // wetransform release repository (HALE releases and Eclipse dependencies)
-    url 'https://artifactory.wetransform.to/artifactory/libs-release-local'
-  }
-  maven { // wetransform snapshot repository (HALE snapshots)
-    url 'https://artifactory.wetransform.to/artifactory/libs-snapshot-local'
+    url 'https://artifactory.wetransform.to/artifactory/local'
   }
 
   // this needs to be defined before jcenter/MavenCentral for retrieving JAI
@@ -48,140 +53,137 @@ repositories {
     url 'https://repo.osgeo.org/repository/release/'
   }
 
-  maven { // HALE artifactory (dependencies for HALE)
-    url 'https://artifactory.wetransform.to/artifactory/ext-release-local'
-  }
-
-  jcenter()
+  mavenCentral()
 }
 
 configurations {
   // exclude Saxon9 custom dependency by schema-utils (schematron validation)
-  compile.exclude group: 'org.opengis.cite.saxon', module: 'saxon9'
+  implementation.exclude group: 'org.opengis.cite.saxon', module: 'saxon9'
 }
 
 dependencies {
   // HALE
 
   // CLI API, utilities and default commands
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.util.cli:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.cli:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.cli.commands:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.util.cli:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.cli:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.cli.commands:$haleVersion"
+
+  implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
 
   // core
-  compile 'eu.esdihumboldt.unpuzzled:org.eclipse.equinox.nonosgi.registry:1.0.0'
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align.groovy:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align.merge:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.referencing:$haleVersion"
+  implementation 'eu.esdihumboldt.unpuzzled:org.eclipse.equinox.nonosgi.registry:1.0.0'
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align.groovy:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align.merge:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.referencing:$haleVersion"
 
   // transformation
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.transform:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.transform:$haleVersion"
   // needed to run successfully:
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.headless.orient:$haleVersion" // reiterable transformation sink (for WFS FeatureCollection)
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.propertyaccessor:$haleVersion" // for CQL filters to work
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.headless.orient:$haleVersion" // reiterable transformation sink (for WFS FeatureCollection)
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.propertyaccessor:$haleVersion" // for CQL filters to work
   // transformation functions:
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.core:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.inspire:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.geometric:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.groovy:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.groovy.helpers:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.numeric:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.string:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.custom:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.collector:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.core:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.inspire:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.geometric:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.groovy:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.groovy.helpers:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.numeric:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.string:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.custom:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.collector:$haleVersion"
 
   // formats
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xml:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xsd:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.gml:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.shp:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.csv:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.wfs:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.json:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xls:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.geopackage:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.html.svg:$haleVersion"
-  
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xml:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xsd:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.gml:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.shp:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.csv:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.wfs:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.json:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xls:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.geopackage:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.html.svg:$haleVersion"
+
   // database support
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.postgresql:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.mssql:$haleVersion"
-  
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.postgresql:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.mssql:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.msaccess:$haleVersion"
+
   // hale connect
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.haleconnect:$haleVersion"
-  
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.haleconnect:$haleVersion"
+
   // code list formats
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.codelist.xml:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.codelist.xml:$haleVersion"
 
   // Schematron validation
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.schematron:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.schematron:$haleVersion"
   // replacement for omitted Saxon dependency
   // tested w/ schematron validation in https://github.com/wetransform/exp-schematron/tree/exp/saxon-he
-  compile 'net.sf.saxon:Saxon-HE:9.7.0-20'
+  implementation 'net.sf.saxon:Saxon-HE:9.7.0-20'
 
   // converters
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.core:$haleVersion"
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.wkt:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.core:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.wkt:$haleVersion"
 
   // Groovy meta extensions
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.util.groovy.meta.extension:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.util.groovy.meta.extension:$haleVersion"
 
   // logging
-  compile(group: 'eu.esdihumboldt.unpuzzled', name: 'de.fhg.igd.slf4jplus.logback.appender', version: '1.2.0.201503311443')
-  compile 'org.slf4j:jul-to-slf4j:1.7.21'
+  implementation(group: 'eu.esdihumboldt.unpuzzled', name: 'de.fhg.igd.slf4jplus.logback.appender', version: '1.2.0.201503311443')
+  implementation 'org.slf4j:jul-to-slf4j:1.7.21'
 
   // resource cache
-  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
-  def resourcesVersion = '2018.8.7'
+  implementation(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
+  def resourcesVersion = '2023.10.28'
   // OpenGIS schemas, INSPIRE schemas, W3C schemas, etc.
-  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: resourcesVersion)
-  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: resourcesVersion)
-  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.portele.de', version: resourcesVersion)
-  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.w3.org', version: resourcesVersion)
+  implementation(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: resourcesVersion)
+  implementation(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: resourcesVersion)
+  implementation(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.portele.de', version: resourcesVersion)
+  implementation(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.w3.org', version: resourcesVersion)
   // INSPIRE code lists and feature concepts
-  compile(group: 'eu.esdihumboldt.hale',
+  implementation(group: 'eu.esdihumboldt.hale',
     name: 'eu.esdihumboldt.util.resource.codelists.inspire',
     version: resourcesVersion)
-  compile(group: 'eu.esdihumboldt.hale',
+  implementation(group: 'eu.esdihumboldt.hale',
     name: 'eu.esdihumboldt.util.resource.codelists.inspire.accept-xml',
     version: resourcesVersion)
-  compile(group: 'eu.esdihumboldt.hale',
+  implementation(group: 'eu.esdihumboldt.hale',
     name: 'eu.esdihumboldt.util.resource.featureconcepts.inspire',
     version: resourcesVersion)
-
-  // More resources with different version
-  resourcesVersion = '2020.6.29'
-  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.adv-online.de', version: resourcesVersion)
-  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.xplanung.de', version: resourcesVersion)
+  // More resources
+  implementation(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.adv-online.de', version: resourcesVersion)
+  implementation(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.xplanung.de', version: resourcesVersion)
 
   // user / customer specific
-  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.adv.merge:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.adv.merge:$haleVersion"
 
   // CLI
-  compile 'commons-cli:commons-cli:1.3.1'
+  implementation 'commons-cli:commons-cli:1.5.0'
   // Groovy Shell
-  compile 'jline:jline:2.13'
+  implementation 'jline:jline:2.13'
 
   // Testing
-  testCompile 'junit:junit:4.12'
-  testCompile 'com.github.stefanbirkner:system-rules:1.16.0'
+  testImplementation 'junit:junit:4.12'
+  testImplementation 'com.github.stefanbirkner:system-rules:1.16.0'
 }
 
 configurations.all {
   // ensure SNAPSHOTs are updated every time if needed
   resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
-
+def defaultJvmArgs = ['-Dcache.level1.enabled=false',
+                                '-Dcache.level1.size=0',
+                                '-Dcache.level2.enabled=false',
+                                '-Dcache.level2.size=0',
+                                '--add-exports=java.base/sun.nio.ch=ALL-UNNAMED',
+                                '--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED']
 mainClassName = 'to.wetransform.halecli.CLI'
 applicationName = 'hale'
-applicationDefaultJvmArgs = [
-  '-Dcache.level1.enabled=false',
-  '-Dcache.level1.size=0',
-  '-Dcache.level2.enabled=false',
-  '-Dcache.level2.size=0'
-]
+applicationDefaultJvmArgs = defaultJvmArgs
 
 /*
  * plugin.xml and OSGi manifest
@@ -193,8 +195,8 @@ applicationDefaultJvmArgs = [
  */
 jar {
   manifest {
-    symbolicName = 'to.wetransform.halecli;singleton:=true'
-    instruction 'Bundle-Vendor', 'wetransform GmbH'
+    attributes 'Bundle-SymbolicName': 'to.wetransform.halecli;singleton:=true',
+      'Bundle-Vendor': 'wetransform GmbH'
   }
 }
 
@@ -230,9 +232,14 @@ distributions {
 
 docker {
   javaApplication {
-    baseImage = 'openjdk:8-jre-slim'
+    // https://bmuschko.github.io/gradle-docker-plugin/current/user-guide/#extension_2
+    // switching to jre-jammy as the use pf Alpine as the OS of the hale-cli image breaks derived images that expect Ubuntu
+    baseImage = 'eclipse-temurin:17-jre-jammy'
     maintainer = 'Simon Templer "simon@wetransform.to"'
-    tag = "wetransform/${project.name}:${project.version}"
+    images = ["wetransform/${project.name}:${project.version}", "wetransform/${project.name}:latest"]
+    // apply JAVA_OPTS to docker plugin as the default args configured in build does not apply to docker plugin
+    jvmArgs = defaultJvmArgs
+
   }
 
   url = project.hasProperty('dockerHost') ? dockerHost : 'http://localdocker:2375'
@@ -245,31 +252,14 @@ docker {
   }
 }
 
-dockerPushImage {
-  // workaround for wrong image name used when pushing to docker hub
-  imageName = project.tasks.dockerBuildImage.getTag().split(':')[0]
-  tag = project.tasks.dockerBuildImage.getTag().split(':')[1]
-}
-
-dockerDistTar {
+dockerCreateDockerfile {
   def buildTime = java.time.ZonedDateTime.now().format(java.time.format.DateTimeFormatter.ISO_INSTANT);
   label('git.sha': grgit.head().id, 'git.branch': grgit.branch.current.name, 'build.version': version, 'build.time': buildTime)
+  instruction 'COPY hale /hale/'
 }
 
-// "latest" tag
-
-task dockerTagLatest(type: com.bmuschko.gradle.docker.tasks.image.DockerTagImage,
-    dependsOn: dockerBuildImage) {
-  imageId = "wetransform/${project.name}:${project.version}"
-  repository = "wetransform/${project.name}"
-  tag = 'latest'
-}
-
-task dockerPushLatest(type: com.bmuschko.gradle.docker.tasks.image.DockerPushImage,
-    dependsOn: dockerTagLatest) {
-  imageName = "wetransform/${project.name}"
-  tag = 'latest'
-}
+task dockerTagLatest(dependsOn: dockerBuildImage) {}
+task dockerPushLatest(dependsOn: dockerPushImage) {}
 
 /*
  * Packaging and publishing
@@ -292,41 +282,57 @@ dependencies {
   jansi 'org.fusesource.jansi:jansi:1.11'
 }
 
+task dockerCopyDistResources(type: Copy) {
+  description "Copies the distribution resources to a temporary directory for image creation."
+  dependsOn installDist
+  from installDist.destinationDir.parentFile
+  into dockerCreateDockerfile.destFile.get().asFile.parentFile
+  exclude "**/lib/${jar.archiveFileName}"
+  into("app-lib") {
+    from jar
+  }
+}
+
+tasks.dockerSyncBuildContext {
+  finalizedBy dockerCopyDistResources
+}
+
+tasks.dockerBuildImage {
+  dependsOn dockerCopyDistResources
+}
+
 // package source into a jar file
 task packageSources(type: Jar) {
   from sourceSets.main.allSource
   classifier = 'sources'
 }
 
-// define artifacts for upload
-artifacts {
-  archives jar
-  archives packageJavadoc
-  archives packageSources
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+      artifact packageSources
+      artifact packageJavadoc
+    }
+  }
+
+  repositories {
+    maven {
+      url = project.version.endsWith('-SNAPSHOT') ?
+        'https://artifactory.wetransform.to/artifactory/libs-snapshot-local' :
+        'https://artifactory.wetransform.to/artifactory/libs-release-local'
+      credentials {
+        username project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : ''
+        password project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : ''
+      }
+    }
+  }
 }
 
 // exclude distZip ands distTar artifacts
 configurations.archives.with {
-  artifacts.remove artifacts.find { it.archiveTask.is distZip }
-  artifacts.remove artifacts.find { it.archiveTask.is distTar }
-}
-
-uploadArchives {
-  repositories {
-    mavenDeployer {
-
-      // upload to wetransform artifactory
-      repository(url: 'https://artifactory.wetransform.to/artifactory/libs-release-local') {
-        authentication(userName: project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : '',
-          password: project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : '')
-      }
-      snapshotRepository(url: 'https://artifactory.wetransform.to/artifactory/libs-snapshot-local') {
-        authentication(userName: project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : '',
-          password: project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : '')
-      }
-
-    }
-  }
+  artifacts.remove artifacts.find { it.file == 'zip' }
+  artifacts.remove artifacts.find { it.file == 'tar' }
 }
 
 
@@ -334,16 +340,19 @@ uploadArchives {
 // see https://gist.github.com/jlmelville/2bfe9277e9e2c0ff79b6
 tasks.withType(CreateStartScripts).each { task ->
   task.doLast {
-      String text = task.windowsScript.text
-      text = text.replaceFirst(/(set CLASSPATH=%APP_HOME%\\lib\\).*/, { "${it[1]}*" })
-      task.windowsScript.write text
+    String text = task.windowsScript.text
+    text = text.replaceFirst(/(set CLASSPATH=%APP_HOME%\\lib\\).*/, { "${it[1]}*" })
+    task.windowsScript.write text
   }
 }
 
+task uploadArchives {
+  dependsOn 'publish'
+}
 
 /*
  * Gradle wrapper
  */
 wrapper {
-  gradleVersion = '3.5'
+  gradleVersion = '7.6.1'
 }

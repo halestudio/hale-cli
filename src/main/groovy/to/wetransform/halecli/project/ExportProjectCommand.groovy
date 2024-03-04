@@ -15,29 +15,14 @@
 
 package to.wetransform.halecli.project
 
-import java.util.List
-
-import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration;
-import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigrator
-import eu.esdihumboldt.hale.common.align.migrate.MigrationOptions;
-import eu.esdihumboldt.hale.common.align.migrate.impl.DefaultAlignmentMigrator
-import eu.esdihumboldt.hale.common.align.migrate.impl.MigrationOptionsImpl
-import eu.esdihumboldt.hale.common.align.migrate.util.EffectiveMapping;
-import eu.esdihumboldt.hale.common.align.model.Alignment
-import eu.esdihumboldt.hale.common.cli.HaleCLIUtil;
-import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
-import eu.esdihumboldt.hale.common.core.io.project.model.Project
-import eu.esdihumboldt.hale.common.core.report.SimpleLog;
-import eu.esdihumboldt.hale.common.core.service.ServiceProvider;
+import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
-import eu.esdihumboldt.hale.common.instance.io.InstanceIO;
-import eu.esdihumboldt.hale.common.schema.io.SchemaIO;
-import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
-import groovy.transform.CompileStatic
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
 import to.wetransform.halecli.util.HaleConnectCLI
-import to.wetransform.halecli.util.ProjectCLI;;;;
+import to.wetransform.halecli.util.ProjectCLI
 
 /**
  * Command exporting a project

@@ -15,42 +15,32 @@
 
 package to.wetransform.halecli.project.alignment
 
-import javax.xml.namespace.QName
-
 import eu.esdihumboldt.cst.functions.groovy.GroovyJoin
-import eu.esdihumboldt.hale.common.align.migrate.util.MigrationUtil;
-import eu.esdihumboldt.hale.common.align.model.Alignment
-import eu.esdihumboldt.hale.common.align.model.AlignmentUtil;
-import eu.esdihumboldt.hale.common.align.model.BaseAlignmentCell;
-import eu.esdihumboldt.hale.common.align.model.Cell
-import eu.esdihumboldt.hale.common.align.model.CellUtil;
-import eu.esdihumboldt.hale.common.align.model.Entity
-import eu.esdihumboldt.hale.common.align.model.ModifiableCell;
-import eu.esdihumboldt.hale.common.align.model.MutableAlignment
-import eu.esdihumboldt.hale.common.align.model.MutableCell
-import eu.esdihumboldt.hale.common.align.model.TransformationMode;
+import eu.esdihumboldt.hale.common.align.migrate.util.MigrationUtil
+import eu.esdihumboldt.hale.common.align.model.*
 import eu.esdihumboldt.hale.common.align.model.functions.JoinFunction
 import eu.esdihumboldt.hale.common.align.model.functions.join.JoinParameter
 import eu.esdihumboldt.hale.common.align.model.impl.DefaultAlignment
-import eu.esdihumboldt.hale.common.align.model.impl.DefaultCell;
-import eu.esdihumboldt.hale.common.core.io.ExportProvider;
+import eu.esdihumboldt.hale.common.align.model.impl.DefaultCell
+import eu.esdihumboldt.hale.common.core.io.ExportProvider
 import eu.esdihumboldt.hale.common.core.io.Value
-import eu.esdihumboldt.hale.common.core.io.ValueList;
+import eu.esdihumboldt.hale.common.core.io.ValueList
 import eu.esdihumboldt.hale.common.core.io.project.ComplexConfigurationService
-import eu.esdihumboldt.hale.common.core.io.project.ProjectIO;
+import eu.esdihumboldt.hale.common.core.io.project.ProjectIO
 import eu.esdihumboldt.hale.common.core.io.project.model.Project
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
-import eu.esdihumboldt.hale.common.schema.SchemaSpaceID;
-import eu.esdihumboldt.hale.common.schema.io.SchemaIO;
+import eu.esdihumboldt.hale.common.schema.SchemaSpaceID
+import eu.esdihumboldt.hale.common.schema.io.SchemaIO
 import eu.esdihumboldt.hale.common.schema.model.TypeDefinition
 import eu.esdihumboldt.hale.io.xsd.constraint.XmlElements
-import eu.esdihumboldt.hale.io.xsd.model.XmlElement;
+import eu.esdihumboldt.hale.io.xsd.model.XmlElement
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
 import groovy.json.JsonSlurper
-import groovy.transform.CompileStatic;
-import groovy.util.CliBuilder;
-import groovy.util.OptionAccessor;
+import groovy.transform.CompileStatic
 import to.wetransform.halecli.project.AbstractDeriveProjectCommand
-import to.wetransform.halecli.project.AbstractDeriveProjectCommand.DeriveProjectResult
+
+import javax.xml.namespace.QName
 
 /**
  * Command creating a project with a filtered alignment.

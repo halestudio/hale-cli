@@ -15,8 +15,6 @@
 
 package to.wetransform.halecli.util
 
-import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail
-import to.wetransform.halecli.project.ProjectHelper
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.core.io.HaleIO
@@ -25,7 +23,6 @@ import eu.esdihumboldt.hale.common.core.io.project.ProjectWriter
 import eu.esdihumboldt.hale.common.core.io.project.model.Project
 import eu.esdihumboldt.hale.common.core.io.supplier.DefaultInputSupplier
 import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier
-import eu.esdihumboldt.hale.common.core.io.supplier.LocatableOutputSupplier;
 import eu.esdihumboldt.hale.common.core.io.supplier.NoStreamOutputSupplier
 import eu.esdihumboldt.hale.common.core.report.ReportHandler
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
@@ -33,7 +30,12 @@ import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
 import eu.esdihumboldt.hale.io.haleconnect.HaleConnectUrnBuilder
 import eu.esdihumboldt.hale.io.haleconnect.project.HaleConnectProjectWriter
 import eu.esdihumboldt.util.cli.CLIUtil
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
 import groovy.transform.CompileStatic
+import to.wetransform.halecli.project.ProjectHelper
+
+import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail
 
 /**
  * Common utility functions for setting up a CliBuilder for loading and saving a project.
