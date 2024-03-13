@@ -12,7 +12,7 @@ plugins {
   id 'application'
   id 'maven-publish'
   //id 'osgi' // discontinued - do we need it?
-  id 'com.bmuschko.docker-java-application' version '9.3.1'
+  id 'com.bmuschko.docker-java-application' version '9.4.0'
   id "nebula.ospackage-application" version "9.1.1"
   id 'org.ajoberstar.grgit' version '1.7.2'
 }
