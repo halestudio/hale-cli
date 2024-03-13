@@ -56,6 +56,29 @@ If using `./gradlew installDist`, the start script can be found in `./build/inst
 JVM parameters can be provided to the start script with the `HALE_OPTS` environment variable.
 
 
+Use custom hale studio dependencies during development
+------------------------------------------------------
+
+If you do changes to hale studio and want to test your changes with hale-cli in your local environment, then you need to perform these steps:
+
+1.  Build hale studio locally and publish the related artifacts to you local Maven repository.
+
+    For that change to the `build/` folder in your hale studio checkout and run the following command:
+
+    ```
+    ./build.sh clean && ./build.sh installArtifacts`
+    ```
+2.  Make sure that in the `build.gradle` file the line adding the `mavenLocal` repository is uncommented (see [here](https://github.com/halestudio/hale-cli/blob/1ac56a52c359e52d71fe210b1cc4681aa53e3edb/build.gradle#L40)).
+3.  If necessary adapt the version of the hale-studio dependencies to the ones you published (see [here](https://github.com/halestudio/hale-cli/blob/1ac56a52c359e52d71fe210b1cc4681aa53e3edb/build.gradle#L29)).
+
+Gradle will then take care to use the local dependencies.
+If you want to create a local build of hale-cli that you want to use, you can for instance run
+
+```
+./gradlew clean installDist
+```
+
+
 Configuration
 -------------
 
