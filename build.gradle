@@ -167,7 +167,7 @@ dependencies {
   implementation 'jline:jline:2.14.6'
 
   // Testing
-  testImplementation 'junit:junit:4.12'
+  testImplementation 'junit:junit:4.13.2'
   testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
 }
 
