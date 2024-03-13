@@ -1,0 +1,38 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - devel
+      - master
+  workflow_dispatch: {}
+
+concurrency:
+  # only run one publishing at a time to avoid conflicts in artifactory
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  artifacts:
+    uses: wetransform/gha-workflows/.github/workflows/gradle-library.yml@master
+    with:
+      java-version: 17
+      gradle-tasks: clean check distZip buildDeb publish
+      upload-artifact-path: build/distributions
+      upload-artifact-name: distributions
+    secrets:
+      SLACK_NOTIFICATIONS_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
+
+  docker:
+    # FIXME both master and devel will push latest - only one should
+    uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@master
+    with:
+      java-version: 17
+      image-tag: wetransform/hale-cli:latest # image to scan
+      # don't run tests since this is already done in artifacts
+      gradle-tasks: clean dockerPushImage
+      expect-tests: false
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      SLACK_NOTIFICATIONS_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
