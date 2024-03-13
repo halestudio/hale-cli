@@ -8,4 +8,9 @@
     ":docker",
     "docker:pinDigests",
   ],
+  labels: [
+    "renovate",
+    "renovate/{{replace '.*/' '' depName}}",
+    "renovate/{{updateType}}",
+  ],
 }
