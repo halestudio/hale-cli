@@ -27,7 +27,7 @@ group = 'to.wetransform'
 
 project.ext {
   haleVersion = '5.2.0-SNAPSHOT'
-  groovyVersion = '2.5.19'
+  groovyVersion = '2.5.23'
 }
 
 version = '5.2.0-SNAPSHOT'
