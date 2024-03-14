@@ -139,24 +139,23 @@ dependencies {
   // resource cache
   implementation(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
   def resourcesGroup = 'to.wetransform.offline-resources'
-  def resourcesVersion = 'CURRENT-SNAPSHOT'
   // OpenGIS schemas, INSPIRE schemas, W3C schemas, etc.
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: resourcesVersion)
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: resourcesVersion)
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.portele.de', version: resourcesVersion)
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.w3.org', version: resourcesVersion)
+  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: '2024.2.1')
+  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: '2024.2.21')
+  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.portele.de', version: '2024.1.25')
+  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.w3.org', version: '2024.1.25')
   // INSPIRE code lists and feature concepts
   implementation(group: resourcesGroup,
     name: 'eu.esdihumboldt.util.resource.codelists.inspire',
-    version: resourcesVersion)
+    version: '2024.2.20')
   implementation(group: resourcesGroup,
     name: 'eu.esdihumboldt.util.resource.codelists.inspire.accept-xml',
-    version: resourcesVersion)
+    version: '2024.2.20')
   implementation(group: resourcesGroup,
     name: 'eu.esdihumboldt.util.resource.featureconcepts.inspire',
-    version: resourcesVersion)
+    version: '2024.2.20')
   // More resources
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.repository.gdi-de.org', version: resourcesVersion)
+  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.repository.gdi-de.org', version: '2024.2.20')
 
   // user / customer specific
   implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.adv.merge:$haleVersion"
