@@ -147,7 +147,7 @@ dependencies {
   // INSPIRE code lists and feature concepts
   implementation(group: resourcesGroup,
     name: 'eu.esdihumboldt.util.resource.codelists.inspire',
-    version: '2024.3.19')
+    version: '2024.4.8')
   implementation(group: resourcesGroup,
     name: 'eu.esdihumboldt.util.resource.codelists.inspire.accept-xml',
     version: '2024.3.19')
