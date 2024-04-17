@@ -1,15 +1,10 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: [
-    "config:recommended",
-    "helpers:pinGitHubActionDigestsToSemver",
-    "security:openssf-scorecard",
-    ":enableVulnerabilityAlertsWithLabel(security)",
+    "github>wetransform/renovate-config:default.json5",
+    "github>wetransform/renovate-config:hale-studio.json5",
+    "group:allNonMajor",
     ":docker",
     "docker:pinDigests",
-  ],
-  labels: [
-    "renovate",
-    "renovate/{{updateType}}",
   ],
 }
