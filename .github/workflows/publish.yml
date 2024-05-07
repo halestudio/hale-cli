@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   artifacts:
-    uses: wetransform/gha-workflows/.github/workflows/gradle-library.yml@master
+    uses: wetransform/gha-workflows/.github/workflows/gradle-library.yml@ef7e7ff0d5f77914d591c783f3dcf854e3c4e204
     with:
       java-version: 17
       build-tasks: clean check distZip buildDeb
@@ -26,7 +26,7 @@ jobs:
 
   docker:
     # FIXME both master and devel will push latest - only one should
-    uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@master
+    uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@ef7e7ff0d5f77914d591c783f3dcf854e3c4e204
     with:
       java-version: 17
       image-tag: wetransform/hale-cli:latest # image to scan
