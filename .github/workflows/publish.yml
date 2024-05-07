@@ -17,7 +17,8 @@ jobs:
     uses: wetransform/gha-workflows/.github/workflows/gradle-library.yml@master
     with:
       java-version: 17
-      gradle-tasks: clean check distZip buildDeb publish
+      build-tasks: clean check distZip buildDeb
+      publish-tasks: publish
       upload-artifact-path: build/distributions
       upload-artifact-name: distributions
     secrets:
