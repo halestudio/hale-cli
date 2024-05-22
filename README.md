@@ -6,6 +6,15 @@ hale-cli
 hale command line interface.
 Lists available commands when run without arguments.
 
+From version 5 onwards, hale-cli versions don't necessarily resemble the version of the respective [hale»studio](https://github.com/halestudio/hale) dependencies used.
+Here you can find an overview on which hale»studio version is used:
+
+| hale-cli | hale»studio (major version) | Java
+| -------- | --------------------------- | ----
+| 5.x      | 5                           | 17
+| 4.x      | 4                           | 8
+| 3.x      | 3                           | 8
+
 
 Build
 -----
