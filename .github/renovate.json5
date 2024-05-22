@@ -3,7 +3,6 @@
   extends: [
     "github>wetransform/renovate-config:default.json5",
     "github>wetransform/renovate-config:hale-studio.json5",
-    "group:allNonMajor",
     ":docker",
     "docker:pinDigests",
   ],
