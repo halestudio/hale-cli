@@ -3,7 +3,6 @@ name: Publish
 on:
   push:
     branches:
-      - devel
       - master
   workflow_dispatch: {}
 
@@ -27,7 +26,6 @@ jobs:
       WETF_ARTIFACTORY_PASSWORD: ${{ secrets.WETF_ARTIFACTORY_PASSWORD }}
 
   docker:
-    # FIXME both master and devel will push latest - only one should
     uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@a78448bc4e8511a19e0362cfc0c450d76ca68b7f # v2.1.0
     with:
       java-version: 17
