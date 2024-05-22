@@ -1,8 +1,3 @@
-# Change Log
-
-All notable changes to this project will be documented in this file.
-See the [change log guidelines](http://keepachangelog.com/) for information on how to structure the file.
-
 ## [5.1.0]
 
 ### Added

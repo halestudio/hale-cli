@@ -1,0 +1,47 @@
+---
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        type: boolean
+        description: "Dry-Run"
+        default: false
+
+concurrency:
+  # only run one publishing at a time to avoid conflicts
+  group: publish-${{ github.ref }}
+
+jobs:
+  release:
+    uses: wetransform/gha-workflows/.github/workflows/gradle-library-publish.yml@feat/release-outputs # TODO merge related branch and replace with release version once tested
+    with:
+      java-version: 17
+      build-tasks: clean check distZip buildDeb
+      publish-tasks: publish
+      multi-module: false
+      semantic-release: true
+      semantic-release-dryrun: ${{ inputs.dryRun }}
+    secrets:
+      SLACK_NOTIFICATIONS_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
+      WETF_ARTIFACTORY_USER: ${{ secrets.WETF_ARTIFACTORY_USER }}
+      WETF_ARTIFACTORY_PASSWORD: ${{ secrets.WETF_ARTIFACTORY_PASSWORD }}
+      WE_RELEASE_GITHUB_APP_ID: ${{ secrets.WE_RELEASE_GITHUB_APP_ID }}
+      WE_RELEASE_GITHUB_PRIVATE_KEY: ${{ secrets.WE_RELEASE_GITHUB_PRIVATE_KEY }}
+
+  docker:
+    needs: [release]
+    if: ${{ needs.release.outputs.release-published != 'false' && needs.release.outputs.release-published != '' }}
+    uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@feat/release-outputs # TODO merge related branch and replace with release version once tested
+    with:
+      checkout-ref: refs/tags/v${{needs.release.outputs.release-version}} # check out release tag
+      java-version: 17
+      image-tag: wetransform/hale-cli:latest # image to scan
+      # don't run tests since this is already done in artifacts
+      gradle-tasks: clean dockerPushImage
+      expect-tests: false
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      SLACK_NOTIFICATIONS_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
