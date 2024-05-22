@@ -12,9 +12,9 @@ plugins {
   id 'application'
   id 'maven-publish'
   //id 'osgi' // discontinued - do we need it?
-  id 'com.bmuschko.docker-java-application' version '9.3.1'
+  id 'com.bmuschko.docker-java-application' version '9.4.0'
   id "nebula.ospackage-application" version "9.1.1"
-  id 'org.ajoberstar.grgit' version '1.5.0'
+  id 'org.ajoberstar.grgit' version '1.7.2'
 }
 
 apply plugin: 'org.standardout.eclipseconfig'
@@ -26,11 +26,11 @@ targetCompatibility = JavaVersion.VERSION_17
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '5.1.0'
-  groovyVersion = '2.5.19'
+  haleVersion = '5.2.0-SNAPSHOT'
+  groovyVersion = '2.5.23'
 }
 
-version = '5.1.0'
+version = '5.2.0-SNAPSHOT'
 
 /*
  * Dependencies
@@ -123,7 +123,7 @@ dependencies {
   implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.schematron:$haleVersion"
   // replacement for omitted Saxon dependency
   // tested w/ schematron validation in https://github.com/wetransform/exp-schematron/tree/exp/saxon-he
-  implementation 'net.sf.saxon:Saxon-HE:9.7.0-20'
+  implementation 'net.sf.saxon:Saxon-HE:9.9.1-8'
 
   // converters
   implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.core:$haleVersion"
@@ -134,41 +134,40 @@ dependencies {
 
   // logging
   implementation(group: 'eu.esdihumboldt.unpuzzled', name: 'de.fhg.igd.slf4jplus.logback.appender', version: '1.2.0.201503311443')
-  implementation 'org.slf4j:jul-to-slf4j:1.7.21'
+  implementation 'org.slf4j:jul-to-slf4j:1.7.36'
 
   // resource cache
   implementation(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
   def resourcesGroup = 'to.wetransform.offline-resources'
-  def resourcesVersion = 'CURRENT-SNAPSHOT'
   // OpenGIS schemas, INSPIRE schemas, W3C schemas, etc.
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: resourcesVersion)
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: resourcesVersion)
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.portele.de', version: resourcesVersion)
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.w3.org', version: resourcesVersion)
+  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: '2024.3.19')
+  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: '2024.3.15')
+  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.portele.de', version: '2024.1.25')
+  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.w3.org', version: '2024.1.25')
   // INSPIRE code lists and feature concepts
   implementation(group: resourcesGroup,
     name: 'eu.esdihumboldt.util.resource.codelists.inspire',
-    version: resourcesVersion)
+    version: '2024.4.8')
   implementation(group: resourcesGroup,
     name: 'eu.esdihumboldt.util.resource.codelists.inspire.accept-xml',
-    version: resourcesVersion)
+    version: '2024.4.16')
   implementation(group: resourcesGroup,
     name: 'eu.esdihumboldt.util.resource.featureconcepts.inspire',
-    version: resourcesVersion)
+    version: '2024.2.20')
   // More resources
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.repository.gdi-de.org', version: resourcesVersion)
+  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.repository.gdi-de.org', version: '2024.2.20')
 
   // user / customer specific
   implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.adv.merge:$haleVersion"
 
   // CLI
-  implementation 'commons-cli:commons-cli:1.5.0'
+  implementation 'commons-cli:commons-cli:1.7.0'
   // Groovy Shell
-  implementation 'jline:jline:2.13'
+  implementation 'jline:jline:2.14.6'
 
   // Testing
-  testImplementation 'junit:junit:4.12'
-  testImplementation 'com.github.stefanbirkner:system-rules:1.16.0'
+  testImplementation 'junit:junit:4.13.2'
+  testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
 }
 
 configurations.all {
@@ -279,7 +278,7 @@ groovydoc {
   groovyClasspath = project.configurations.jansi
 }
 dependencies {
-  jansi 'org.fusesource.jansi:jansi:1.11'
+  jansi 'org.fusesource.jansi:jansi:1.18'
 }
 
 task dockerCopyDistResources(type: Copy) {
@@ -354,5 +353,5 @@ task uploadArchives {
  * Gradle wrapper
  */
 wrapper {
-  gradleVersion = '7.6.1'
+  gradleVersion = '7.6.4'
 }

@@ -1,0 +1,22 @@
+name: Check
+
+on:
+  pull_request:
+    branches:
+      - master
+      - devel
+
+jobs:
+  check:
+    uses: wetransform/gha-workflows/.github/workflows/gradle-library-check.yml@a78448bc4e8511a19e0362cfc0c450d76ca68b7f # v2.1.0
+    with:
+      java-version: 17
+
+  docker:
+    uses: wetransform/gha-workflows/.github/workflows/gradle-service-check.yml@a78448bc4e8511a19e0362cfc0c450d76ca68b7f # v2.1.0
+    with:
+      java-version: 17
+      image-tag: wetransform/hale-cli:latest # image to scan
+      # don't run tests since this is already done in check
+      gradle-tasks: clean dockerTagLatest
+      expect-tests: false
