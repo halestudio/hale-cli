@@ -6,4 +6,18 @@
     ":docker",
     "docker:pinDigests",
   ],
+  packageRules: [
+    {
+      description: "Treat major hale studio updates as breaking change",
+      matchPackagePrefixes: ["eu.esdihumboldt.hale:"],
+      matchUpdateTypes: ["major"],
+      semanticCommitType: "feat!" // to be confirmed that this works
+    },
+    {
+      description: "Treat minor hale studio updates as feature",
+      matchPackagePrefixes: ["eu.esdihumboldt.hale:"],
+      matchUpdateTypes: ["minor"],
+      semanticCommitType: "feat"
+    },
+  ],
 }
