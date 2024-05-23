@@ -163,7 +163,7 @@ dependencies {
   implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.adv.merge:$haleVersion"
 
   // CLI
-  implementation 'commons-cli:commons-cli:1.7.0'
+  implementation 'commons-cli:commons-cli:1.8.0'
   // Groovy Shell
   implementation 'jline:jline:2.14.6'
 
