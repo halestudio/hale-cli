@@ -152,7 +152,7 @@ dependencies {
     version: '2024.6.13')
   implementation(group: resourcesGroup,
     name: 'eu.esdihumboldt.util.resource.codelists.inspire.accept-xml',
-    version: '2024.6.13')
+    version: '2024.6.18')
   implementation(group: resourcesGroup,
     name: 'eu.esdihumboldt.util.resource.featureconcepts.inspire',
     version: '2024.2.20')
