@@ -142,7 +142,7 @@ dependencies {
   implementation(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
   def resourcesGroup = 'to.wetransform.offline-resources'
   // OpenGIS schemas, INSPIRE schemas, W3C schemas, etc.
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: '2024.3.19')
+  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: '2024.6.18')
   implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: '2024.3.15')
   implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.portele.de', version: '2024.1.25')
   implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.w3.org', version: '2024.1.25')
