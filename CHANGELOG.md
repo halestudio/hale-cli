@@ -1,3 +1,36 @@
+## [5.2.0](https://github.com/halestudio/hale-cli/compare/v5.1.0...v5.2.0) (2024-06-19)
+
+
+### Features
+
+* update hale studio dependencies to version 5.2.0 ([bb5eb8b](https://github.com/halestudio/hale-cli/commit/bb5eb8be31b01e00af8d9aead165974145e70ec8))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([e62579f](https://github.com/halestudio/hale-cli/commit/e62579f0b9ca62452fa39342b3bf6b3798068455))
+* **deps:** update dependency com.github.stefanbirkner:system-rules to v1.19.0 ([a558275](https://github.com/halestudio/hale-cli/commit/a5582754e06fc6fe2bda32cf871a47d55f99c802))
+* **deps:** update dependency commons-cli:commons-cli to v1.6.0 ([46420f6](https://github.com/halestudio/hale-cli/commit/46420f632de12fbeb2782ae84ce7aede1baf0aef))
+* **deps:** update dependency commons-cli:commons-cli to v1.7.0 ([6e4b63b](https://github.com/halestudio/hale-cli/commit/6e4b63b6ac4d73e37b8850274fcab5ef943e99d7))
+* **deps:** update dependency commons-cli:commons-cli to v1.8.0 ([3d6b8c5](https://github.com/halestudio/hale-cli/commit/3d6b8c5bc450732a2f1173589532114e731ed536))
+* **deps:** update dependency jline:jline to v2.14.6 ([89c1625](https://github.com/halestudio/hale-cli/commit/89c1625361d9a5e3fef05355ff11dcd565b900fe))
+* **deps:** update dependency junit:junit to v4.13.2 ([a9201ad](https://github.com/halestudio/hale-cli/commit/a9201ad9a0cb2e0c80b34357c2dec847ae66ba85))
+* **deps:** update dependency net.sf.saxon:saxon-he to v9.9.1-8 ([94369c7](https://github.com/halestudio/hale-cli/commit/94369c7b8e43c49d9ce40751daf89af47e1c1c84))
+* **deps:** update dependency org.codehaus.groovy:groovy-all to v2.5.23 ([f4bea49](https://github.com/halestudio/hale-cli/commit/f4bea49125dc47533d7f17051b88bc5f2d3559da))
+* **deps:** update dependency org.fusesource.jansi:jansi to v1.18 ([2b1cb7c](https://github.com/halestudio/hale-cli/commit/2b1cb7c5274dc20a24e98005931bb1defc42acf0))
+* **deps:** update dependency org.slf4j:jul-to-slf4j to v1.7.36 ([6d0ff40](https://github.com/halestudio/hale-cli/commit/6d0ff4053fca48e327a85c76ceeaa21754f5daea))
+* **deps:** update dependency to.wetransform.offline-resources:eu.esdihumboldt.util.resource.codelists.inspire to v2024.3.19 ([cd7dc62](https://github.com/halestudio/hale-cli/commit/cd7dc621afbf3e6577f11fb3c0c9259a0768cfd4))
+* **deps:** update dependency to.wetransform.offline-resources:eu.esdihumboldt.util.resource.codelists.inspire to v2024.6.13 ([387ac6a](https://github.com/halestudio/hale-cli/commit/387ac6a0c733b5a4727e09e5aad5c8702ad74183))
+* **deps:** update dependency to.wetransform.offline-resources:eu.esdihumboldt.util.resource.codelists.inspire to v2024.6.18 ([799f4b0](https://github.com/halestudio/hale-cli/commit/799f4b0abe4224c7640b05d63036b6f50b69cd0d))
+* **deps:** update dependency to.wetransform.offline-resources:eu.esdihumboldt.util.resource.codelists.inspire.accept-xml to v2024.3.19 ([6eadd8e](https://github.com/halestudio/hale-cli/commit/6eadd8ec420ad30a5c3e6ce7aac31517ff617d0c))
+* **deps:** update dependency to.wetransform.offline-resources:eu.esdihumboldt.util.resource.codelists.inspire.accept-xml to v2024.6.13 ([2e9ce7c](https://github.com/halestudio/hale-cli/commit/2e9ce7cfdb97e356592922701fe40f8c8e256450))
+* **deps:** update dependency to.wetransform.offline-resources:eu.esdihumboldt.util.resource.codelists.inspire.accept-xml to v2024.6.18 ([db9bf71](https://github.com/halestudio/hale-cli/commit/db9bf71ccbdbf6b255d67b7108e3d4dc7d905ac4))
+* **deps:** update dependency to.wetransform.offline-resources:eu.esdihumboldt.util.resource.schemas.inspire to v2024.3.15 ([a4d5fef](https://github.com/halestudio/hale-cli/commit/a4d5fef42c0e630f2e579fe5dbde9d28166087bb))
+* **deps:** update dependency to.wetransform.offline-resources:eu.esdihumboldt.util.resource.schemas.opengis.net to v2024.3.19 ([93d5b02](https://github.com/halestudio/hale-cli/commit/93d5b0268b404adbbd552748d8a975e89d0dd7dd))
+* **deps:** update dependency to.wetransform.offline-resources:eu.esdihumboldt.util.resource.schemas.opengis.net to v2024.3.8 ([d21d73b](https://github.com/halestudio/hale-cli/commit/d21d73bedeb1b4da063ecfac1b545dc6ec7f154f))
+* **deps:** update dependency to.wetransform.offline-resources:eu.esdihumboldt.util.resource.schemas.opengis.net to v2024.6.18 ([826341d](https://github.com/halestudio/hale-cli/commit/826341dc0bb65373cac3a37080a296ed72ce3496))
+* **deps:** update dependency to.wetransform.offline-resources:eu.esdihumboldt.util.resource.schemas.repository.gdi-de.org to v2024.5.23 ([b747b24](https://github.com/halestudio/hale-cli/commit/b747b24cc8177a1bf84f1e2f6105828fffc9a114))
+
 ## [5.1.0]
 
 ### Added
