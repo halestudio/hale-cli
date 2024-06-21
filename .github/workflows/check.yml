@@ -7,12 +7,12 @@ on:
 
 jobs:
   check:
-    uses: wetransform/gha-workflows/.github/workflows/gradle-library-check.yml@c3e3f046877f7db88ccb34f71c10f53ee995e437 # v2.2.0
+    uses: wetransform/gha-workflows/.github/workflows/gradle-library-check.yml@4fdf015e777b3be01ee5baf8d18441898baf24d8 # v2.2.1
     with:
       java-version: 17
 
   docker:
-    uses: wetransform/gha-workflows/.github/workflows/gradle-service-check.yml@c3e3f046877f7db88ccb34f71c10f53ee995e437 # v2.2.0
+    uses: wetransform/gha-workflows/.github/workflows/gradle-service-check.yml@4fdf015e777b3be01ee5baf8d18441898baf24d8 # v2.2.1
     with:
       java-version: 17
       image-tag: wetransform/hale-cli:latest # image to scan
