@@ -272,17 +272,6 @@ task packageJavadoc(type: Jar, dependsOn: 'groovydoc') {
   classifier = 'javadoc'
 }
 
-// groovydoc task work-around
-configurations {
-  jansi.extendsFrom(runtime)
-}
-groovydoc {
-  groovyClasspath = project.configurations.jansi
-}
-dependencies {
-  jansi 'org.fusesource.jansi:jansi:1.18'
-}
-
 task dockerCopyDistResources(type: Copy) {
   description "Copies the distribution resources to a temporary directory for image creation."
   dependsOn installDist
