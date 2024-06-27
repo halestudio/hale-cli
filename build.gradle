@@ -280,7 +280,7 @@ groovydoc {
   groovyClasspath = project.configurations.jansi
 }
 dependencies {
-  jansi 'org.fusesource.jansi:jansi:1.18'
+  jansi 'org.fusesource.jansi:jansi:2.4.1'
 }
 
 task dockerCopyDistResources(type: Copy) {
