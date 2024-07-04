@@ -1,3 +1,10 @@
+## [5.2.1](https://github.com/halestudio/hale-cli/compare/v5.2.0...v5.2.1) (2024-07-04)
+
+
+### Bug Fixes
+
+* **deps:** update hale dependencies to v5.2.1 ([9c754bc](https://github.com/halestudio/hale-cli/commit/9c754bcced7224969f94c0f2024361e117516806))
+
 ## [5.2.0](https://github.com/halestudio/hale-cli/compare/v5.1.0...v5.2.0) (2024-06-19)
 
 
