@@ -1,3 +1,15 @@
+## [5.3.0](https://github.com/halestudio/hale-cli/compare/v5.2.1...v5.3.0) (2024-08-07)
+
+
+### Features
+
+* **deps:** update hale dependencies to v5.3.0 ([bce45dd](https://github.com/halestudio/hale-cli/commit/bce45dd40d46ec5cbd9bf2e7ccd171cde2913d85))
+
+
+### Bug Fixes
+
+* **deps:** update offline resources to v2024.7.31 ([725887a](https://github.com/halestudio/hale-cli/commit/725887a19dc9760a0e5183e3ef6abe2ee11486ff))
+
 ## [5.2.1](https://github.com/halestudio/hale-cli/compare/v5.2.0...v5.2.1) (2024-07-04)
 
 
