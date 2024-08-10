@@ -136,7 +136,7 @@ dependencies {
 
   // logging
   implementation(group: 'eu.esdihumboldt.unpuzzled', name: 'de.fhg.igd.slf4jplus.logback.appender', version: '1.2.0.201503311443')
-  implementation 'org.slf4j:jul-to-slf4j:1.7.36'
+  implementation 'org.slf4j:jul-to-slf4j:2.0.16'
 
   // resource cache
   implementation(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
