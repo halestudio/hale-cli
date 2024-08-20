@@ -316,7 +316,8 @@ def header = '''
  */
 '''
 
-def headerRegex = /(?!.*@custom-license-header).*/
+// add header only if "@custom-license-header" is NOT present in file
+def headerRegex = /^(?s)(?!.*@custom-license-header).*/
 
 spotless {
   java {
@@ -329,7 +330,7 @@ spotless {
     // https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-jdt
     eclipse().configFile('eclipse-format.xml')
 
-    // licenseHeader(header).onlyIfContentMatches(headerRegex)
+    licenseHeader(header).onlyIfContentMatches(headerRegex)
 
     trimTrailingWhitespace()
     endWithNewline()
@@ -346,7 +347,7 @@ spotless {
     // excludes all Java sources within the Groovy source dirs from formatting
     excludeJava()
 
-    // licenseHeader(header).onlyIfContentMatches(headerRegex)
+    licenseHeader(header).onlyIfContentMatches(headerRegex)
 
     trimTrailingWhitespace()
     endWithNewline()
