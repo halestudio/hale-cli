@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   release:
-    uses: wetransform/gha-workflows/.github/workflows/gradle-library-publish.yml@feat/release-outputs # TODO merge related branch and replace with release version once tested
+    uses: wetransform/gha-workflows/.github/workflows/gradle-library-publish.yml@06a242e21c2f8e81407d629a67b747eea7c91706 # v2.4.0
     with:
       java-version: 17
       build-tasks: clean check distZip buildDeb
@@ -33,7 +33,7 @@ jobs:
   docker:
     needs: [release]
     if: ${{ needs.release.outputs.release-published != 'false' && needs.release.outputs.release-published != '' }}
-    uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@feat/release-outputs # TODO merge related branch and replace with release version once tested
+    uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@06a242e21c2f8e81407d629a67b747eea7c91706 # v2.4.0
     with:
       checkout-ref: refs/tags/v${{needs.release.outputs.release-version}} # check out release tag
       java-version: 17
