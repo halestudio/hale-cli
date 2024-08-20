@@ -18,8 +18,8 @@ jobs:
     uses: wetransform/gha-workflows/.github/workflows/gradle-library-publish.yml@06a242e21c2f8e81407d629a67b747eea7c91706 # v2.4.0
     with:
       java-version: 17
-      build-tasks: clean check distZip buildDeb
-      publish-tasks: publish
+      build-tasks: clean check
+      publish-tasks: distZip buildDeb publish # performed after setting release version
       multi-module: false
       semantic-release: true
       semantic-release-dryrun: ${{ inputs.dryRun }}
