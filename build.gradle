@@ -16,6 +16,7 @@ plugins {
   id "nebula.ospackage-application" version "9.1.1"
   id 'org.ajoberstar.grgit' version '5.2.2'
   id 'to.wetransform.semantic-release-version' version '2.1.1'
+  id 'com.diffplug.spotless' version '6.25.0'
 }
 
 apply plugin: 'org.standardout.eclipseconfig'
@@ -290,4 +291,70 @@ task uploadArchives {
  */
 wrapper {
   gradleVersion = '7.6.4'
+}
+
+/*
+ * Formatting
+ */
+
+def header = '''
+/*
+ * Copyright (c) $YEAR wetransform GmbH
+ *
+ * All rights reserved. This program and the accompanying materials are made
+ * available under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution. If not, see <http://www.gnu.org/licenses/>.
+ */
+'''
+
+def headerRegex = /(?!.*@custom-license-header).*/
+
+spotless {
+  java {
+    toggleOffOn()
+
+    importOrder('java', 'javax', 'org', 'com', '')
+
+    removeUnusedImports()
+
+    // https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-jdt
+    eclipse().configFile('eclipse-format.xml')
+
+    // licenseHeader(header).onlyIfContentMatches(headerRegex)
+
+    trimTrailingWhitespace()
+    endWithNewline()
+  }
+
+  groovy {
+    toggleOffOn()
+
+    importOrder('java', 'javax', 'org', 'com', '')
+
+    // https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-groovy
+    greclipse().configFile('groovy-format.properties')
+
+    // excludes all Java sources within the Groovy source dirs from formatting
+    excludeJava()
+
+    // licenseHeader(header).onlyIfContentMatches(headerRegex)
+
+    trimTrailingWhitespace()
+    endWithNewline()
+  }
+
+  groovyGradle {
+    toggleOffOn()
+
+    target '*.gradle'
+
+    greclipse().configFile('groovy-format.properties')
+
+    trimTrailingWhitespace()
+    endWithNewline()
+  }
 }

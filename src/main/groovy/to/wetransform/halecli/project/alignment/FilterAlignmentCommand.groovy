@@ -192,6 +192,7 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
       messages << "Removed $removed cells"
       messages << "Retained $retained cells from original project"
     }
+    // spotless:off
     /*
     XXX case that retains base alignments contained in the original alignment
     not working properly currently
@@ -252,6 +253,7 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
       }
     }
     */
+    // spotless:on
 
     ValueList msgList = new ValueList()
     messages.each {
