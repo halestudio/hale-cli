@@ -18,14 +18,6 @@
 
 package to.wetransform.halecli.groovy
 
-import eu.esdihumboldt.cst.functions.groovy.helper.HelperFunctions
-import eu.esdihumboldt.hale.common.core.HalePlatform
-import eu.esdihumboldt.hale.common.core.io.HaleIO
-import eu.esdihumboldt.hale.common.core.io.Value
-import eu.esdihumboldt.util.cli.Command
-import eu.esdihumboldt.util.cli.CommandContext
-import groovy.transform.CompileStatic
-import groovyjarjarcommonscli.HelpFormatter
 import org.codehaus.groovy.tools.shell.Groovysh
 import org.codehaus.groovy.tools.shell.IO
 import org.codehaus.groovy.tools.shell.Main
@@ -34,8 +26,17 @@ import org.codehaus.groovy.tools.shell.util.MessageSource
 import org.codehaus.groovy.tools.shell.util.NoExitSecurityManager
 import org.eclipse.core.runtime.IConfigurationElement
 import org.eclipse.core.runtime.Platform
+
+import eu.esdihumboldt.cst.functions.groovy.helper.HelperFunctions
+import eu.esdihumboldt.hale.common.core.HalePlatform
+import eu.esdihumboldt.hale.common.core.io.HaleIO
+import eu.esdihumboldt.hale.common.core.io.Value
+import eu.esdihumboldt.util.cli.Command
+import eu.esdihumboldt.util.cli.CommandContext
 import groovy.cli.picocli.CliBuilder
 import groovy.cli.picocli.OptionAccessor
+import groovy.transform.CompileStatic
+import groovyjarjarcommonscli.HelpFormatter
 /**
  * Groovy shell command based on Groovy shell main class.
  *
@@ -162,10 +163,10 @@ class GroovyShellCommand implements Command {
 
     // determine imports from extension (see DefaultGroovyService class)
     for (IConfigurationElement conf : Platform.getExtensionRegistry()
-        .getConfigurationElementsFor('eu.esdihumboldt.util.groovy.sandbox')) {
+      .getConfigurationElementsFor('eu.esdihumboldt.util.groovy.sandbox')) {
       if (conf.getName().equals("import")) {
-        String className = conf.getAttribute("class");
-        String alias = conf.getAttribute("alias");
+        String className = conf.getAttribute("class")
+        String alias = conf.getAttribute("alias")
 
         if (className != null && !className.isEmpty()) {
           if (alias == null || alias.isEmpty()) {
@@ -193,5 +194,4 @@ class GroovyShellCommand implements Command {
   public String getShortDescription() {
     'Launch a Groovy shell (for advanced users)'
   }
-
 }

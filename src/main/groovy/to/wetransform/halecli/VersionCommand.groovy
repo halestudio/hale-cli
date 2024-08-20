@@ -35,5 +35,4 @@ class VersionCommand implements Command {
   }
 
   final String shortDescription = 'Print the hale version'
-
 }

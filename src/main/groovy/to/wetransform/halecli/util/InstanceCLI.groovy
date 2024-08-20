@@ -15,7 +15,13 @@
 
 package to.wetransform.halecli.util
 
+import static to.wetransform.halecli.util.HaleIOHelper.prepareReader
+import static to.wetransform.halecli.util.HaleIOHelper.prepareWriter
+
+import org.eclipse.core.runtime.jobs.Job
+
 import com.google.common.io.Files
+
 import eu.esdihumboldt.hale.app.transform.ConsoleProgressMonitor
 import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.core.io.impl.LogProgressIndicator
@@ -35,10 +41,6 @@ import eu.esdihumboldt.util.cli.CLIUtil
 import groovy.cli.picocli.CliBuilder
 import groovy.cli.picocli.OptionAccessor
 import groovy.transform.CompileStatic
-import org.eclipse.core.runtime.jobs.Job
-
-import static to.wetransform.halecli.util.HaleIOHelper.prepareReader
-import static to.wetransform.halecli.util.HaleIOHelper.prepareWriter
 
 /**
  * Common utility functions for setting up a CliBuilder for loading/saving instances.
@@ -50,9 +52,9 @@ class InstanceCLI {
   static void loadOptions(CliBuilder cli, String argName = 'data', String descr = 'Data to load', boolean allowFilter = true) {
     cli._(longOpt: argName, args:1, argName:'file-or-URL', descr)
     cli._(longOpt: argName + '-setting', args:2, valueSeparator:'=', argName:'setting=value',
-      'Setting for instance reader (optional, repeatable)')
+    'Setting for instance reader (optional, repeatable)')
     cli._(longOpt: argName + '-reader', args:1, argName: 'provider-id',
-      'Identifier of instance reader to use (otherwise auto-detect)')
+    'Identifier of instance reader to use (otherwise auto-detect)')
 
     // filter options
     if (allowFilter) {
@@ -63,13 +65,13 @@ class InstanceCLI {
   static void filterOptions(CliBuilder cli, String argName) {
     def prefix = argName ? argName + '-' : ''
     cli._(longOpt: prefix + 'filter', args: 1, argName: 'filter',
-      'Filter expression that is checked against all objects read from the source. The filter language can be specified at the beginning of the filter expression, followed by a colon. If no language is provided explicitly, the expression is assumed to be CQL. If multiple filters are provided an object must only match one of them.')
+    'Filter expression that is checked against all objects read from the source. The filter language can be specified at the beginning of the filter expression, followed by a colon. If no language is provided explicitly, the expression is assumed to be CQL. If multiple filters are provided an object must only match one of them.')
     cli._(longOpt: prefix + 'exclude', args: 1, argName: 'filter',
-      'All objects matching the filter will be exlcuded.')
+    'All objects matching the filter will be exlcuded.')
     cli._(longOpt: prefix + 'filter-on', args: 2, valueSeparator:'=', argName: 'type=filter',
-      'Filter on a specific type only. You can specify the type\'s name with or without namespace. If you want to specify the namespace, wrap it in curly braces and prepend it to the type name.')
+    'Filter on a specific type only. You can specify the type\'s name with or without namespace. If you want to specify the namespace, wrap it in curly braces and prepend it to the type name.')
     cli._(longOpt: prefix + 'exclude-type', args: 1, argName: 'type',
-      'Exclude a specific type')
+    'Exclude a specific type')
   }
 
   static InstanceFilterDefinition createFilter(OptionAccessor options, String argName) {
@@ -78,7 +80,7 @@ class InstanceCLI {
 
     def filter = options."${prefix}filters" // magic "s" at the end yields a list
     if (filter) {
-      if (!res) res = new InstanceFilterDefinition();
+      if (!res) res = new InstanceFilterDefinition()
 
       filter.each {
         res.addUnconditionalFilter(it)
@@ -87,7 +89,7 @@ class InstanceCLI {
 
     filter = options."${prefix}excludes"
     if (filter) {
-      if (!res) res = new InstanceFilterDefinition();
+      if (!res) res = new InstanceFilterDefinition()
 
       filter.each {
         res.addExcludeFilter(it)
@@ -96,7 +98,7 @@ class InstanceCLI {
 
     filter = options."${prefix}filter-ons"
     if (filter) {
-      if (!res) res = new InstanceFilterDefinition();
+      if (!res) res = new InstanceFilterDefinition()
 
       filter.toSpreadMap().each { key, value ->
         res.addTypeFilter(key, value)
@@ -105,7 +107,7 @@ class InstanceCLI {
 
     filter = options."${prefix}exclude-types"
     if (filter) {
-      if (!res) res = new InstanceFilterDefinition();
+      if (!res) res = new InstanceFilterDefinition()
 
       filter.each {
         res.addExcludedType(it)
@@ -138,7 +140,7 @@ class InstanceCLI {
 
   @CompileStatic
   static InstanceCollection load(URI loc, Map<String, String> settings, String customProvider,
-      TypeIndex schema, ReportHandler reports, InstanceFilterDefinition filter = null) {
+    TypeIndex schema, ReportHandler reports, InstanceFilterDefinition filter = null) {
 
     Pair<InstanceReader, String> readerInfo = prepareReader(loc, InstanceReader, settings, customProvider)
     InstanceReader instanceReader = readerInfo.first
@@ -165,9 +167,9 @@ class InstanceCLI {
     //TODO support preset?
     cli._(longOpt: argName, args:1, argName: 'file-or-URI', descr)
     cli._(longOpt: argName + '-setting', args:2, valueSeparator:'=', argName:'setting=value',
-      'Setting for target writer (optional, repeatable)')
+    'Setting for target writer (optional, repeatable)')
     cli._(longOpt: argName + '-writer', args:1, argName: 'provider-id',
-      'Identifier of instance writer to use')
+    'Identifier of instance writer to use')
   }
 
   static InstanceWriter getWriter(OptionAccessor options, String argName = 'target') {
@@ -192,12 +194,12 @@ class InstanceCLI {
     // writer is returned because of writing instance directly, because for some
     // use cases it is required to first check
 
-    return prepareWriter(providerId, InstanceWriter, settings, loc);
+    return prepareWriter(providerId, InstanceWriter, settings, loc)
   }
 
   @CompileStatic
   static IOReport save(InstanceWriter instanceWriter, InstanceCollection instances, SchemaSpace targetSchema,
-      ReportHandler reports) {
+    ReportHandler reports) {
     def loc = instanceWriter.getTarget()?.location
     println "Writing instances to ${loc}..."
 
@@ -214,28 +216,26 @@ class InstanceCLI {
 
   @CompileStatic
   static LocalOrientDB loadTempDatabase(InstanceCollection instances, TypeIndex schema,
-      ReportHandler reports = null) {
+    ReportHandler reports = null) {
     // create db
-    File tmpDir = Files.createTempDir();
-    LocalOrientDB db = new LocalOrientDB(tmpDir);
-    tmpDir.deleteOnExit();
+    File tmpDir = Files.createTempDir()
+    LocalOrientDB db = new LocalOrientDB(tmpDir)
+    tmpDir.deleteOnExit()
 
     ServiceProvider serviceProvider = null
 
     // run store instance job first...
     Job storeJob = new StoreInstancesJob("Load source instances into temporary database",
-        db, instances, serviceProvider, reports, false) {
+      db, instances, serviceProvider, reports, false) {
 
-      @Override
-      protected void onComplete() {
-        // do nothing
+        @Override
+        protected void onComplete() {
+          // do nothing
+        }
       }
-
-    };
 
     storeJob.run(new ConsoleProgressMonitor())
 
     db
   }
-
 }

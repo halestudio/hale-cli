@@ -21,9 +21,9 @@ import eu.esdihumboldt.hale.common.schema.model.Schema
 import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
 import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
 import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
 import groovy.transform.CompileStatic
 import to.wetransform.halecli.util.SchemaCLI
-import groovy.cli.picocli.OptionAccessor
 /**
  * Command that migrates a project to a different schema.
  *
@@ -34,7 +34,7 @@ class ReplaceSourceCommand extends AbstractMigrationCommand<DefaultSchemaMigrati
 
   @Override
   protected void addOptions(CliBuilder cli) {
-// options for loading new source schema
+    // options for loading new source schema
     SchemaCLI.loadSchemaOptions(cli, 'schema', 'The new source schema for the project')
   }
 
@@ -59,11 +59,12 @@ class ReplaceSourceCommand extends AbstractMigrationCommand<DefaultSchemaMigrati
 
   @Override
   protected List<IOConfiguration> getNewSourceConfig(DefaultSchemaMigration migration, OptionAccessor options) {
-    [SchemaCLI.getSchemaIOConfig(options, 'schema', true)]
+    [
+      SchemaCLI.getSchemaIOConfig(options, 'schema', true)
+    ]
   }
 
   final String shortDescription = 'Migrate a source project to a new source schema'
 
   final boolean experimental = true
-
 }

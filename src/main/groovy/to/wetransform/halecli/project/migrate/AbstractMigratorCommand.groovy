@@ -42,7 +42,7 @@ import to.wetransform.halecli.util.ProjectCLI
  * @author Simon Templer
  */
 abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends AlignmentMigration>
-    implements Command {
+implements Command {
 
   protected abstract void addOptions(CliBuilder cli)
 
@@ -149,5 +149,4 @@ abstract class AbstractMigratorCommand<M extends AlignmentMigrator, T extends Al
   protected void wrapup() {
     // override me
   }
-
 }

@@ -15,8 +15,6 @@
 
 package to.wetransform.halecli
 
-import eu.esdihumboldt.util.nonosgi.Init
-
 import static org.junit.Assert.*
 
 import org.junit.BeforeClass
@@ -26,6 +24,7 @@ import org.junit.contrib.java.lang.system.SystemOutRule
 
 import eu.esdihumboldt.hale.common.core.HalePlatform
 import eu.esdihumboldt.util.cli.Runner
+import eu.esdihumboldt.util.nonosgi.Init
 
 /**
  * Simple tests for CLI runner.
@@ -77,5 +76,4 @@ class RunnerTest {
     assertTrue(out.log.trim().startsWith('Usage:'))
     assertTrue(out.log.contains('-project'))
   }
-
 }

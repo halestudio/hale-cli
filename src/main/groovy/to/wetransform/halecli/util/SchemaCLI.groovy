@@ -15,6 +15,9 @@
 
 package to.wetransform.halecli.util
 
+import static to.wetransform.halecli.util.HaleIOHelper.prepareReader
+import static to.wetransform.halecli.util.HaleIOHelper.prepareWriter
+
 import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.core.io.impl.LogProgressIndicator
 import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration
@@ -29,10 +32,8 @@ import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
 import eu.esdihumboldt.util.Pair
 import eu.esdihumboldt.util.cli.CLIUtil
 import groovy.cli.picocli.CliBuilder
-import groovy.transform.CompileStatic
 import groovy.cli.picocli.OptionAccessor
-import static to.wetransform.halecli.util.HaleIOHelper.prepareReader
-import static to.wetransform.halecli.util.HaleIOHelper.prepareWriter
+import groovy.transform.CompileStatic
 
 /**
  * Common utility functions for setting up a CliBuilder for loading a schema.
@@ -44,9 +45,9 @@ class SchemaCLI {
   static void loadSchemaOptions(CliBuilder cli, String argName = 'schema', String descr = 'Schema to load') {
     cli._(longOpt: argName, args:1, argName:'file-or-URL', descr)
     cli._(longOpt: argName + '-setting', args:2, valueSeparator:'=', argName:'setting=value',
-      'Setting for schema reader (optional, repeatable)')
+    'Setting for schema reader (optional, repeatable)')
     cli._(longOpt: argName + '-reader', args:1, argName: 'provider-id',
-      'Identifier of schema reader to use')
+    'Identifier of schema reader to use')
   }
 
   static Schema loadSchema(OptionAccessor options, String argName = 'schema') {
@@ -73,7 +74,7 @@ class SchemaCLI {
   }
 
   static IOConfiguration getSchemaIOConfig(OptionAccessor options, String argName = 'schema',
-      boolean isSource = true) {
+    boolean isSource = true) {
     def location = options."$argName"
     if (location) {
       URI loc = CLIUtil.fileOrUri(location)
@@ -92,7 +93,7 @@ class SchemaCLI {
 
   @CompileStatic
   static IOConfiguration getSchemaIOConfig(URI loc, Map<String, String> settings,
-      String customProvider, boolean isSource) {
+    String customProvider, boolean isSource) {
     Pair<SchemaReader, String> readerInfo = prepareReader(loc, SchemaReader, settings, customProvider)
     SchemaReader schemaReader = readerInfo.first
 
@@ -123,9 +124,9 @@ class SchemaCLI {
   static void saveSchemaOptions(CliBuilder cli, String argName = 'target', String descr = 'Target location') {
     cli._(longOpt: argName, args:1, argName: 'file-or-URI', descr)
     cli._(longOpt: argName + '-setting', args:2, valueSeparator:'=', argName:'setting=value',
-      'Setting for target writer (optional, repeatable)')
+    'Setting for target writer (optional, repeatable)')
     cli._(longOpt: argName + '-writer', args:1, argName: 'provider-id',
-      'Identifier of schema writer to use')
+    'Identifier of schema writer to use')
   }
 
   private static SchemaWriter getWriter(OptionAccessor options, String argName = 'target') {
@@ -147,7 +148,7 @@ class SchemaCLI {
 
   @CompileStatic
   private static SchemaWriter getWriter(URI loc, Map<String, String> settings, String providerId) {
-    return prepareWriter(providerId, SchemaWriter, settings, loc);
+    return prepareWriter(providerId, SchemaWriter, settings, loc)
   }
 
   @CompileStatic
@@ -170,5 +171,4 @@ class SchemaCLI {
 
     return report
   }
-
 }

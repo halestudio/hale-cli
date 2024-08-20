@@ -54,34 +54,32 @@ public class ProjectMigrator {
       updateMappingRelevantTypes(conf, SchemaSpaceID.TARGET, oldTargetSchema, migration, log);
     }
 
-    //TODO what else?
+    // TODO what else?
   }
 
   private static void updateMappingRelevantTypes(ComplexConfigurationService config,
-      SchemaSpaceID schemaSpace, TypeIndex oldSchema, AlignmentMigration migration,
-      SimpleLog log) {
+      SchemaSpaceID schemaSpace, TypeIndex oldSchema, AlignmentMigration migration, SimpleLog log) {
     String confName = SchemaIO.getMappingRelevantTypesParameterName(schemaSpace);
 
     List<String> cfg = config.getList(confName);
 
     if (cfg != null) {
-      List<String> typeNames = cfg.stream()
-          .map(name -> QName.valueOf(name))
-          .map(name -> oldSchema.getType(name))
-          .filter(type -> type != null)
+      List<String> typeNames = cfg.stream().map(name -> QName.valueOf(name))
+          .map(name -> oldSchema.getType(name)).filter(type -> type != null)
           .map(type -> new TypeEntityDefinition(type, schemaSpace, null))
 
           .flatMap(entity -> {
             if (migration instanceof MatchingMigration) {
-              return ((MatchingMigration) migration).findMatches(entity).orElse(Collections.emptyList()).stream();
+              return ((MatchingMigration) migration).findMatches(entity)
+                  .orElse(Collections.emptyList()).stream();
             }
             else {
-              return migration.entityReplacement(entity, log).map(e -> Collections.singletonList(e)).orElse(Collections.emptyList()).stream();
+              return migration.entityReplacement(entity, log).map(e -> Collections.singletonList(e))
+                  .orElse(Collections.emptyList()).stream();
             }
           })
 
-          .map(option -> option.getType().getName().toString())
-          .collect(Collectors.toList());
+          .map(option -> option.getType().getName().toString()).collect(Collectors.toList());
 
       config.setList(confName, typeNames);
     }

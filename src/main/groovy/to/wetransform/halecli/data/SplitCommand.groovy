@@ -15,6 +15,8 @@
 
 package to.wetransform.halecli.data
 
+import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail
+
 import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.Value
@@ -33,12 +35,10 @@ import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
 import groovy.transform.CompileStatic
 import to.wetransform.halecli.util.InstanceCLI
 import to.wetransform.halecli.util.SchemaCLI
-import groovy.cli.picocli.OptionAccessor
-
-import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail
 
 /**
  * Splits a GML source file and creates multiple target files.
@@ -90,7 +90,7 @@ class SplitCommand implements Command {
     LocalOrientDB db = InstanceCLI.loadTempDatabase(source, schema, reports)
     try {
       // replace source with database
-      source = new BrowseOrientInstanceCollection(db, schema, DataSet.SOURCE);
+      source = new BrowseOrientInstanceCollection(db, schema, DataSet.SOURCE)
       // Note: It is important that OrientDB caches are disabled
       // via system properties to have a decent performance
 
@@ -98,11 +98,11 @@ class SplitCommand implements Command {
 
       // create a reference graph
       ReferenceGraph<String> rg = new ReferenceGraph<String>(new XMLInspector(),
-          source)
+        source)
 
       // partition the graph
       int threshold = (options.threshold ?: 10000) as int
-      Iterator<InstanceCollection> parts = rg.partition(threshold);
+      Iterator<InstanceCollection> parts = rg.partition(threshold)
 
       // target
       def target = options.target as File
@@ -147,7 +147,7 @@ class SplitCommand implements Command {
 
   @CompileStatic
   private void saveGml(InstanceCollection instances, File targetFile, Schema schema,
-      ReportHandler reports) {
+    ReportHandler reports) {
     def target = new FileIOSupplier(targetFile)
 
     // create I/O provider
@@ -155,17 +155,17 @@ class SplitCommand implements Command {
     String customProvider = 'eu.esdihumboldt.hale.io.gml.writer'
     if (customProvider != null) {
       // use specified provider
-      instanceWriter = HaleIO.createIOProvider(InstanceWriter, null, customProvider);
+      instanceWriter = HaleIO.createIOProvider(InstanceWriter, null, customProvider)
       if (instanceWriter == null) {
-        fail("Could not find instance writer with ID " + customProvider);
+        fail("Could not find instance writer with ID " + customProvider)
       }
     }
     if (instanceWriter == null) {
       // find applicable reader
-      instanceWriter = HaleIO.findIOProvider(InstanceWriter, target, targetFile.name);
+      instanceWriter = HaleIO.findIOProvider(InstanceWriter, target, targetFile.name)
     }
     if (instanceWriter == null) {
-      throw fail("Could not determine instance reader to use for source data");
+      throw fail("Could not determine instance reader to use for source data")
     }
 
     //FIXME apply custom settings
@@ -189,5 +189,4 @@ class SplitCommand implements Command {
   final String shortDescription = 'Split a source file (GML) into portions'
 
   final boolean experimental = true
-
 }

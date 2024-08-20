@@ -15,6 +15,8 @@
 
 package to.wetransform.halecli.project.alignment
 
+import javax.xml.namespace.QName
+
 import eu.esdihumboldt.cst.functions.groovy.GroovyJoin
 import eu.esdihumboldt.hale.common.align.migrate.util.MigrationUtil
 import eu.esdihumboldt.hale.common.align.model.*
@@ -40,8 +42,6 @@ import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import to.wetransform.halecli.project.AbstractDeriveProjectCommand
 
-import javax.xml.namespace.QName
-
 /**
  * Command creating a project with a filtered alignment.
  *
@@ -56,7 +56,7 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
     super.setupOptions(cli)
 
     cli._(longOpt: 'json-filter', args: 1, argName: 'json-file', required: true,
-      'Specify a JSON file with the filter definition')
+    'Specify a JSON file with the filter definition')
     cli.b(longOpt: 'use-base-alignment', 'Use the original alignment as base alignment instead of copying the cells')
     cli._(longOpt: 'skip-empty', 'Specify to skip the project if the filtered alignment is empty')
     cli._(longOpt: 'skip-no-type-cells', 'Specify to skip the project if the filtered alignment contains no type cells')
@@ -166,12 +166,12 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
       messages << "Deactivated $rejected rejected alignment cells"
     }
     else {
-      result = new DefaultAlignment(alignment);
+      result = new DefaultAlignment(alignment)
 
       // remove base alignment cells keeping custom functions
-      MigrationUtil.removeBaseCells(result);
+      MigrationUtil.removeBaseCells(result)
       // remove other cells
-      result.clearCells();
+      result.clearCells()
 
       int removed = 0
       int retained = 0
@@ -179,13 +179,13 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
       for (Cell cell : alignment.getCells()) {
         if (acceptCell(cell, filterDef, messages)) {
           // transfer cell unchanged
-          MutableCell cellNew = new DefaultCell(cell);
-          MigrationUtil.removeIdPrefix(cellNew, true, true);
-          result.addCell(cellNew);
-          retained++;
+          MutableCell cellNew = new DefaultCell(cell)
+          MigrationUtil.removeIdPrefix(cellNew, true, true)
+          result.addCell(cellNew)
+          retained++
         }
         else {
-          removed++;
+          removed++
         }
       }
 
@@ -364,7 +364,7 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
           switch (cell.transformationIdentifier) {
             case JoinFunction.ID:
             case GroovyJoin.ID:
-              // check if mismatch is on first type in Join order -> then don't keep cell
+            // check if mismatch is on first type in Join order -> then don't keep cell
               def joinParam = CellUtil.getFirstParameter(cell, JoinFunction.PARAMETER_JOIN).as(JoinParameter)
               if (joinParam && joinParam.getTypes()) {
                 def firstType = joinParam.getTypes()[0]
@@ -398,7 +398,8 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
   }
 
   boolean matchesCell(Cell cell, Map excludeObj, List<String> messages) {
-    if (excludeObj.typeCell) { // match type cells
+    if (excludeObj.typeCell) {
+      // match type cells
       //TODO support different kinds of matching?
       // for now lax matching, but source and target need at least one match
       if (AlignmentUtil.isTypeCell(cell)) {
@@ -429,9 +430,7 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
         if (sourceMatch && targetMatch) {
           return true
         }
-
       }
-
     }
     else {
       // unknown definition
@@ -469,5 +468,4 @@ class FilterAlignmentCommand extends AbstractDeriveProjectCommand {
   }
 
   final boolean experimental = true
-
 }

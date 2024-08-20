@@ -15,14 +15,13 @@
 
 package to.wetransform.halecli.project.match.postnas
 
-import eu.esdihumboldt.hale.common.align.groovy.accessor.path.PathElement;
-
 import java.util.List
 
 import eu.esdihumboldt.hale.common.align.groovy.accessor.EntityAccessor
-import eu.esdihumboldt.hale.common.align.groovy.accessor.internal.EntityAccessorUtil;
+import eu.esdihumboldt.hale.common.align.groovy.accessor.internal.EntityAccessorUtil
+import eu.esdihumboldt.hale.common.align.groovy.accessor.path.PathElement
 import eu.esdihumboldt.hale.common.align.model.EntityDefinition
-import eu.esdihumboldt.util.groovy.paths.Path;
+import eu.esdihumboldt.util.groovy.paths.Path
 import groovy.transform.CompileStatic
 import groovy.transform.Immutable
 import groovy.transform.ToString
@@ -110,8 +109,8 @@ class PostNASPropertyInfo {
     }
 
     new PostNASPropertyInfo(baseProperty: baseProperty, path: path,
-      typeCategory: typeCategory, typeName: typeName, cardinality: cardinality,
-      assocRef: assocRef, assocType: assocType)
+    typeCategory: typeCategory, typeName: typeName, cardinality: cardinality,
+    assocRef: assocRef, assocType: assocType)
   }
 
   EntityDefinition findEntity(EntityDefinition typeEntity) {
@@ -157,5 +156,4 @@ class PostNASPropertyInfo {
       }
     }
   }
-
 }
