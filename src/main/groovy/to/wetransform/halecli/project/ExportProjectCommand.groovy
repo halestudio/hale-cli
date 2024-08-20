@@ -75,5 +75,4 @@ class ExportProjectCommand implements Command {
   final String shortDescription = 'Exports a project with different settings'
 
   final boolean experimental = true
-
 }

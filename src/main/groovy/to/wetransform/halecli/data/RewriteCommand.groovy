@@ -15,6 +15,8 @@
 
 package to.wetransform.halecli.data
 
+import static to.wetransform.halecli.util.HaleIOHelper.guessSchema
+
 import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.core.io.report.IOReport
 import eu.esdihumboldt.hale.common.instance.io.InstanceWriter
@@ -28,11 +30,9 @@ import eu.esdihumboldt.util.cli.CLIUtil
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
 import to.wetransform.halecli.util.InstanceCLI
 import to.wetransform.halecli.util.SchemaCLI
-import groovy.cli.picocli.OptionAccessor
-
-import static to.wetransform.halecli.util.HaleIOHelper.guessSchema
 
 /**
  * Reads a source file and writes it.
@@ -99,7 +99,7 @@ class RewriteCommand implements Command {
     try {
       // replace source with database
       if (db != null) {
-        source = new BrowseOrientInstanceCollection(db, schema, DataSet.SOURCE);
+        source = new BrowseOrientInstanceCollection(db, schema, DataSet.SOURCE)
       }
       // Note: It is important that OrientDB caches are disabled
       // via system properties to have a decent performance
@@ -113,7 +113,6 @@ class RewriteCommand implements Command {
       if (!report.isSuccess()) {
         throw new IllegalStateException('Writing target file failed: ' + report.summary)
       }
-
     } finally {
       if (db != null) {
         db.delete()
@@ -126,5 +125,4 @@ class RewriteCommand implements Command {
   final String shortDescription = 'Read a data source and write it with specific settings'
 
   final boolean experimental = true
-
 }

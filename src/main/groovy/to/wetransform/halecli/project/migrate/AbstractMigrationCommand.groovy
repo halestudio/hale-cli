@@ -40,5 +40,4 @@ abstract class AbstractMigrationCommand<T extends AlignmentMigration> extends Ab
   protected abstract SchemaSpace getNewSource(T migration, OptionAccessor options)
 
   protected abstract List<IOConfiguration> getNewSourceConfig(T migration, OptionAccessor options)
-
 }

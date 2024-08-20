@@ -37,8 +37,8 @@ public class SaveAlignmentAdvisor extends AbstractIOAdvisor<AlignmentWriter> {
   private final SchemaSpace targetSchema;
   private final URI projectLoadLocation;
 
-  public SaveAlignmentAdvisor(ProjectInfo projectInfo, Alignment alignment, SchemaSpace sourceSchema,
-      SchemaSpace targetSchema, URI projectLoadLocation) {
+  public SaveAlignmentAdvisor(ProjectInfo projectInfo, Alignment alignment,
+      SchemaSpace sourceSchema, SchemaSpace targetSchema, URI projectLoadLocation) {
     super();
     this.projectInfo = projectInfo;
     this.alignment = alignment;

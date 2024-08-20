@@ -38,7 +38,8 @@ import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
  *
  * @author Simon Templer
  */
-public class SaveProjectAdvisor extends AbstractIOAdvisor<ProjectWriter> implements IOAdvisorRegister {
+public class SaveProjectAdvisor extends AbstractIOAdvisor<ProjectWriter>
+    implements IOAdvisorRegister {
 
   private final Map<String, IOAdvisor<?>> advisors = new HashMap<>();
 
@@ -46,15 +47,14 @@ public class SaveProjectAdvisor extends AbstractIOAdvisor<ProjectWriter> impleme
 
   private final URI projectLoadLocation;
 
-  public SaveProjectAdvisor(Project project, Alignment alignment,
-      SchemaSpace sourceSchema, SchemaSpace targetSchema, URI projectLoadLocation) {
+  public SaveProjectAdvisor(Project project, Alignment alignment, SchemaSpace sourceSchema,
+      SchemaSpace targetSchema, URI projectLoadLocation) {
     super();
     this.project = project;
     this.projectLoadLocation = projectLoadLocation;
 
-    advisors.put("eu.esdihumboldt.hale.io.align.write",
-        new SaveAlignmentAdvisor(project, alignment, sourceSchema, targetSchema,
-            projectLoadLocation));
+    advisors.put("eu.esdihumboldt.hale.io.align.write", new SaveAlignmentAdvisor(project, alignment,
+        sourceSchema, targetSchema, projectLoadLocation));
   }
 
   @Override
@@ -66,8 +66,7 @@ public class SaveProjectAdvisor extends AbstractIOAdvisor<ProjectWriter> impleme
   public void updateConfiguration(ProjectWriter provider) {
     provider.getProject().setModified(new Date());
     provider.getProject().setHaleVersion(HalePlatform.getCoreVersion());
-    Map<String, ProjectFile> projectFiles = ProjectIO
-        .createDefaultProjectFiles(this);
+    Map<String, ProjectFile> projectFiles = ProjectIO.createDefaultProjectFiles(this);
 
     for (ProjectFile pf : projectFiles.values()) {
       if (pf instanceof AdvisorProjectFile) {

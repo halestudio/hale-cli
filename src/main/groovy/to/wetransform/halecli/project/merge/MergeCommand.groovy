@@ -21,10 +21,10 @@ import eu.esdihumboldt.hale.common.core.service.ServiceProvider
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.hale.common.schema.io.SchemaIO
 import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
-import to.wetransform.halecli.project.migrate.AbstractMigratorCommand
-import to.wetransform.halecli.util.ProjectCLI
 import groovy.cli.picocli.CliBuilder
 import groovy.cli.picocli.OptionAccessor
+import to.wetransform.halecli.project.migrate.AbstractMigratorCommand
+import to.wetransform.halecli.util.ProjectCLI
 
 /**
  * Command that migrates a project to a different schema.
@@ -101,5 +101,4 @@ class MergeCommand extends AbstractMigratorCommand<MergeMigrator, MatchingMigrat
   final String shortDescription = "Migrate a source project based on a project providing a schema mapping to the project's source"
 
   final boolean experimental = true
-
 }

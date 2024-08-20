@@ -22,10 +22,10 @@ import eu.esdihumboldt.hale.common.schema.model.Schema
 import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
+import groovy.cli.picocli.CliBuilder
 import groovy.cli.picocli.OptionAccessor
 import to.wetransform.halecli.util.ProjectCLI
 import to.wetransform.halecli.util.SchemaCLI
-import groovy.cli.picocli.CliBuilder
 
 abstract class MatchSchemasCommand implements Command {
 
@@ -57,7 +57,7 @@ abstract class MatchSchemasCommand implements Command {
     assert targetSchema
 
     // generate mapping between schemas
-    SchemaMatcher matcher = createMatcher();
+    SchemaMatcher matcher = createMatcher()
     Alignment alignment = matcher.generateSchemaMatching(refSchema, targetSchema)
 
     // save project
@@ -85,5 +85,4 @@ abstract class MatchSchemasCommand implements Command {
   }
 
   final boolean experimental = true
-
 }

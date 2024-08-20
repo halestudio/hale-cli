@@ -47,7 +47,8 @@ repositories {
   // but libs-release-local was placed before snapshots here in the hierarchy and also
   // vice-versa case when dependencies were encountered from release but snapshots
   // was placed before release
-  maven { // wetransform release repository (HALE releases and Eclipse dependencies)
+  maven {
+    // wetransform release repository (HALE releases and Eclipse dependencies)
     url 'https://artifactory.wetransform.to/artifactory/local'
   }
 
@@ -122,12 +123,14 @@ configurations.all {
   // ensure SNAPSHOTs are updated every time if needed
   resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
-def defaultJvmArgs = ['-Dcache.level1.enabled=false',
-                                '-Dcache.level1.size=0',
-                                '-Dcache.level2.enabled=false',
-                                '-Dcache.level2.size=0',
-                                '--add-exports=java.base/sun.nio.ch=ALL-UNNAMED',
-                                '--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED']
+def defaultJvmArgs = [
+  '-Dcache.level1.enabled=false',
+  '-Dcache.level1.size=0',
+  '-Dcache.level2.enabled=false',
+  '-Dcache.level2.size=0',
+  '--add-exports=java.base/sun.nio.ch=ALL-UNNAMED',
+  '--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED'
+]
 mainClassName = 'to.wetransform.halecli.CLI'
 applicationName = 'hale'
 applicationDefaultJvmArgs = defaultJvmArgs
@@ -143,7 +146,7 @@ applicationDefaultJvmArgs = defaultJvmArgs
 jar {
   manifest {
     attributes 'Bundle-SymbolicName': 'to.wetransform.halecli;singleton:=true',
-      'Bundle-Vendor': 'wetransform GmbH'
+    'Bundle-Vendor': 'wetransform GmbH'
   }
 }
 
@@ -183,10 +186,12 @@ docker {
     // switching to jre-jammy as the use pf Alpine as the OS of the hale-cli image breaks derived images that expect Ubuntu
     baseImage = 'eclipse-temurin:17-jre-jammy'
     maintainer = 'Simon Templer "simon@wetransform.to"'
-    images = ["wetransform/${project.name}:${project.version}", "wetransform/${project.name}:latest"]
+    images = [
+      "wetransform/${project.name}:${project.version}",
+      "wetransform/${project.name}:latest"
+    ]
     // apply JAVA_OPTS to docker plugin as the default args configured in build does not apply to docker plugin
     jvmArgs = defaultJvmArgs
-
   }
 
   url = project.hasProperty('dockerHost') ? dockerHost : 'http://localdocker:2375'
@@ -200,7 +205,7 @@ docker {
 }
 
 dockerCreateDockerfile {
-  def buildTime = java.time.ZonedDateTime.now().format(java.time.format.DateTimeFormatter.ISO_INSTANT);
+  def buildTime = java.time.ZonedDateTime.now().format(java.time.format.DateTimeFormatter.ISO_INSTANT)
   label('git.sha': grgit.head().id, 'git.branch': grgit.branch.current.name, 'build.version': version, 'build.time': buildTime)
   instruction 'COPY hale /hale/'
 }

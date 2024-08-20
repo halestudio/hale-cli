@@ -20,8 +20,8 @@ import eu.esdihumboldt.hale.common.schema.model.Schema
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
 import groovy.cli.picocli.CliBuilder
-import to.wetransform.halecli.util.SchemaCLI
 import groovy.cli.picocli.OptionAccessor
+import to.wetransform.halecli.util.SchemaCLI
 /**
  * Reads a schema and writes it.
  *
@@ -62,5 +62,4 @@ class RewriteCommand implements Command {
   final String shortDescription = 'Read a schema and write it with specific settings'
 
   final boolean experimental = true
-
 }

@@ -18,10 +18,10 @@ package to.wetransform.halecli.project.merge
 import java.util.List
 
 import eu.esdihumboldt.hale.common.align.extension.function.FunctionDefinition
-import eu.esdihumboldt.hale.common.align.extension.function.FunctionUtil;
+import eu.esdihumboldt.hale.common.align.extension.function.FunctionUtil
 import eu.esdihumboldt.hale.common.align.helper.EntityDefinitionComparator
-import eu.esdihumboldt.hale.common.align.model.EntityDefinition;
-import groovy.json.JsonOutput;
+import eu.esdihumboldt.hale.common.align.model.EntityDefinition
+import groovy.json.JsonOutput
 
 /**
  * Collects statistics on the merge.
@@ -178,5 +178,4 @@ class MergeStatistics {
       entry.noSource++
     }
   }
-
 }

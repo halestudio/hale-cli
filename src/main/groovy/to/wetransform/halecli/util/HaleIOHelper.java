@@ -112,7 +112,8 @@ public class HaleIOHelper {
     }
     if (reader == null) {
       // find applicable reader
-      Pair<T, String> providerInfo = HaleIO.findIOProviderAndId(providerClass, sourceIn, loc.getPath());
+      Pair<T, String> providerInfo = HaleIO.findIOProviderAndId(providerClass, sourceIn,
+          loc.getPath());
       if (providerInfo != null) {
         reader = providerInfo.getFirst();
         providerId = providerInfo.getSecond();
@@ -134,14 +135,14 @@ public class HaleIOHelper {
     return new Pair<>(reader, providerId);
   }
 
-
   /**
    * Guess the schema location for a given data location.
    *
    * XXX improve and move to hale codebase?
    *
    * @param dataLoc the location of the data
-   * @return the location of the schema if any could be determined, otherwise <code>null</code>
+   * @return the location of the schema if any could be determined, otherwise
+   *         <code>null</code>
    */
   @Nullable
   public static URI guessSchema(URI dataLoc) {
@@ -156,8 +157,8 @@ public class HaleIOHelper {
     IContentType xml = ctm.getContentType("org.eclipse.core.runtime.xml");
     IContentType xmlGz = ctm.getContentType("eu.esdihumboldt.hale.io.xml.gzip");
 
-
-    IContentType contentType = HaleIO.findContentType(InstanceReader.class, input, dataLoc.getPath());
+    IContentType contentType = HaleIO.findContentType(InstanceReader.class, input,
+        dataLoc.getPath());
 
     URI result = null;
 
@@ -170,7 +171,8 @@ public class HaleIOHelper {
       }
     }
 
-    //TODO support for other types, especially those where the schema is extracted from the data
+    // TODO support for other types, especially those where the schema is extracted
+    // from the data
 
     return result;
   }
@@ -179,33 +181,36 @@ public class HaleIOHelper {
    * Determine the XML Schema location for a given XML document.
    *
    * @param input the input supplier of the XML document
-   * @return the location of the schema if any could be determined, otherwise <code>null</code>
+   * @return the location of the schema if any could be determined, otherwise
+   *         <code>null</code>
    * @throws IOException
    * @throws XMLStreamException
    */
-  private static URI getXmlSchemaLocation(DefaultInputSupplier input) throws IOException, XMLStreamException {
+  private static URI getXmlSchemaLocation(DefaultInputSupplier input)
+      throws IOException, XMLStreamException {
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     try (InputStream in = input.getInput()) {
       XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(in);
       boolean done = false;
-      while(xmlEventReader.hasNext() && !done) {
+      while (xmlEventReader.hasNext() && !done) {
         XMLEvent xmlEvent = xmlEventReader.nextEvent();
         if (xmlEvent.isStartElement()) {
-            StartElement startElement = xmlEvent.asStartElement();
+          StartElement startElement = xmlEvent.asStartElement();
 
-            Attribute att = startElement.getAttributeByName(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"));
-            if (att != null) {
-              String value = att.getValue();
+          Attribute att = startElement.getAttributeByName(
+              new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"));
+          if (att != null) {
+            String value = att.getValue();
 
-              //XXX may hold multiple schema locations, right now we only can only handle one
-              //XXX using the first one for now
-              String[] parts = value.split("\\s+");
-              if (parts != null && parts.length >= 2) {
-                return URI.create(parts[1]);
-              }
+            // XXX may hold multiple schema locations, right now we only can only handle one
+            // XXX using the first one for now
+            String[] parts = value.split("\\s+");
+            if (parts != null && parts.length >= 2) {
+              return URI.create(parts[1]);
             }
+          }
 
-            done = true;
+          done = true;
         }
       }
     }

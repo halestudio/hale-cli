@@ -15,16 +15,17 @@
 
 package to.wetransform.halecli.data
 
-import eu.esdihumboldt.util.cli.Runner
-import eu.esdihumboldt.util.nonosgi.Init
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
+
 import org.junit.BeforeClass
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.contrib.java.lang.system.SystemOutRule
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue
+import eu.esdihumboldt.util.cli.Runner
+import eu.esdihumboldt.util.nonosgi.Init
 
 /**
  * Tests for rewrite command.
@@ -44,15 +45,15 @@ class RewriteCommandTest {
   @Test
   void testSimpleRewrite() {
 
-    def args = ['data', 'rewrite'];
+    def args = ['data', 'rewrite']
 
     args << '--data'
     args << 'https://wetransform.box.com/shared/static/9sjicl1nmrxzxiapq1o2jefu5byz63j4.gml'
 
     args << '--schema'
     args << 'https://wetransform.box.com/shared/static/2gb9ifjjn0h08rogllm1undbbrhmwllz.xsd'
-//    args << '--schema-reader'
-//    args << 'eu.esdihumboldt.hale.io.xsd.reader'
+    //    args << '--schema-reader'
+    //    args << 'eu.esdihumboldt.hale.io.xsd.reader'
 
     def targetFile = File.createTempFile('rewrite', '.gml')
     args << '--target'
@@ -71,7 +72,6 @@ class RewriteCommandTest {
       assertTrue(targetFile.exists())
       assertTrue(targetFile.size() > 0)
       //TODO check file content?
-
     } finally {
       targetFile.delete()
     }
@@ -80,7 +80,7 @@ class RewriteCommandTest {
   @Test
   void testRewriteGuessSchema() {
 
-    def args = ['data', 'rewrite'];
+    def args = ['data', 'rewrite']
 
     args << '--data'
     args << getClass().getClassLoader().getResource("testdata/inspire.gml")
@@ -102,7 +102,6 @@ class RewriteCommandTest {
       assertTrue(targetFile.exists())
       assertTrue(targetFile.size() > 0)
       //TODO check file content?
-
     } finally {
       targetFile.delete()
     }
@@ -111,7 +110,7 @@ class RewriteCommandTest {
   @Test
   void testRewriteNoPassthrough() {
 
-    def args = ['data', 'rewrite'];
+    def args = ['data', 'rewrite']
 
     args << '--data'
     args << getClass().getClassLoader().getResource("testdata/inspire.gml")
@@ -133,7 +132,6 @@ class RewriteCommandTest {
       assertTrue(targetFile.exists())
       assertTrue(targetFile.size() > 0)
       //TODO check file content?
-
     } finally {
       targetFile.delete()
     }
@@ -142,7 +140,7 @@ class RewriteCommandTest {
   @Test
   void testRewriteFilter() {
 
-    def args = ['data', 'rewrite'];
+    def args = ['data', 'rewrite']
 
     args << '--data'
     args << getClass().getClassLoader().getResource("testdata/inspire2.gml")
@@ -179,7 +177,7 @@ class RewriteCommandTest {
   @Test
   void testRewriteFilterList() {
 
-    def args = ['data', 'rewrite'];
+    def args = ['data', 'rewrite']
 
     args << '--data'
     args << getClass().getClassLoader().getResource("testdata/inspire2.gml")
@@ -223,7 +221,7 @@ class RewriteCommandTest {
   @Test
   void testRewriteExcludeType() {
 
-    def args = ['data', 'rewrite'];
+    def args = ['data', 'rewrite']
 
     args << '--data'
     args << getClass().getClassLoader().getResource("testdata/inspire2.gml")
@@ -265,7 +263,7 @@ class RewriteCommandTest {
   @Test
   void testRewriteExclude() {
 
-    def args = ['data', 'rewrite'];
+    def args = ['data', 'rewrite']
 
     args << '--data'
     args << getClass().getClassLoader().getResource("testdata/inspire2.gml")
@@ -306,7 +304,7 @@ class RewriteCommandTest {
   @Test
   void testRewriteExcludeWorkaround() {
 
-    def args = ['data', 'rewrite'];
+    def args = ['data', 'rewrite']
 
     args << '--data'
     args << getClass().getClassLoader().getResource("testdata/inspire2.gml")
@@ -350,7 +348,7 @@ class RewriteCommandTest {
   @Test
   void testRewriteFilterContext() {
 
-    def args = ['data', 'rewrite'];
+    def args = ['data', 'rewrite']
 
     args << '--data'
     args << getClass().getClassLoader().getResource("testdata/inspire2.gml")
@@ -405,5 +403,4 @@ class RewriteCommandTest {
       targetFile.delete()
     }
   }
-
 }

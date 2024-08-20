@@ -87,7 +87,7 @@ public class MergeMigrator extends DefaultAlignmentMigrator {
 
     collectAlignmentStatistics(originalAlignment, false);
 
-    //XXX the following is copied and adapted from the base class
+    // XXX the following is copied and adapted from the base class
 
     MutableAlignment result = new DefaultAlignment(originalAlignment);
 
@@ -101,8 +101,7 @@ public class MergeMigrator extends DefaultAlignmentMigrator {
         Iterable<MutableCell> newCells = mergeCell(cell, migration, options, log);
         result.removeCell(cell);
         for (MutableCell newCell : newCells) {
-          MigrationUtil.removeIdPrefix(newCell, options.transferBase(),
-              options.transferBase());
+          MigrationUtil.removeIdPrefix(newCell, options.transferBase(), options.transferBase());
           if (newCell != null) {
             result.addCell(newCell);
           }
@@ -158,12 +157,15 @@ public class MergeMigrator extends DefaultAlignmentMigrator {
 
       MergeCellMigrator merger;
       try {
-        merger = MigratorExtension.getInstance().getMigrator(originalCell.getTransformationIdentifier()).orElse(null);
+        merger = MigratorExtension.getInstance()
+            .getMigrator(originalCell.getTransformationIdentifier()).orElse(null);
       } catch (Exception e) {
-        throw new IllegalStateException("Unable to initialize migrator for function " + originalCell.getTransformationIdentifier(), e);
+        throw new IllegalStateException("Unable to initialize migrator for function "
+            + originalCell.getTransformationIdentifier(), e);
       }
       if (merger == null) {
-        CellMigrator cellMigrator = super.getCellMigrator(originalCell.getTransformationIdentifier());
+        CellMigrator cellMigrator = super.getCellMigrator(
+            originalCell.getTransformationIdentifier());
         if (cellMigrator instanceof MergeCellMigrator) {
           // function explicitly supports merge
           merger = (MergeCellMigrator) cellMigrator;
@@ -176,7 +178,8 @@ public class MergeMigrator extends DefaultAlignmentMigrator {
 
       return merger.mergeCell(originalCell, targetIndex, migration, this::getCellMigrator, log);
     }
-    else throw new IllegalStateException();
+    else
+      throw new IllegalStateException();
   }
 
   /**
@@ -211,7 +214,8 @@ public class MergeMigrator extends DefaultAlignmentMigrator {
       return;
     }
 
-    String targetFunction = FunctionUtil.getFunction(originalCell.getTransformationIdentifier(), serviceProvider).getDisplayName();
+    String targetFunction = FunctionUtil
+        .getFunction(originalCell.getTransformationIdentifier(), serviceProvider).getDisplayName();
     List<List<String>> sourceFunctions = new ArrayList<>();
     boolean incomplete = false;
     for (Entity source : sources) {
@@ -237,13 +241,14 @@ public class MergeMigrator extends DefaultAlignmentMigrator {
         List<String> matchFunctions = new ArrayList<>();
         for (Cell match : matches) {
           String sourceFunction = match.getTransformationIdentifier();
-          sourceFunction = FunctionUtil.getFunction(sourceFunction, serviceProvider).getDisplayName();
+          sourceFunction = FunctionUtil.getFunction(sourceFunction, serviceProvider)
+              .getDisplayName();
           matchFunctions.add(sourceFunction);
 
           boolean hasNewSourceCondition = false;
 
           if (match.getSource() != null) {
-            //XXX also report multiple sources?
+            // XXX also report multiple sources?
 
             for (Entity matchSource : match.getSource().values()) {
               if (hasConditions(matchSource)) {
@@ -268,11 +273,12 @@ public class MergeMigrator extends DefaultAlignmentMigrator {
     }
     statistics.addCell();
 
-    // System.out.println("| " + targetFunction + ": " + sourceFunctions.stream().collect(Collectors.joining(", ")) + " |");
+    // System.out.println("| " + targetFunction + ": " +
+    // sourceFunctions.stream().collect(Collectors.joining(", ")) + " |");
   }
 
   private boolean hasConditions(Entity source) {
-    //XXX what about index conditions?
+    // XXX what about index conditions?
 
     EntityDefinition def = source.getDefinition();
 

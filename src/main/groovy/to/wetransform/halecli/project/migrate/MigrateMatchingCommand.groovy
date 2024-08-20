@@ -21,8 +21,8 @@ import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironmen
 import eu.esdihumboldt.hale.common.schema.io.SchemaIO
 import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
 import groovy.cli.picocli.CliBuilder
-import to.wetransform.halecli.util.ProjectCLI
 import groovy.cli.picocli.OptionAccessor
+import to.wetransform.halecli.util.ProjectCLI
 /**
  * Command that migrates a project to a different schema.
  *
@@ -68,5 +68,4 @@ class MigrateMatchingCommand extends AbstractMigrationCommand<MatchingMigration>
   final String shortDescription = 'Migrate a source project based on a project providing a schema matching'
 
   final boolean experimental = true
-
 }

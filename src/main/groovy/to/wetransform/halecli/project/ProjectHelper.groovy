@@ -17,7 +17,6 @@ package to.wetransform.halecli.project
 
 import org.eclipse.core.runtime.content.IContentType
 
-import to.wetransform.halecli.project.advisor.SaveProjectAdvisor
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.Value
@@ -34,6 +33,7 @@ import eu.esdihumboldt.hale.common.core.service.ServiceManager
 import eu.esdihumboldt.hale.common.core.service.ServiceProvider
 import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
 import groovy.transform.CompileStatic
+import to.wetransform.halecli.project.advisor.SaveProjectAdvisor
 
 /**
  * Helper for dealing with hale projects.
@@ -52,7 +52,7 @@ class ProjectHelper {
     IContentType projectType = HaleIO.findContentType(
       ProjectWriter.class, null, "project.$extension")
     IOProviderDescriptor factory = HaleIO.findIOProviderFactory(
-      ProjectWriter.class, projectType, null);
+      ProjectWriter.class, projectType, null)
 
     saveProject(project, alignment, sourceSchema, targetSchema, output,
       reports, factory, projectLoadLocation, settings)
@@ -85,23 +85,22 @@ class ProjectHelper {
 
     // service provider
     // XXX what services are needed for project export?
-    ServiceProvider projectScope = new ServiceManager(ServiceManager.SCOPE_PROJECT);
+    ServiceProvider projectScope = new ServiceManager(ServiceManager.SCOPE_PROJECT)
     ProjectInfoService projectInfo = new FixedProjectInfoService(project, projectLoadLocation)
     ServiceProvider serviceProvider = new ServiceProvider() {
 
-      @Override
-      public <T> T getService(Class<T> serviceInterface) {
-        if (ProjectInfoService.metaClass.equals(serviceInterface)) {
-          return projectInfo;
+        @Override
+        public <T> T getService(Class<T> serviceInterface) {
+          if (ProjectInfoService.metaClass.equals(serviceInterface)) {
+            return projectInfo
+          }
+          return projectScope.getService(serviceInterface)
         }
-        return projectScope.getService(serviceInterface);
       }
 
-    }
-
     SaveProjectAdvisor advisor = new SaveProjectAdvisor(project, alignment, sourceSchema,
-      targetSchema, projectLoadLocation);
-    advisor.setServiceProvider(serviceProvider);
+      targetSchema, projectLoadLocation)
+    advisor.setServiceProvider(serviceProvider)
     advisor.prepareProvider(projectWriter)
     advisor.updateConfiguration(projectWriter)
     // HeadlessIO.executeProvider(projectWriter, advisor, null, reports);
@@ -118,5 +117,4 @@ class ProjectHelper {
       }
     }
   }
-
 }

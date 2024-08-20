@@ -41,13 +41,13 @@ abstract class AbstractDeriveProjectCommand extends AbstractProjectEnvironmentCo
 
   @Override
   void setupOptions(CliBuilder cli) {
-    super.setupOptions(cli);
+    super.setupOptions(cli)
 
     cli._(longOpt: 'name', args: 1, argName: 'variant-name', 'Set the name of project variant')
   }
 
   abstract DeriveProjectResult deriveProject(ProjectTransformationEnvironment projectEnv,
-    OptionAccessor options)
+  OptionAccessor options)
 
   @Override
   boolean runForProject(ProjectTransformationEnvironment projectEnv, URI projectLocation,
@@ -93,5 +93,4 @@ abstract class AbstractDeriveProjectCommand extends AbstractProjectEnvironmentCo
 
     true
   }
-
 }
