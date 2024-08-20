@@ -13,12 +13,13 @@
  *     wetransform GmbH <http://www.wetransform.to>
  */
 
-package to.wetransform.halecli.project.match.postnas;
+package to.wetransform.halecli.project.match.postnas
+
+import eu.esdihumboldt.hale.common.align.groovy.accessor.path.PathElement;
 
 import java.util.List
 
 import eu.esdihumboldt.hale.common.align.groovy.accessor.EntityAccessor
-import eu.esdihumboldt.hale.common.align.groovy.accessor.PathElement;
 import eu.esdihumboldt.hale.common.align.groovy.accessor.internal.EntityAccessorUtil;
 import eu.esdihumboldt.hale.common.align.model.EntityDefinition
 import eu.esdihumboldt.util.groovy.paths.Path;

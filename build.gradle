@@ -30,7 +30,7 @@ java {
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '5.3.0'
+  haleVersion = '5.4.0-SNAPSHOT'
   groovyVersion = '2.5.23'
 }
 
@@ -66,60 +66,28 @@ configurations {
 dependencies {
   // HALE
 
-  // CLI API, utilities and default commands
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.util.cli:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.cli:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.cli.commands:$haleVersion"
+  // BOM
+  implementation(platform("eu.esdihumboldt.hale:bom:$haleVersion"))
 
-  implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
+  /*
+   * Features
+   */
 
-  // core
-  implementation 'eu.esdihumboldt.unpuzzled:org.eclipse.equinox.nonosgi.registry:1.0.0'
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align.groovy:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align.merge:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.referencing:$haleVersion"
+  // CLI and core hale libraries & resources
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.feature.cli:$haleVersion"
 
-  // transformation
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.transform:$haleVersion"
-  // needed to run successfully:
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.headless.orient:$haleVersion" // reiterable transformation sink (for WFS FeatureCollection)
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.propertyaccessor:$haleVersion" // for CQL filters to work
-  // transformation functions:
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.core:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.inspire:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.geometric:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.groovy:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.groovy.helpers:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.numeric:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.string:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.custom:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.cst.functions.collector:$haleVersion"
+  // core I/O providers and core hale libraries & resources
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.feature.core:$haleVersion"
 
-  // formats
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xml:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xsd:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.gml:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.shp:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.csv:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.wfs:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.json:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.xls:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.geopackage:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.html.svg:$haleVersion"
+  // HTML export
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.feature.html:$haleVersion"
 
-  // database support
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.postgresql:$haleVersion"
+  /*
+   * Additional formats
+   */
+
   implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.mssql:$haleVersion"
   implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.msaccess:$haleVersion"
-
-  // hale connect
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.haleconnect:$haleVersion"
-
-  // code list formats
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.codelist.xml:$haleVersion"
 
   // Schematron validation
   implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.schematron:$haleVersion"
@@ -127,47 +95,24 @@ dependencies {
   // tested w/ schematron validation in https://github.com/wetransform/exp-schematron/tree/exp/saxon-he
   implementation 'net.sf.saxon:Saxon-HE:9.9.1-8'
 
-  // converters
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.core:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.convert.wkt:$haleVersion"
-
-  // Groovy meta extensions
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.util.groovy.meta.extension:$haleVersion"
-
-  // logging
-  implementation(group: 'eu.esdihumboldt.unpuzzled', name: 'de.fhg.igd.slf4jplus.logback.appender', version: '1.2.0.201503311443')
-  implementation 'org.slf4j:jul-to-slf4j:1.7.36'
-
-  // resource cache
-  implementation(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
-  def resourcesGroup = 'to.wetransform.offline-resources'
-  // OpenGIS schemas, INSPIRE schemas, W3C schemas, etc.
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: '2024.7.31')
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: '2024.7.31')
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.portele.de', version: '2024.1.25')
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.w3.org', version: '2024.1.25')
-  // INSPIRE code lists and feature concepts
-  implementation(group: resourcesGroup,
-    name: 'eu.esdihumboldt.util.resource.codelists.inspire',
-    version: '2024.7.31')
-  implementation(group: resourcesGroup,
-    name: 'eu.esdihumboldt.util.resource.codelists.inspire.accept-xml',
-    version: '2024.7.31')
-  implementation(group: resourcesGroup,
-    name: 'eu.esdihumboldt.util.resource.featureconcepts.inspire',
-    version: '2024.2.20')
-  // More resources
-  implementation(group: resourcesGroup, name: 'eu.esdihumboldt.util.resource.schemas.repository.gdi-de.org', version: '2024.5.23')
+  /*
+   * Other
+   */
 
   // user / customer specific
   implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.adv.merge:$haleVersion"
 
+  // Groovy
+  implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
+
   // CLI
-  implementation 'commons-cli:commons-cli:1.9.0'
+  // implementation 'commons-cli:commons-cli:1.9.0'
   // Groovy Shell
   implementation 'jline:jline:2.14.6'
 
-  // Testing
+  /*
+   * Testing
+   */
   testImplementation 'junit:junit:4.13.2'
   testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
 }

@@ -16,12 +16,12 @@
 package to.wetransform.halecli.data
 
 import eu.esdihumboldt.util.cli.Runner
+import eu.esdihumboldt.util.nonosgi.Init
 import org.junit.BeforeClass
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.contrib.java.lang.system.SystemOutRule
-import to.wetransform.halecli.internal.Init
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertTrue
