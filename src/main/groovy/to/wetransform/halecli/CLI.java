@@ -16,7 +16,7 @@
 package to.wetransform.halecli;
 
 import eu.esdihumboldt.util.cli.Runner;
-import to.wetransform.halecli.internal.Init;
+import eu.esdihumboldt.util.nonosgi.Init;
 
 /**
  * hale CLI main class.
