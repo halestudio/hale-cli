@@ -12,12 +12,13 @@
  */
 package to.wetransform.halecli.schema
 
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
+
 import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.schema.model.Schema
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
-import groovy.cli.picocli.CliBuilder
-import groovy.cli.picocli.OptionAccessor
 import to.wetransform.halecli.util.SchemaCLI
 /**
  * Reads a schema and writes it.

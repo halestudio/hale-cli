@@ -12,6 +12,8 @@
  */
 package to.wetransform.halecli.project
 
+import groovy.transform.CompileStatic
+
 import org.eclipse.core.runtime.content.IContentType
 
 import eu.esdihumboldt.hale.common.align.model.Alignment
@@ -29,7 +31,6 @@ import eu.esdihumboldt.hale.common.core.report.ReportHandler
 import eu.esdihumboldt.hale.common.core.service.ServiceManager
 import eu.esdihumboldt.hale.common.core.service.ServiceProvider
 import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
-import groovy.transform.CompileStatic
 import to.wetransform.halecli.project.advisor.SaveProjectAdvisor
 
 /**

@@ -12,6 +12,11 @@
  */
 package to.wetransform.halecli.project.alignment
 
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
+import groovy.json.JsonSlurper
+import groovy.transform.CompileStatic
+
 import javax.xml.namespace.QName
 
 import eu.esdihumboldt.cst.functions.groovy.GroovyJoin
@@ -33,10 +38,6 @@ import eu.esdihumboldt.hale.common.schema.io.SchemaIO
 import eu.esdihumboldt.hale.common.schema.model.TypeDefinition
 import eu.esdihumboldt.hale.io.xsd.constraint.XmlElements
 import eu.esdihumboldt.hale.io.xsd.model.XmlElement
-import groovy.cli.picocli.CliBuilder
-import groovy.cli.picocli.OptionAccessor
-import groovy.json.JsonSlurper
-import groovy.transform.CompileStatic
 import to.wetransform.halecli.project.AbstractDeriveProjectCommand
 
 /**

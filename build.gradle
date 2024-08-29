@@ -344,7 +344,7 @@ spotless {
   groovy {
     toggleOffOn()
 
-    importOrder('java', 'javax', 'org', 'com', '')
+    importOrder('groovy', 'java', 'javax', 'org', 'com', '')
 
     // https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-groovy
     greclipse().configFile('groovy-format.properties')

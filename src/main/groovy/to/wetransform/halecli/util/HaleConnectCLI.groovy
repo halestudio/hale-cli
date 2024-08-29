@@ -14,11 +14,12 @@ package to.wetransform.halecli.util
 
 import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail
 
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
+
 import eu.esdihumboldt.hale.common.core.HalePlatform
 import eu.esdihumboldt.hale.common.core.service.ServiceProvider
 import eu.esdihumboldt.hale.io.haleconnect.HaleConnectService
-import groovy.cli.picocli.CliBuilder
-import groovy.cli.picocli.OptionAccessor
 
 /**
  * Common utility functions for configuring a hale connect connection.

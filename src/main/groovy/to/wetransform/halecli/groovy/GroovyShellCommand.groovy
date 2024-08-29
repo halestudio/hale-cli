@@ -18,6 +18,11 @@
 
 package to.wetransform.halecli.groovy
 
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
+import groovy.transform.CompileStatic
+import groovyjarjarcommonscli.HelpFormatter
+
 import org.codehaus.groovy.tools.shell.Groovysh
 import org.codehaus.groovy.tools.shell.IO
 import org.codehaus.groovy.tools.shell.Main
@@ -33,10 +38,6 @@ import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.Value
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
-import groovy.cli.picocli.CliBuilder
-import groovy.cli.picocli.OptionAccessor
-import groovy.transform.CompileStatic
-import groovyjarjarcommonscli.HelpFormatter
 /**
  * Groovy shell command based on Groovy shell main class.
  *
