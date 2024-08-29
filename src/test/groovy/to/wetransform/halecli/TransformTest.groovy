@@ -14,6 +14,8 @@ package to.wetransform.halecli
 
 import static org.junit.Assert.*
 
+import groovy.xml.XmlUtil
+
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
@@ -27,7 +29,6 @@ import eu.esdihumboldt.hale.common.core.HalePlatform
 import eu.esdihumboldt.util.cli.Runner
 import eu.esdihumboldt.util.io.IOUtils
 import eu.esdihumboldt.util.nonosgi.Init
-import groovy.xml.XmlUtil
 
 /**
  * Simple tests for CLI runner.

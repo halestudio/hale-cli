@@ -12,14 +12,15 @@
  */
 package to.wetransform.halecli.project.merge
 
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
+
 import eu.esdihumboldt.hale.common.align.merge.impl.MatchingMigration
 import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration
 import eu.esdihumboldt.hale.common.core.service.ServiceProvider
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.hale.common.schema.io.SchemaIO
 import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
-import groovy.cli.picocli.CliBuilder
-import groovy.cli.picocli.OptionAccessor
 import to.wetransform.halecli.project.migrate.AbstractMigratorCommand
 import to.wetransform.halecli.util.ProjectCLI
 

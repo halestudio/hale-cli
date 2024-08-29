@@ -12,14 +12,15 @@
  */
 package to.wetransform.halecli.project.migrate
 
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
+import groovy.transform.CompileStatic
+
 import eu.esdihumboldt.hale.common.align.merge.impl.DefaultSchemaMigration
 import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration
 import eu.esdihumboldt.hale.common.schema.model.Schema
 import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
 import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
-import groovy.cli.picocli.CliBuilder
-import groovy.cli.picocli.OptionAccessor
-import groovy.transform.CompileStatic
 import to.wetransform.halecli.util.SchemaCLI
 /**
  * Command that migrates a project to a different schema.

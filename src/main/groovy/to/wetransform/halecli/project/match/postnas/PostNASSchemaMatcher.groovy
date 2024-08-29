@@ -12,6 +12,8 @@
  */
 package to.wetransform.halecli.project.match.postnas
 
+import groovy.transform.CompileStatic
+
 import javax.xml.namespace.QName
 
 import com.google.common.collect.ArrayListMultimap
@@ -37,7 +39,6 @@ import eu.esdihumboldt.hale.common.schema.model.ChildDefinition
 import eu.esdihumboldt.hale.common.schema.model.DefinitionUtil
 import eu.esdihumboldt.hale.common.schema.model.TypeDefinition
 import eu.esdihumboldt.hale.common.schema.model.TypeIndex
-import groovy.transform.CompileStatic
 import to.wetransform.halecli.project.match.SchemaMatcher
 
 /**

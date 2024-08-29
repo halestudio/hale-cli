@@ -14,6 +14,10 @@ package to.wetransform.halecli.data
 
 import static eu.esdihumboldt.hale.app.transform.ExecUtil.fail
 
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
+import groovy.transform.CompileStatic
+
 import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.Value
@@ -31,9 +35,6 @@ import eu.esdihumboldt.hale.common.schema.model.Schema
 import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
-import groovy.cli.picocli.CliBuilder
-import groovy.cli.picocli.OptionAccessor
-import groovy.transform.CompileStatic
 import to.wetransform.halecli.util.InstanceCLI
 import to.wetransform.halecli.util.SchemaCLI
 

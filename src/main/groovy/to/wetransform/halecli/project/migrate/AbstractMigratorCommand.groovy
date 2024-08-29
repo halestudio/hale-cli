@@ -12,6 +12,9 @@
  */
 package to.wetransform.halecli.project.migrate
 
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
+
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigration
 import eu.esdihumboldt.hale.common.align.migrate.AlignmentMigrator
 import eu.esdihumboldt.hale.common.align.migrate.MigrationOptions
@@ -29,8 +32,6 @@ import eu.esdihumboldt.hale.common.schema.io.SchemaIO
 import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
-import groovy.cli.picocli.CliBuilder
-import groovy.cli.picocli.OptionAccessor
 import to.wetransform.halecli.util.ProjectCLI
 
 /**

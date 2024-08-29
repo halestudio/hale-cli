@@ -12,6 +12,9 @@
  */
 package to.wetransform.halecli.project
 
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
+
 import eu.esdihumboldt.hale.common.align.model.Alignment
 import eu.esdihumboldt.hale.common.cli.project.AbstractProjectEnvironmentCommand
 import eu.esdihumboldt.hale.common.core.io.project.ComplexConfigurationService
@@ -21,8 +24,6 @@ import eu.esdihumboldt.hale.common.core.io.supplier.FileIOSupplier
 import eu.esdihumboldt.hale.common.core.report.ReportHandler
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.util.cli.CommandContext
-import groovy.cli.picocli.CliBuilder
-import groovy.cli.picocli.OptionAccessor
 
 /**
  * Base class for command creating derived projects.

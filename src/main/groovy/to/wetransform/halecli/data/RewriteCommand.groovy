@@ -14,6 +14,9 @@ package to.wetransform.halecli.data
 
 import static to.wetransform.halecli.util.HaleIOHelper.guessSchema
 
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
+
 import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.core.io.report.IOReport
 import eu.esdihumboldt.hale.common.instance.io.InstanceWriter
@@ -26,8 +29,6 @@ import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
 import eu.esdihumboldt.util.cli.CLIUtil
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
-import groovy.cli.picocli.CliBuilder
-import groovy.cli.picocli.OptionAccessor
 import to.wetransform.halecli.util.InstanceCLI
 import to.wetransform.halecli.util.SchemaCLI
 

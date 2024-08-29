@@ -12,12 +12,13 @@
  */
 package to.wetransform.halecli.project
 
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
+
 import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.headless.impl.ProjectTransformationEnvironment
 import eu.esdihumboldt.util.cli.Command
 import eu.esdihumboldt.util.cli.CommandContext
-import groovy.cli.picocli.CliBuilder
-import groovy.cli.picocli.OptionAccessor
 import to.wetransform.halecli.util.HaleConnectCLI
 import to.wetransform.halecli.util.ProjectCLI
 
