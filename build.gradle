@@ -135,6 +135,11 @@ mainClassName = 'to.wetransform.halecli.CLI'
 applicationName = 'hale'
 applicationDefaultJvmArgs = defaultJvmArgs
 
+test {
+  // debug classloading
+  // jvmArgs '-verbose:class'
+}
+
 /*
  * plugin.xml and OSGi manifest
  *
