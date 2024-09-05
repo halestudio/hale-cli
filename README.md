@@ -6,7 +6,14 @@ hale-cli
 hale command line interface.
 Lists available commands when run without arguments.
 
-From version 5 onwards, hale-cli versions don't necessarily resemble the version of the respective [hale»studio](https://github.com/halestudio/hale) dependencies used.
+From version 6 onwards hale-cli is based on [hale-core](https://github.com/halestudio/hale-core). The version of hale-cli does not necessarily resemble the version of the hale-core dependencies used.
+Here you can find an overview on which version of hale-core is used:
+
+| hale-cli | hale-core (major version) | Java
+|----------|---------------------------| ----
+| 6.x      | 6                         | 17
+
+Earlier versions of hale-cli were based on [hale»studio](https://github.com/halestudio/hale) dependencies.
 Here you can find an overview on which hale»studio version is used:
 
 | hale-cli | hale»studio (major version) | Java
@@ -14,7 +21,6 @@ Here you can find an overview on which hale»studio version is used:
 | 5.x      | 5                           | 17
 | 4.x      | 4                           | 8
 | 3.x      | 3                           | 8
-
 
 Build
 -----
@@ -62,30 +68,6 @@ For example pass argument `help` to run command as below
 If using `./gradlew installDist`, the start script can be found in `./build/install/hale/bin/`.
 
 JVM parameters can be provided to the start script with the `HALE_OPTS` environment variable.
-
-
-Use custom hale studio dependencies during development
-------------------------------------------------------
-
-If you do changes to hale studio and want to test your changes with hale-cli in your local environment, then you need to perform these steps:
-
-1.  Build hale studio locally and publish the related artifacts to you local Maven repository.
-
-    For that change to the `build/` folder in your hale studio checkout and run the following command:
-
-    ```
-    ./build.sh clean && ./build.sh installArtifacts`
-    ```
-2.  Make sure that in the `build.gradle` file the line adding the `mavenLocal` repository is uncommented (see [here](https://github.com/halestudio/hale-cli/blob/1ac56a52c359e52d71fe210b1cc4681aa53e3edb/build.gradle#L40)).
-3.  If necessary adapt the version of the hale-studio dependencies to the ones you published (see [here](https://github.com/halestudio/hale-cli/blob/1ac56a52c359e52d71fe210b1cc4681aa53e3edb/build.gradle#L29)).
-
-Gradle will then take care to use the local dependencies.
-If you want to create a local build of hale-cli that you want to use, you can for instance run
-
-```
-./gradlew clean installDist
-```
-
 
 Configuration
 -------------
