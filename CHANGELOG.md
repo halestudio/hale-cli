@@ -1,3 +1,25 @@
+## [6.0.0](https://github.com/halestudio/hale-cli/compare/v5.3.0...v6.0.0) (2024-09-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** update hale dependencies to v6 (major)
+* use hale-core libraries as dependencies
+
+### Features
+
+* **deps:** update hale dependencies to v6 (major) ([58c3ffb](https://github.com/halestudio/hale-cli/commit/58c3ffb97198fcb07ee8a1f8366ec2f9fd94350e))
+
+
+### Bug Fixes
+
+* **deps:** update dependency commons-cli:commons-cli to v1.9.0 ([4ebff3f](https://github.com/halestudio/hale-cli/commit/4ebff3f6aa0390f080654463a536ede1d3f4fd2b))
+
+
+### Build System
+
+* use hale-core libraries as dependencies ([f187496](https://github.com/halestudio/hale-cli/commit/f18749658ab1505ca95112f02d379345f1cb96fe))
+
 ## [5.3.0](https://github.com/halestudio/hale-cli/compare/v5.2.1...v5.3.0) (2024-08-07)
 
 
