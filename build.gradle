@@ -15,7 +15,7 @@ plugins {
   id 'com.bmuschko.docker-java-application' version '9.4.0'
   id "nebula.ospackage-application" version "9.1.1"
   id 'org.ajoberstar.grgit' version '5.2.2'
-  id 'to.wetransform.semantic-release-version' version '2.1.1'
+  id 'to.wetransform.semantic-release-version' version '2.1.2'
   id 'com.diffplug.spotless' version '6.25.0'
 }
 
