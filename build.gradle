@@ -31,7 +31,7 @@ java {
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '5.4.0-SNAPSHOT'
+  haleCoreVersion = '6.0.0'
   groovyVersion = '2.5.23'
 }
 
@@ -42,11 +42,6 @@ project.ext {
 repositories {
   // mavenLocal() //XXX for testing
 
-  // merge both snapshot and release repositories to virtual repository named local
-  // because gradle was reporting error if it encountered dependencies from snapshots
-  // but libs-release-local was placed before snapshots here in the hierarchy and also
-  // vice-versa case when dependencies were encountered from release but snapshots
-  // was placed before release
   maven {
     // wetransform release repository (HALE releases and Eclipse dependencies)
     url 'https://artifactory.wetransform.to/artifactory/local'
@@ -69,30 +64,30 @@ dependencies {
   // HALE
 
   // BOM
-  implementation(platform("eu.esdihumboldt.hale:bom:$haleVersion"))
+  implementation(platform("eu.esdihumboldt.hale:bom:$haleCoreVersion"))
 
   /*
    * Features
    */
 
   // CLI and core hale libraries & resources
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.feature.cli:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.feature.cli"
 
   // core I/O providers and core hale libraries & resources
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.feature.core:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.feature.core"
 
   // HTML export
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.feature.html:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.feature.html"
 
   /*
    * Additional formats
    */
 
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.mssql:$haleVersion"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.msaccess:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.mssql"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.msaccess"
 
   // Schematron validation
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.schematron:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.schematron"
   // replacement for omitted Saxon dependency
   // tested w/ schematron validation in https://github.com/wetransform/exp-schematron/tree/exp/saxon-he
   implementation 'net.sf.saxon:Saxon-HE:9.9.1-8'
@@ -102,7 +97,7 @@ dependencies {
    */
 
   // user / customer specific
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.adv.merge:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.adv.merge"
 
   // Groovy
   implementation "org.codehaus.groovy:groovy-all:$groovyVersion"

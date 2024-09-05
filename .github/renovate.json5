@@ -8,13 +8,14 @@
   ],
   packageRules: [
     {
-      description: "Treat major hale studio updates as breaking change",
+      description: "Treat major hale-core updates as breaking change",
       matchPackagePrefixes: ["eu.esdihumboldt.hale:"],
       matchUpdateTypes: ["major"],
-      semanticCommitType: "feat!" // to be confirmed that this works
+      semanticCommitType: "feat!", // works, but ! is before scope
+      semanticCommitScope: "" // remove scope TODO confirm this works as expected
     },
     {
-      description: "Treat minor hale studio updates as feature",
+      description: "Treat minor hale-core updates as feature",
       matchPackagePrefixes: ["eu.esdihumboldt.hale:"],
       matchUpdateTypes: ["minor"],
       semanticCommitType: "feat"
