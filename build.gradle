@@ -31,7 +31,7 @@ java {
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '5.4.0-SNAPSHOT'
+  haleVersion = '6.0.0'
   groovyVersion = '2.5.23'
 }
 
