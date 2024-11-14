@@ -1,3 +1,9 @@
+## [6.0.1](https://github.com/halestudio/hale-cli/compare/v6.0.0...v6.0.1) (2024-11-14)
+
+### Bug Fixes
+
+* **deps:** update dependency eu.esdihumboldt.hale:bom to v6.1.0 ([8fc4a45](https://github.com/halestudio/hale-cli/commit/8fc4a45a5afdf7087868fb524274f331c9135c93))
+
 ## [6.0.0](https://github.com/halestudio/hale-cli/compare/v5.3.0...v6.0.0) (2024-09-05)
 
 
