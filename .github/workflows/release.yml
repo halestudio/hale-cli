@@ -39,7 +39,8 @@ jobs:
       java-version: 17
       image-tag: wetransform/hale-cli:latest # image to scan
       # don't run tests since this is already done in artifacts
-      gradle-tasks: clean dockerPushImage
+      build-tasks: clean
+      publish-tasks: dockerPushImage
       expect-tests: false
     secrets:
       DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
