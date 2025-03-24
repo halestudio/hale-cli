@@ -60,6 +60,16 @@ configurations {
   implementation.exclude group: 'org.opengis.cite.saxon', module: 'saxon9'
 }
 
+configurations.all {
+  // exclude slf4j-nop introduced by geopackage library (see https://github.com/ngageoint/geopackage-java/issues/62)
+  exclude group: 'org.slf4j', module: 'slf4j-nop'
+  // exclude slf4j-jdk14 introduced by schemacrawler library
+  exclude group: 'org.slf4j', module: 'slf4j-jdk14'
+  // exclude other unwanted providers just in case...
+  exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+  exclude group: 'org.slf4j', module: 'slf4j-jcl'
+}
+
 dependencies {
   // HALE
 
