@@ -1,3 +1,9 @@
+## [6.1.2](https://github.com/halestudio/hale-cli/compare/v6.1.1...v6.1.2) (2025-03-25)
+
+### Bug Fixes
+
+* fix conflicting SLF4J providers introduced by dependencies ([05c218d](https://github.com/halestudio/hale-cli/commit/05c218d62f25745e0e27c3dc4fd0bf9942e9d00b))
+
 ## [6.1.1](https://github.com/halestudio/hale-cli/compare/v6.1.0...v6.1.1) (2025-02-14)
 
 ### Bug Fixes
