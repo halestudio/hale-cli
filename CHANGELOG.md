@@ -1,3 +1,9 @@
+## [6.1.4](https://github.com/halestudio/hale-cli/compare/v6.1.3...v6.1.4) (2025-09-09)
+
+### Bug Fixes
+
+* **deps:** update hale-core to 6.2.4 ([84208ec](https://github.com/halestudio/hale-cli/commit/84208eca1aa1694b94428237a8da440208e604b2))
+
 ## [6.1.3](https://github.com/halestudio/hale-cli/compare/v6.1.2...v6.1.3) (2025-08-05)
 
 ### Bug Fixes
