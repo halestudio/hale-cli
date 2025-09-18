@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   release:
-    uses: wetransform/gha-workflows/.github/workflows/gradle-library-publish.yml@cf33a255ff268cb2f569e09d241296e341c44e73 # v3.4.5
+    uses: wetransform/gha-workflows/.github/workflows/gradle-library-publish.yml@ff134b5acb193725e52cfa8fe713f3631b1b151d # v3.6.0
     with:
       java-version: 17
       build-tasks: clean check
@@ -33,7 +33,7 @@ jobs:
   docker:
     needs: [release]
     if: ${{ needs.release.outputs.release-published != 'false' && needs.release.outputs.release-published != '' }}
-    uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@cf33a255ff268cb2f569e09d241296e341c44e73 # v3.4.5
+    uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@ff134b5acb193725e52cfa8fe713f3631b1b151d # v3.6.0
     with:
       checkout-ref: refs/tags/v${{needs.release.outputs.release-version}} # check out release tag
       java-version: 17
