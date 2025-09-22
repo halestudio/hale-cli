@@ -68,6 +68,15 @@ configurations.all {
   // exclude other unwanted providers just in case...
   exclude group: 'org.slf4j', module: 'slf4j-log4j12'
   exclude group: 'org.slf4j', module: 'slf4j-jcl'
+
+  resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+    if (details.requested.group == 'commons-collections' && details.requested.name == 'commons-collections') {
+      if (details.requested.version < '3.2.2') {
+        details.useVersion '3.2.2'
+        details.because 'Avoid CVE-2015-7501'
+      }
+    }
+  }
 }
 
 dependencies {

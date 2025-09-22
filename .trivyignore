@@ -1,0 +1,4 @@
+# https://trivy.dev/latest/docs/configuration/filtering/#trivyignore
+
+# Related to OrientDB, not seen as risk in our use case, should be removed once OrientDB is replaced in hale-core
+CVE-2017-11467
