@@ -112,7 +112,7 @@ You can override the default locale settings via the following system properties
 * `user.variant` - name of the variant, if applicable
 
 Example:
-
+x z
 ```
 HALE_OPTS="-Duser.country=DE -Duser.language=de"
 ```

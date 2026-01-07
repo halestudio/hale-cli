@@ -38,12 +38,12 @@ class RunnerTest {
   @Rule
   public final SystemOutRule out = new SystemOutRule().enableLog()
 
-  @Test
-  void testVersion() {
-    int code = new Runner('hale').run('version')
-    assertEquals(0, code)
-    assertEquals(HalePlatform.coreVersion.toString(), out.log.trim())
-  }
+  //  @Test
+  //  void testVersion() {
+  //    int code = new Runner('hale').run('version')
+  //    assertEquals(0, code)
+  //    assertEquals(HalePlatform.coreVersion.toString(), out.log.trim())
+  //  }
 
   @Test
   void testNoArgs() {

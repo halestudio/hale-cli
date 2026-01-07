@@ -31,7 +31,7 @@ java {
 group = 'to.wetransform'
 
 project.ext {
-  haleCoreVersion = '6.3.2'
+  haleCoreVersion = '6.4.0-SNAPSHOT'
   groovyVersion = '2.5.23'
 }
 
@@ -40,7 +40,7 @@ project.ext {
  */
 
 repositories {
-  // mavenLocal() //XXX for testing
+  mavenLocal() //XXX for testing
 
   maven {
     // wetransform release repository (HALE releases and Eclipse dependencies)
