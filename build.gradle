@@ -2,41 +2,58 @@ plugins {
   id 'groovy'
   id 'application'
   id 'maven-publish'
-  //id 'osgi' // discontinued - do we need it?
+
   alias(libs.plugins.docker.java.application)
   alias(libs.plugins.nebula.ospackage)
-  alias(libs.plugins.grgit)
-  alias(libs.plugins.semantic.release.version)
   alias(libs.plugins.spotless)
+
+  id 'to.wetransform.conventions' version '2.4.0'
 }
 
-// use java 17
-java {
-  toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
-  }
+def defaultJvmArgs = [
+  '-Dcache.level1.enabled=false',
+  '-Dcache.level1.size=0',
+  '-Dcache.level2.enabled=false',
+  '-Dcache.level2.size=0',
+  '--add-exports=java.base/sun.nio.ch=ALL-UNNAMED',
+  '--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED'
+]
+def appName = 'hale'
+def mainClassName = 'to.wetransform.halecli.CLI'
+
+application {
+  mainClass = mainClassName
+  applicationName = appName
+  applicationDefaultJvmArgs = defaultJvmArgs
 }
 
-group = 'to.wetransform'
+wetransform {
+  repos {
+    // mavenLocal() //XXX for testing
 
-/*
- * Dependencies
- */
+    wetfPublic()
 
-repositories {
-  // mavenLocal() //XXX for testing
+    // this needs to be defined before jcenter/MavenCentral for retrieving JAI
+    maven('https://repo.osgeo.org/repository/release/')
 
-  maven {
-    // wetransform release repository (HALE releases and Eclipse dependencies)
-    url = 'https://artifactory.wetransform.to/artifactory/local'
+    mavenCentral()
   }
 
-  // this needs to be defined before jcenter/MavenCentral for retrieving JAI
-  maven {
-    url = 'https://repo.osgeo.org/repository/release/'
-  }
+  setup {
+    spotless {
+      // use custom config for Spotless
+      disable = true
+    }
 
-  mavenCentral()
+    publish {
+      // switching to jre-jammy as the use pf Alpine as the OS of the hale-cli image breaks derived images that expect Ubuntu
+      baseImage = 'eclipse-temurin:17.0.18_8-jre-jammy'
+      mainClass = mainClassName
+      jvmArgs = defaultJvmArgs
+
+      privateRepo = false
+    }
+  }
 }
 
 configurations {
@@ -119,38 +136,13 @@ dependencies {
   compileOnly libs.spotbugs.annotations
 }
 
-configurations.all {
-  // ensure SNAPSHOTs are updated every time if needed
-  resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}
-def defaultJvmArgs = [
-  '-Dcache.level1.enabled=false',
-  '-Dcache.level1.size=0',
-  '-Dcache.level2.enabled=false',
-  '-Dcache.level2.size=0',
-  '--add-exports=java.base/sun.nio.ch=ALL-UNNAMED',
-  '--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED'
-]
-def appName = 'hale'
-
-application {
-  mainClass = 'to.wetransform.halecli.CLI'
-  applicationName = appName
-  applicationDefaultJvmArgs = defaultJvmArgs
-}
-
-test {
-  // debug classloading
-  // jvmArgs '-verbose:class'
-}
-
 /*
  * plugin.xml and OSGi manifest
  *
  * For the plugin.xml file to be recognised there must be an
  * OSGi manifest. In the resources is a dummy file that is required
  * for tests and execution from within Eclipse or Gradle.
- * In the build Jar, the manifest file is overriden.
+ * In the build Jar, the manifest file is overridden.
  */
 jar {
   manifest {
@@ -185,52 +177,11 @@ distributions {
 }
 
 /*
- * Docker configuration
- * see https://github.com/bmuschko/gradle-docker-plugin
- */
-
-docker {
-  javaApplication {
-    // https://bmuschko.github.io/gradle-docker-plugin/current/user-guide/#extension_2
-    // switching to jre-jammy as the use pf Alpine as the OS of the hale-cli image breaks derived images that expect Ubuntu
-    baseImage = 'eclipse-temurin:17.0.18_8-jre-jammy'
-    maintainer = 'Simon Templer "simon@wetransform.to"'
-    images = [
-      "wetransform/${project.name}:${project.version}",
-      "wetransform/${project.name}:latest"
-    ]
-    // apply JAVA_OPTS to docker plugin as the default args configured in build does not apply to docker plugin
-    jvmArgs = defaultJvmArgs
-  }
-
-  url = project.hasProperty('dockerHost') ? dockerHost : 'http://localdocker:2375'
-
-  registryCredentials {
-    url = 'https://index.docker.io/v1/'
-    username = project.hasProperty('dockerHubUsername') ? dockerHubUsername : ''
-    password = project.hasProperty('dockerHubPassword') ? dockerHubPassword : ''
-    email = project.hasProperty('dockerHubEmail') ? dockerHubEmail : ''
-  }
-}
-
-dockerCreateDockerfile {
-  def buildTime = java.time.ZonedDateTime.now().format(java.time.format.DateTimeFormatter.ISO_INSTANT)
-  label('git.sha': grgit.head().id, 'git.branch': grgit.branch.current.name, 'build.version': version, 'build.time': buildTime)
-  instruction 'COPY hale /hale/'
-}
-
-tasks.register('dockerTagLatest') { dependsOn 'dockerBuildImage' }
-tasks.register('dockerPushLatest') { dependsOn 'dockerPushImage' }
-
-/*
  * Packaging and publishing
  */
 
-// package groovydoc into a jar file
-tasks.register('packageJavadoc', Jar) {
-  dependsOn 'groovydoc'
-  from groovydoc.destinationDir
-  archiveClassifier.set('javadoc')
+dockerCreateDockerfile {
+  instruction 'COPY hale /hale/'
 }
 
 tasks.register('dockerCopyDistResources', Copy) {
@@ -252,34 +203,6 @@ tasks.dockerBuildImage {
   dependsOn 'dockerCopyDistResources'
 }
 
-// package source into a jar file
-tasks.register('packageSources', Jar) {
-  from sourceSets.main.allSource
-  archiveClassifier.set('sources')
-}
-
-publishing {
-  publications {
-    mavenJava(MavenPublication) {
-      from components.java
-      artifact tasks.named('packageSources')
-      artifact tasks.named('packageJavadoc')
-    }
-  }
-
-  repositories {
-    maven {
-      url = project.version.endsWith('-SNAPSHOT') ?
-        'https://artifactory.wetransform.to/artifactory/libs-snapshot-local' :
-        'https://artifactory.wetransform.to/artifactory/libs-release-local'
-      credentials {
-        username = project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : ''
-        password = project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : ''
-      }
-    }
-  }
-}
-
 // Workaround for gradle application plugin 'the input line is too long' error on Windows
 // see https://gist.github.com/jlmelville/2bfe9277e9e2c0ff79b6
 tasks.withType(CreateStartScripts).configureEach { task ->
@@ -288,10 +211,6 @@ tasks.withType(CreateStartScripts).configureEach { task ->
     text = text.replaceFirst(/(set CLASSPATH=%APP_HOME%\\lib\\).*/, { "${it[1]}*" })
     task.windowsScript.write text
   }
-}
-
-tasks.register('uploadArchives') {
-  dependsOn 'publish'
 }
 
 /*
