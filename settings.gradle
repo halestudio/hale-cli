@@ -1,1 +1,14 @@
+pluginManagement {
+  repositories {
+    gradlePluginPortal()
+    maven {
+      url 'https://artifactory.wetransform.to/artifactory/local'
+    }
+  }
+}
+
+plugins {
+  id('to.wetransform.settings.default') version "2.3.0"
+}
+
 rootProject.name= 'hale-cli'

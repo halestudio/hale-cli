@@ -3,11 +3,11 @@ plugins {
   id 'application'
   id 'maven-publish'
   //id 'osgi' // discontinued - do we need it?
-  id 'com.bmuschko.docker-java-application' version '10.0.0'
-  id "com.netflix.nebula.ospackage-application" version "12.3.0"
-  id 'org.ajoberstar.grgit' version '5.3.3'
-  id 'to.wetransform.semantic-release-version' version '2.1.3'
-  id 'com.diffplug.spotless' version '8.3.0'
+  alias(libs.plugins.docker.java.application)
+  alias(libs.plugins.nebula.ospackage)
+  alias(libs.plugins.grgit)
+  alias(libs.plugins.semantic.release.version)
+  alias(libs.plugins.spotless)
 }
 
 // use java 17
@@ -18,11 +18,6 @@ java {
 }
 
 group = 'to.wetransform'
-
-project.ext {
-  haleCoreVersion = '6.3.3'
-  groovyVersion = '2.5.23'
-}
 
 /*
  * Dependencies
@@ -72,56 +67,56 @@ dependencies {
   // HALE
 
   // BOM
-  implementation(platform("eu.esdihumboldt.hale:bom:$haleCoreVersion"))
+  implementation(platform(libs.hale.bom))
 
   /*
    * Features
    */
 
   // CLI and core hale libraries & resources
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.app.feature.cli"
+  implementation libs.hale.app.cli
 
   // core I/O providers and core hale libraries & resources
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.feature.core"
+  implementation libs.hale.io.core
 
   // HTML export
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.feature.html"
+  implementation libs.hale.io.html
 
   /*
    * Additional formats
    */
 
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.mssql"
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.jdbc.msaccess"
+  implementation libs.hale.io.jdbc.mssql
+  implementation libs.hale.io.jdbc.msaccess
 
   // Schematron validation
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.io.schematron"
+  implementation libs.hale.io.schematron
   // replacement for omitted Saxon dependency
   // tested w/ schematron validation in https://github.com/wetransform/exp-schematron/tree/exp/saxon-he
-  implementation 'net.sf.saxon:Saxon-HE:9.9.1-8'
+  implementation libs.saxon.he
 
   /*
    * Other
    */
 
   // user / customer specific
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.adv.merge"
+  implementation libs.hale.adv.merge
 
   // Groovy
-  implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
+  implementation libs.groovy.all
 
   // CLI
   // implementation 'commons-cli:commons-cli:1.9.0'
   // Groovy Shell
-  implementation 'jline:jline:2.14.6'
+  implementation libs.jline
 
   /*
    * Testing
    */
-  testImplementation 'junit:junit:4.13.2'
-  testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
+  testImplementation testLibs.junit
+  testImplementation testLibs.system.rules
 
-  compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.8'
+  compileOnly libs.spotbugs.annotations
 }
 
 configurations.all {

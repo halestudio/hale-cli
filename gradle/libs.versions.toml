@@ -1,0 +1,35 @@
+[versions]
+hale-core = "6.3.3"
+groovy = "2.5.23"
+saxon-he = "9.9.1-8"
+jline = "2.14.6"
+spotbugs-annotations = "4.9.8"
+
+# Plugin versions
+docker-java-application = "10.0.0"
+nebula-ospackage = "12.3.0"
+grgit = "5.3.3"
+semantic-release-version = "2.1.3"
+spotless = "8.3.0"
+wetransform-settings = "2.3.0"
+
+[libraries]
+hale-bom = { group = "eu.esdihumboldt.hale", name = "bom", version.ref = "hale-core" }
+hale-app-cli = { group = "eu.esdihumboldt.hale", name = "eu.esdihumboldt.hale.app.feature.cli" }
+hale-io-core = { group = "eu.esdihumboldt.hale", name = "eu.esdihumboldt.hale.io.feature.core" }
+hale-io-html = { group = "eu.esdihumboldt.hale", name = "eu.esdihumboldt.hale.io.feature.html" }
+hale-io-jdbc-mssql = { group = "eu.esdihumboldt.hale", name = "eu.esdihumboldt.hale.io.jdbc.mssql" }
+hale-io-jdbc-msaccess = { group = "eu.esdihumboldt.hale", name = "eu.esdihumboldt.hale.io.jdbc.msaccess" }
+hale-io-schematron = { group = "eu.esdihumboldt.hale", name = "eu.esdihumboldt.hale.io.schematron" }
+hale-adv-merge = { group = "eu.esdihumboldt.hale", name = "eu.esdihumboldt.hale.adv.merge" }
+saxon-he = { group = "net.sf.saxon", name = "Saxon-HE", version.ref = "saxon-he" }
+groovy-all = { group = "org.codehaus.groovy", name = "groovy-all", version.ref = "groovy" }
+jline = { group = "jline", name = "jline", version.ref = "jline" }
+spotbugs-annotations = { group = "com.github.spotbugs", name = "spotbugs-annotations", version.ref = "spotbugs-annotations" }
+
+[plugins]
+docker-java-application = { id = "com.bmuschko.docker-java-application", version.ref = "docker-java-application" }
+nebula-ospackage = { id = "com.netflix.nebula.ospackage-application", version.ref = "nebula-ospackage" }
+grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
+semantic-release-version = { id = "to.wetransform.semantic-release-version", version.ref = "semantic-release-version" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
