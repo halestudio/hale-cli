@@ -20,7 +20,7 @@ java {
 group = 'to.wetransform'
 
 project.ext {
-  haleCoreVersion = '6.3.2'
+  haleCoreVersion = '6.3.3'
   groovyVersion = '2.5.23'
 }
 
@@ -120,6 +120,8 @@ dependencies {
    */
   testImplementation 'junit:junit:4.13.2'
   testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
+
+  compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.8'
 }
 
 configurations.all {
