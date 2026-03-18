@@ -1,25 +1,14 @@
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath 'org.standardout:gradle-eclipseconfig:1.1.1'
-  }
-}
-
 plugins {
   id 'groovy'
   id 'application'
   id 'maven-publish'
   //id 'osgi' // discontinued - do we need it?
   id 'com.bmuschko.docker-java-application' version '10.0.0'
-  id "nebula.ospackage-application" version "9.1.1"
+  id "com.netflix.nebula.ospackage-application" version "12.3.0"
   id 'org.ajoberstar.grgit' version '5.3.3'
   id 'to.wetransform.semantic-release-version' version '2.1.3'
-  id 'com.diffplug.spotless' version '8.0.0'
+  id 'com.diffplug.spotless' version '8.3.0'
 }
-
-apply plugin: 'org.standardout.eclipseconfig'
 
 // use java 17
 java {
@@ -44,12 +33,12 @@ repositories {
 
   maven {
     // wetransform release repository (HALE releases and Eclipse dependencies)
-    url 'https://artifactory.wetransform.to/artifactory/local'
+    url = 'https://artifactory.wetransform.to/artifactory/local'
   }
 
   // this needs to be defined before jcenter/MavenCentral for retrieving JAI
   maven {
-    url 'https://repo.osgeo.org/repository/release/'
+    url = 'https://repo.osgeo.org/repository/release/'
   }
 
   mavenCentral()
@@ -145,9 +134,13 @@ def defaultJvmArgs = [
   '--add-exports=java.base/sun.nio.ch=ALL-UNNAMED',
   '--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED'
 ]
-mainClassName = 'to.wetransform.halecli.CLI'
-applicationName = 'hale'
-applicationDefaultJvmArgs = defaultJvmArgs
+def appName = 'hale'
+
+application {
+  mainClass = 'to.wetransform.halecli.CLI'
+  applicationName = appName
+  applicationDefaultJvmArgs = defaultJvmArgs
+}
 
 test {
   // debug classloading
@@ -176,8 +169,8 @@ jar {
 ospackage {
   packageName = 'hale-cli'
 
-  link("/usr/local/bin/$applicationName", "/opt/$applicationName/bin/$applicationName")
-  link("/etc/bash_completion.d/hale", "/opt/$applicationName/etc/bash_completion.sh")
+  link("/usr/local/bin/$appName", "/opt/$appName/bin/$appName")
+  link("/etc/bash_completion.d/hale", "/opt/$appName/etc/bash_completion.sh")
 }
 
 ospackage_application {
@@ -229,50 +222,51 @@ dockerCreateDockerfile {
   instruction 'COPY hale /hale/'
 }
 
-task dockerTagLatest(dependsOn: dockerBuildImage) {}
-task dockerPushLatest(dependsOn: dockerPushImage) {}
+tasks.register('dockerTagLatest') { dependsOn 'dockerBuildImage' }
+tasks.register('dockerPushLatest') { dependsOn 'dockerPushImage' }
 
 /*
  * Packaging and publishing
  */
 
 // package groovydoc into a jar file
-task packageJavadoc(type: Jar, dependsOn: 'groovydoc') {
+tasks.register('packageJavadoc', Jar) {
+  dependsOn 'groovydoc'
   from groovydoc.destinationDir
-  classifier = 'javadoc'
+  archiveClassifier.set('javadoc')
 }
 
-task dockerCopyDistResources(type: Copy) {
+tasks.register('dockerCopyDistResources', Copy) {
   description "Copies the distribution resources to a temporary directory for image creation."
-  dependsOn installDist
+  dependsOn 'installDist'
   from installDist.destinationDir.parentFile
   into dockerCreateDockerfile.destFile.get().asFile.parentFile
-  exclude "**/lib/${jar.archiveFileName}"
+  exclude "**/lib/${jar.archiveFileName.get()}"
   into("app-lib") {
     from jar
   }
 }
 
 tasks.dockerSyncBuildContext {
-  finalizedBy dockerCopyDistResources
+  finalizedBy 'dockerCopyDistResources'
 }
 
 tasks.dockerBuildImage {
-  dependsOn dockerCopyDistResources
+  dependsOn 'dockerCopyDistResources'
 }
 
 // package source into a jar file
-task packageSources(type: Jar) {
+tasks.register('packageSources', Jar) {
   from sourceSets.main.allSource
-  classifier = 'sources'
+  archiveClassifier.set('sources')
 }
 
 publishing {
   publications {
     mavenJava(MavenPublication) {
       from components.java
-      artifact packageSources
-      artifact packageJavadoc
+      artifact tasks.named('packageSources')
+      artifact tasks.named('packageJavadoc')
     }
   }
 
@@ -282,23 +276,16 @@ publishing {
         'https://artifactory.wetransform.to/artifactory/libs-snapshot-local' :
         'https://artifactory.wetransform.to/artifactory/libs-release-local'
       credentials {
-        username project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : ''
-        password project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : ''
+        username = project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : ''
+        password = project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : ''
       }
     }
   }
 }
 
-// exclude distZip ands distTar artifacts
-configurations.archives.with {
-  artifacts.remove artifacts.find { it.file == 'zip' }
-  artifacts.remove artifacts.find { it.file == 'tar' }
-}
-
-
 // Workaround for gradle application plugin 'the input line is too long' error on Windows
 // see https://gist.github.com/jlmelville/2bfe9277e9e2c0ff79b6
-tasks.withType(CreateStartScripts).each { task ->
+tasks.withType(CreateStartScripts).configureEach { task ->
   task.doLast {
     String text = task.windowsScript.text
     text = text.replaceFirst(/(set CLASSPATH=%APP_HOME%\\lib\\).*/, { "${it[1]}*" })
@@ -306,7 +293,7 @@ tasks.withType(CreateStartScripts).each { task ->
   }
 }
 
-task uploadArchives {
+tasks.register('uploadArchives') {
   dependsOn 'publish'
 }
 
@@ -314,7 +301,7 @@ task uploadArchives {
  * Gradle wrapper
  */
 wrapper {
-  gradleVersion = '7.6.6'
+  gradleVersion = '9.4.0'
 }
 
 /*
