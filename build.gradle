@@ -7,7 +7,7 @@ plugins {
   alias(libs.plugins.nebula.ospackage)
   alias(libs.plugins.spotless)
 
-  id 'to.wetransform.conventions' version '2.4.0'
+  id 'to.wetransform.conventions' version '3.0.0'
 }
 
 def defaultJvmArgs = [
