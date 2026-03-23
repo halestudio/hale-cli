@@ -8,7 +8,7 @@ pluginManagement {
 }
 
 plugins {
-  id('to.wetransform.settings.default') version "2.4.0"
+  id('to.wetransform.settings.default') version "3.0.0"
 }
 
 rootProject.name= 'hale-cli'
