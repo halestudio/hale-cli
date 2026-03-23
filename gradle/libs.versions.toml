@@ -1,7 +1,7 @@
 [versions]
 hale-core = "6.3.3"
 groovy = "2.5.23"
-saxon-he = "9.9.1-8"
+saxon-he = "12.9"
 jline = "2.14.6"
 spotbugs-annotations = "4.9.8"
 
