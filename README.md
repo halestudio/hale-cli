@@ -1,5 +1,4 @@
-hale-cli
-========
+# hale-cli
 
 [![Docker Hub Badge](https://img.shields.io/badge/Docker-Hub%20Hosted-blue.svg)](https://hub.docker.com/r/wetransform/hale-cli/)
 
@@ -9,21 +8,20 @@ Lists available commands when run without arguments.
 From version 6 onwards hale-cli is based on [hale-core](https://github.com/halestudio/hale-core). The version of hale-cli does not necessarily resemble the version of the hale-core dependencies used.
 Here you can find an overview on which version of hale-core is used:
 
-| hale-cli | hale-core (major version) | Java
-|----------|---------------------------| ----
-| 6.x      | 6                         | 17
+| hale-cli | hale-core (major version) | Java |
+| -------- | ------------------------- | ---- |
+| 6.x      | 6                         | 17   |
 
 Earlier versions of hale-cli were based on [hale»studio](https://github.com/halestudio/hale) dependencies.
 Here you can find an overview on which hale»studio version is used:
 
-| hale-cli | hale»studio (major version) | Java
-| -------- | --------------------------- | ----
-| 5.x      | 5                           | 17
-| 4.x      | 4                           | 8
-| 3.x      | 3                           | 8
+| hale-cli | hale»studio (major version) | Java |
+| -------- | --------------------------- | ---- |
+| 5.x      | 5                           | 17   |
+| 4.x      | 4                           | 8    |
+| 3.x      | 3                           | 8    |
 
-Build
------
+## Build
 
 Build distribution archive:
 
@@ -43,9 +41,7 @@ Build docker image:
 ./gradlew dockerBuildImage
 ```
 
-
-Run
----
+## Run
 
 You can run the application using Gradle.
 
@@ -61,6 +57,7 @@ hale --version
 
 You can provide arguments to run as string in `""` following the below syntax.
 For example pass argument `help` to run command as below
+
 ```
 ./gradlew run --args="help"
 ```
@@ -69,9 +66,7 @@ If using `./gradlew installDist`, the start script can be found in `./build/inst
 
 JVM parameters can be provided to the start script with the `HALE_OPTS` environment variable.
 
-Configuration
--------------
-
+## Configuration
 
 ### Logging
 
@@ -81,18 +76,17 @@ The system properties `log.hale.level` and `log.root.level` can be set to contro
 HALE_OPTS="-Dlog.hale.level=INFO -Dlog.root.level=WARN"
 ```
 
-
 ### Proxy connection
 
 If you need to connect to the internet via a proxy server, you need to provide that information as system properties as well.
 
 The following system properties can be provided to configure the proxy:
 
-* `http.proxyHost` - the proxy host name or IP address
-* `http.proxyPort` - the proxy port number
-* `http.nonProxyHosts` - hosts for which the proxy should not be used, separated by | (optional)
-* `http.proxyUser` - user name for authentication with the proxy (optional)
-* `http.proxyPassword` - password for authentication with the proxy (optional)
+- `http.proxyHost` - the proxy host name or IP address
+- `http.proxyPort` - the proxy port number
+- `http.nonProxyHosts` - hosts for which the proxy should not be used, separated by | (optional)
+- `http.proxyUser` - user name for authentication with the proxy (optional)
+- `http.proxyPassword` - password for authentication with the proxy (optional)
 
 Example:
 
@@ -100,16 +94,15 @@ Example:
 HALE_OPTS="-Dhttp.proxyHost=webcache.example.com -Dhttp.proxyPort=8080 -Dhttp.nonProxyHosts='localhost|host.example.com'"
 ```
 
-
 ### Language
 
 Some commands may produce different results based on your language.
 By default the system language is used.
 You can override the default locale settings via the following system properties:
 
-* `user.language` - two letter code for the language (e.g. `de`)
-* `user.country` - two letter code for the country (e.g. `DE`)
-* `user.variant` - name of the variant, if applicable
+- `user.language` - two letter code for the language (e.g. `de`)
+- `user.country` - two letter code for the country (e.g. `DE`)
+- `user.variant` - name of the variant, if applicable
 
 Example:
 
@@ -117,9 +110,7 @@ Example:
 HALE_OPTS="-Duser.country=DE -Duser.language=de"
 ```
 
-
-Helpers
--------
+## Helpers
 
 Check which files were installed by the `.deb` package:
 

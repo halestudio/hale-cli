@@ -12,7 +12,7 @@ plugins:
       publishCmd: RELEASE=true ./gradlew showVersion verifyReleaseVersion $PUBLISH_TASKS
   - - "@semantic-release/git"
     - assets:
-      - CHANGELOG.md
+        - CHANGELOG.md
   - - "@semantic-release/github"
     - assets:
-      - build/distributions/*
+        - build/distributions/*
