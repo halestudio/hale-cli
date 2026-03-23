@@ -10,16 +10,16 @@
   packageRules: [
     {
       description: "Treat major hale-core updates as breaking change",
-      matchPackagePrefixes: ["eu.esdihumboldt.hale:"],
       matchUpdateTypes: ["major"],
       semanticCommitType: "feat!", // works, but ! is before scope
-      semanticCommitScope: "" // remove scope TODO confirm this works as expected
+      semanticCommitScope: "", // remove scope TODO confirm this works as expected
+      matchPackageNames: ["eu.esdihumboldt.hale:{/,}**"],
     },
     {
       description: "Treat minor hale-core updates as feature",
-      matchPackagePrefixes: ["eu.esdihumboldt.hale:"],
       matchUpdateTypes: ["minor"],
-      semanticCommitType: "feat"
+      semanticCommitType: "feat",
+      matchPackageNames: ["eu.esdihumboldt.hale:{/,}**"],
     },
   ],
 }
