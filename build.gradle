@@ -180,25 +180,23 @@ distributions {
  * Packaging and publishing
  */
 
+// copy distribution resources to docker build context and include in image
+// this is intended for cases where the image is used as a base for derived images that need to use a custom entrypoint
 dockerCreateDockerfile {
   instruction 'COPY hale /hale/'
 }
-
 tasks.register('dockerCopyDistResources', Copy) {
   description "Copies the distribution resources to a temporary directory for image creation."
   dependsOn 'installDist'
   from installDist.destinationDir.parentFile
   into dockerCreateDockerfile.destFile.get().asFile.parentFile
-  exclude "**/lib/${jar.archiveFileName.get()}"
   into("app-lib") {
     from jar
   }
 }
-
 tasks.dockerSyncBuildContext {
   finalizedBy 'dockerCopyDistResources'
 }
-
 tasks.dockerBuildImage {
   dependsOn 'dockerCopyDistResources'
 }
