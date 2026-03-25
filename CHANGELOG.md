@@ -1,3 +1,9 @@
+## [6.1.8](https://github.com/halestudio/hale-cli/compare/v6.1.7...v6.1.8) (2026-03-25)
+
+### Bug Fixes
+
+* fix CLI inclusion in Docker image ([1df7184](https://github.com/halestudio/hale-cli/commit/1df7184f349701c02be8a4ae3e14cfbf53ad579f))
+
 ## [6.1.7](https://github.com/halestudio/hale-cli/compare/v6.1.6...v6.1.7) (2026-03-19)
 
 ### Bug Fixes
