@@ -1,5 +1,5 @@
 [versions]
-hale-core = "6.3.3"
+hale-core = "6.4.0"
 groovy = "2.5.23"
 saxon-he = "9.9.1-8"
 jline = "2.14.6"

@@ -71,8 +71,9 @@ public class ProjectMigrator {
                   .orElse(Collections.emptyList()).stream();
             }
             else {
-              return migration.entityReplacement(entity, log).map(e -> Collections.singletonList(e))
-                  .orElse(Collections.emptyList()).stream();
+              return migration.entityReplacement(entity, log)
+                  .map(e -> Collections.singletonList(e.getMatch())).orElse(Collections.emptyList())
+                  .stream();
             }
           })
 
