@@ -47,7 +47,7 @@ wetransform {
 
     publish {
       // switching to jre-jammy as the use pf Alpine as the OS of the hale-cli image breaks derived images that expect Ubuntu
-      baseImage = 'eclipse-temurin:17.0.18_8-jre-jammy'
+      baseImage = 'eclipse-temurin:17.0.19_10-jre-jammy'
       mainClass = mainClassName
       jvmArgs = defaultJvmArgs
 
