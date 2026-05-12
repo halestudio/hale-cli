@@ -215,7 +215,7 @@ tasks.withType(CreateStartScripts).configureEach { task ->
  * Gradle wrapper
  */
 wrapper {
-  gradleVersion = '9.5.0'
+  gradleVersion = '9.5.1'
 }
 
 /*
