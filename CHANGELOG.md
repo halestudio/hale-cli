@@ -1,3 +1,12 @@
+## [6.2.1](https://github.com/halestudio/hale-cli/compare/v6.2.0...v6.2.1) (2026-07-09)
+
+### Bug Fixes
+
+* **deps:** only use specific Groovy dependencies ([0292ba0](https://github.com/halestudio/hale-cli/commit/0292ba0cb32b4a1a312ea6b1bf4875584ca51155))
+* **deps:** update dependency eu.esdihumboldt.hale:bom to v6.4.1 ([7992f58](https://github.com/halestudio/hale-cli/commit/7992f58a0b3a7f1b689440677f6271be565c095c))
+* **deps:** update spotbugs.annotations to v4.10.1 ([dee1799](https://github.com/halestudio/hale-cli/commit/dee1799b7969367205991d80d328778811d12758))
+* **deps:** update spotbugs.annotations to v4.10.2 ([686794e](https://github.com/halestudio/hale-cli/commit/686794ee37c0078158bcb8e884d6c22ec2668533))
+
 ## [6.2.0](https://github.com/halestudio/hale-cli/compare/v6.1.8...v6.2.0) (2026-04-23)
 
 ### Features
