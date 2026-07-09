@@ -120,7 +120,7 @@ dependencies {
   implementation libs.hale.adv.merge
 
   // Groovy
-  implementation libs.groovy.all
+  implementation libs.bundles.groovy
 
   // CLI
   // implementation 'commons-cli:commons-cli:1.9.0'
