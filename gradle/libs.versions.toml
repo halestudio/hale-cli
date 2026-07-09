@@ -1,6 +1,5 @@
 [versions]
 hale-core = "6.4.1"
-groovy = "2.5.23"
 saxon-he = "9.9.1-8"
 jline = "2.14.6"
 spotbugs-annotations = "4.10.2"
@@ -23,9 +22,17 @@ hale-io-jdbc-msaccess = { group = "eu.esdihumboldt.hale", name = "eu.esdihumbold
 hale-io-schematron = { group = "eu.esdihumboldt.hale", name = "eu.esdihumboldt.hale.io.schematron" }
 hale-adv-merge = { group = "eu.esdihumboldt.hale", name = "eu.esdihumboldt.hale.adv.merge" }
 saxon-he = { group = "net.sf.saxon", name = "Saxon-HE", version.ref = "saxon-he" }
-groovy-all = { group = "org.codehaus.groovy", name = "groovy-all", version.ref = "groovy" }
 jline = { group = "jline", name = "jline", version.ref = "jline" }
 spotbugs-annotations = { group = "com.github.spotbugs", name = "spotbugs-annotations", version.ref = "spotbugs-annotations" }
+
+groovy-json = { group = "org.codehaus.groovy", name = "groovy-json" }
+groovy-xml = { group = "org.codehaus.groovy", name = "groovy-xml" }
+groovy-datetime = { group = "org.codehaus.groovy", name = "groovy-datetime" }
+groovy-nio = { group = "org.codehaus.groovy", name = "groovy-nio" }
+groovy-templates = { group = "org.codehaus.groovy", name = "groovy-templates" }
+groovy-groovysh = { group = "org.codehaus.groovy", name = "groovy-groovysh" }
+groovy-cli-picocli = { group = "org.codehaus.groovy", name = "groovy-cli-picocli" }
+groovy-cli-commons = { group = "org.codehaus.groovy", name = "groovy-cli-commons" }
 
 [plugins]
 docker-java-application = { id = "com.bmuschko.docker-java-application", version.ref = "docker-java-application" }
@@ -33,3 +40,6 @@ nebula-ospackage = { id = "com.netflix.nebula.ospackage-application", version.re
 grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
 semantic-release-version = { id = "to.wetransform.semantic-release-version", version.ref = "semantic-release-version" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+
+[bundles]
+groovy = ["groovy-json", "groovy-xml", "groovy-datetime", "groovy-nio", "groovy-templates", "groovy-groovysh", "groovy-cli-picocli", "groovy-cli-commons"]
