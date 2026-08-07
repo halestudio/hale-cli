@@ -2,7 +2,7 @@
 hale-core = "6.4.1"
 saxon-he = "9.9.1-8"
 jline = "2.14.6"
-spotbugs-annotations = "4.10.2"
+spotbugs-annotations = "4.10.3"
 
 # Plugin versions
 docker-java-application = "10.0.0"
