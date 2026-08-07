@@ -1,6 +1,6 @@
 [versions]
 hale-core = "6.4.1"
-saxon-he = "9.9.1-8"
+saxon-he = "13.0"
 jline = "2.14.6"
 spotbugs-annotations = "4.10.2"
 
