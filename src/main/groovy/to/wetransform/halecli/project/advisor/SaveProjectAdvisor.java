@@ -17,10 +17,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import eu.esdihumboldt.hale.common.align.io.AlignmentIO;
 import eu.esdihumboldt.hale.common.align.model.Alignment;
 import eu.esdihumboldt.hale.common.core.HalePlatform;
 import eu.esdihumboldt.hale.common.core.io.IOAdvisor;
 import eu.esdihumboldt.hale.common.core.io.IOAdvisorRegister;
+import eu.esdihumboldt.hale.common.core.io.extension.IOAdvisorExtension;
 import eu.esdihumboldt.hale.common.core.io.impl.AbstractIOAdvisor;
 import eu.esdihumboldt.hale.common.core.io.project.ProjectIO;
 import eu.esdihumboldt.hale.common.core.io.project.ProjectWriter;
@@ -37,6 +42,8 @@ import eu.esdihumboldt.hale.common.schema.model.SchemaSpace;
  */
 public class SaveProjectAdvisor extends AbstractIOAdvisor<ProjectWriter>
     implements IOAdvisorRegister {
+
+  private static final Logger log = LoggerFactory.getLogger(SaveProjectAdvisor.class);
 
   private final Map<String, IOAdvisor<?>> advisors = new HashMap<>();
 
@@ -65,6 +72,18 @@ public class SaveProjectAdvisor extends AbstractIOAdvisor<ProjectWriter>
     provider.getProject().setHaleVersion(HalePlatform.getCoreVersion());
     Map<String, ProjectFile> projectFiles = ProjectIO.createDefaultProjectFiles(this);
 
+    // only keep project files that can be saved in this context (i.e. that
+    // have a save advisor available), e.g. styles.sld has none headlessly
+    projectFiles.entrySet().removeIf(entry -> {
+      boolean supported = AlignmentIO.PROJECT_FILE_ALIGNMENT.equals(entry.getKey());
+      if (!supported) {
+        log.warn(
+            "Project file '{}' is not supported when saving projects with hale-cli and will be skipped.",
+            entry.getKey());
+      }
+      return !supported;
+    });
+
     for (ProjectFile pf : projectFiles.values()) {
       if (pf instanceof AdvisorProjectFile) {
         ((AdvisorProjectFile) pf).setAdvisorRegister(this);
@@ -80,6 +99,10 @@ public class SaveProjectAdvisor extends AbstractIOAdvisor<ProjectWriter>
   @Override
   public IOAdvisor<?> findAdvisor(String actionId, ServiceProvider serviceProvider) {
     IOAdvisor<?> advisor = advisors.get(actionId);
+    if (advisor == null) {
+      // fall back to the advisor extension (the default register)
+      return IOAdvisorExtension.getInstance().findAdvisor(actionId, serviceProvider);
+    }
     advisor.setServiceProvider(serviceProvider); // not sure if this is needed here
     return advisor;
   }

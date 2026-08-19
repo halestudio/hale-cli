@@ -70,5 +70,10 @@ class SaveProjectTest {
 
     assertTrue(targetFile.exists())
     assertTrue(targetFile.length() > 0)
+
+    // the alignment is saved as separate project file
+    assertTrue(new File(tempFolder, 'saved.halex.alignment.xml').exists())
+    // unsupported project files like styles.sld are skipped
+    assertFalse(new File(tempFolder, 'saved.halex.styles.sld').exists())
   }
 }
