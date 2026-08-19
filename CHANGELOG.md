@@ -1,3 +1,10 @@
+## [6.2.2](https://github.com/halestudio/hale-cli/compare/v6.2.1...v6.2.2) (2026-08-19)
+
+### Bug Fixes
+
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.10.3 ([ab43579](https://github.com/halestudio/hale-cli/commit/ab4357916192b1c6205572d3cf4ca1d905822b0a))
+* NPE when saving a project with unsupported project files ([e480076](https://github.com/halestudio/hale-cli/commit/e4800762897181a311103cbf5e09db41e2ddfbb8))
+
 ## [6.2.1](https://github.com/halestudio/hale-cli/compare/v6.2.0...v6.2.1) (2026-07-09)
 
 ### Bug Fixes
