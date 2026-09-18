@@ -1,5 +1,5 @@
 [versions]
-hale-core = "6.4.1"
+hale-core = "6.5.0"
 saxon-he = "9.9.1-8"
 jline = "2.14.6"
 spotbugs-annotations = "4.10.4"
