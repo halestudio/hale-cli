@@ -1,3 +1,13 @@
+## [6.3.0](https://github.com/halestudio/hale-cli/compare/v6.2.2...v6.3.0) (2026-09-18)
+
+### Features
+
+* **deps:** update dependency eu.esdihumboldt.hale:bom to v6.5.0 ([b6661b9](https://github.com/halestudio/hale-cli/commit/b6661b9ff1102808c16948913c38d0918576aa53))
+
+### Bug Fixes
+
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.10.4 ([c805d40](https://github.com/halestudio/hale-cli/commit/c805d40cd67a0bd2f5136cf5e1fabe0413fa0a98))
+
 ## [6.2.2](https://github.com/halestudio/hale-cli/compare/v6.2.1...v6.2.2) (2026-08-19)
 
 ### Bug Fixes
