@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   release:
-    uses: wetransform/gha-workflows/.github/workflows/gradle-library-publish.yml@e369ce8f658250de66c8a7e6945bf7bb592648ab # v4.6.2
+    uses: wetransform/gha-workflows/.github/workflows/gradle-library-publish.yml@7971851395511ca7b1f5dbaea1835d9253f18388 # v4.7.1
     with:
       build-tasks: clean check
       publish-tasks: distZip buildDeb publish # performed after setting release version
@@ -32,7 +32,7 @@ jobs:
   docker:
     needs: [release]
     if: ${{ needs.release.outputs.release-published != 'false' && needs.release.outputs.release-published != '' }}
-    uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@e369ce8f658250de66c8a7e6945bf7bb592648ab # v4.6.2
+    uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@7971851395511ca7b1f5dbaea1835d9253f18388 # v4.7.1
     with:
       checkout-ref: refs/tags/v${{needs.release.outputs.release-version}} # check out release tag
       image-tag: wetransform/hale-cli:latest # image to scan
