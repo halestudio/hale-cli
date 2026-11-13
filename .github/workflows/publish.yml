@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   artifacts:
-    uses: wetransform/gha-workflows/.github/workflows/gradle-library.yml@835bff77f691fa8307f03ab6d1b79f6f478bd0a5 # v4.7.2
+    uses: wetransform/gha-workflows/.github/workflows/gradle-library.yml@abcd91d90282cfe0f35cf46fce67818a6a5e513b # v4.8.0
     with:
       build-tasks: clean check distZip buildDeb
       publish-tasks: publish
@@ -25,7 +25,7 @@ jobs:
       WETF_ARTIFACTORY_PASSWORD: ${{ secrets.WETF_ARTIFACTORY_PASSWORD }}
 
   docker:
-    uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@835bff77f691fa8307f03ab6d1b79f6f478bd0a5 # v4.7.2
+    uses: wetransform/gha-workflows/.github/workflows/gradle-service-publish.yml@abcd91d90282cfe0f35cf46fce67818a6a5e513b # v4.8.0
     with:
       image-tag: wetransform/hale-cli:latest # image to scan
       # don't run tests since this is already done in artifacts
