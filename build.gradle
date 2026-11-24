@@ -11,10 +11,6 @@ plugins {
 }
 
 def defaultJvmArgs = [
-  '-Dcache.level1.enabled=false',
-  '-Dcache.level1.size=0',
-  '-Dcache.level2.enabled=false',
-  '-Dcache.level2.size=0',
   '--add-exports=java.base/sun.nio.ch=ALL-UNNAMED',
   '--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED'
 ]
