@@ -20,10 +20,8 @@ import groovy.cli.picocli.OptionAccessor
 import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.core.io.report.IOReport
 import eu.esdihumboldt.hale.common.instance.io.InstanceWriter
-import eu.esdihumboldt.hale.common.instance.model.DataSet
 import eu.esdihumboldt.hale.common.instance.model.InstanceCollection
-import eu.esdihumboldt.hale.common.instance.orient.storage.BrowseOrientInstanceCollection
-import eu.esdihumboldt.hale.common.instance.orient.storage.LocalOrientDB
+import eu.esdihumboldt.hale.common.instance.store.InstanceStore
 import eu.esdihumboldt.hale.common.schema.model.Schema
 import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
 import eu.esdihumboldt.util.cli.CLIUtil
@@ -90,17 +88,15 @@ class RewriteCommand implements Command {
     assert writer
 
     // store in temporary database (if necessary)
-    LocalOrientDB db
+    InstanceStore store
     if (!writer.passthrough) {
-      db = InstanceCLI.loadTempDatabase(source, schema, reports)
+      store = InstanceCLI.loadTempDatabase(source, schema, reports)
     }
     try {
-      // replace source with database
-      if (db != null) {
-        source = new BrowseOrientInstanceCollection(db, schema, DataSet.SOURCE)
+      // replace source with store
+      if (store != null) {
+        source = store.getInstances(schema)
       }
-      // Note: It is important that OrientDB caches are disabled
-      // via system properties to have a decent performance
 
       // write instances
       DefaultSchemaSpace schemaSpace = new DefaultSchemaSpace()
@@ -112,8 +108,8 @@ class RewriteCommand implements Command {
         throw new IllegalStateException('Writing target file failed: ' + report.summary)
       }
     } finally {
-      if (db != null) {
-        db.delete()
+      if (store != null) {
+        store.close()
       }
     }
 
