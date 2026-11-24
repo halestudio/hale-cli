@@ -7,10 +7,10 @@ on:
 
 jobs:
   check:
-    uses: wetransform/gha-workflows/.github/workflows/gradle-library-check.yml@835bff77f691fa8307f03ab6d1b79f6f478bd0a5 # v4.7.2
+    uses: wetransform/gha-workflows/.github/workflows/gradle-library-check.yml@04362756c3b3abc8c2505617a37ec16fb0a5b7ce # v4.9.0
 
   docker:
-    uses: wetransform/gha-workflows/.github/workflows/gradle-service-check.yml@835bff77f691fa8307f03ab6d1b79f6f478bd0a5 # v4.7.2
+    uses: wetransform/gha-workflows/.github/workflows/gradle-service-check.yml@04362756c3b3abc8c2505617a37ec16fb0a5b7ce # v4.9.0
     with:
       image-tag: wetransform/hale-cli:latest # image to scan
       # don't run tests since this is already done in check
