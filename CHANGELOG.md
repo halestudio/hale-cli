@@ -1,3 +1,17 @@
+## [7.0.0](https://github.com/halestudio/hale-cli/compare/v6.3.2...v7.0.0) (2026-11-24)
+
+### ⚠ BREAKING CHANGES
+
+* update dependency eu.esdihumboldt.hale:bom to v7
+
+### Features
+
+* update dependency eu.esdihumboldt.hale:bom to v7 ([580b473](https://github.com/halestudio/hale-cli/commit/580b47322d77cf8933dc72cc7e09690305831c8e))
+
+### Bug Fixes
+
+* use hale-core instance store instead of removed OrientDB store ([6d52f05](https://github.com/halestudio/hale-cli/commit/6d52f052ccb7636e42cfcc2a3cc7b2cf7693100d))
+
 ## [6.3.2](https://github.com/halestudio/hale-cli/compare/v6.3.1...v6.3.2) (2026-10-22)
 
 ### Bug Fixes
