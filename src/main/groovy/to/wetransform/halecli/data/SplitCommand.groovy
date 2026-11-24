@@ -27,10 +27,8 @@ import eu.esdihumboldt.hale.common.core.report.ReportHandler
 import eu.esdihumboldt.hale.common.instance.graph.reference.ReferenceGraph
 import eu.esdihumboldt.hale.common.instance.graph.reference.impl.XMLInspector
 import eu.esdihumboldt.hale.common.instance.io.InstanceWriter
-import eu.esdihumboldt.hale.common.instance.model.DataSet
 import eu.esdihumboldt.hale.common.instance.model.InstanceCollection
-import eu.esdihumboldt.hale.common.instance.orient.storage.BrowseOrientInstanceCollection
-import eu.esdihumboldt.hale.common.instance.orient.storage.LocalOrientDB
+import eu.esdihumboldt.hale.common.instance.store.InstanceStore
 import eu.esdihumboldt.hale.common.schema.model.Schema
 import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchemaSpace
 import eu.esdihumboldt.util.cli.Command
@@ -85,12 +83,10 @@ class SplitCommand implements Command {
 
     // store in temporary database
     //XXX reason is that sources may have slow InstanceReference resolving (e.g. XML/GML)
-    LocalOrientDB db = InstanceCLI.loadTempDatabase(source, schema, reports)
+    InstanceStore store = InstanceCLI.loadTempDatabase(source, schema, reports)
     try {
-      // replace source with database
-      source = new BrowseOrientInstanceCollection(db, schema, DataSet.SOURCE)
-      // Note: It is important that OrientDB caches are disabled
-      // via system properties to have a decent performance
+      // replace source with store
+      source = store.getInstances(schema)
 
       println "Building reference graph..."
 
@@ -137,7 +133,7 @@ class SplitCommand implements Command {
       }
       println "Total $partCount parts"
     } finally {
-      db.delete()
+      store.close()
     }
 
     return 0

@@ -19,22 +19,27 @@ import groovy.cli.picocli.CliBuilder
 import groovy.cli.picocli.OptionAccessor
 import groovy.transform.CompileStatic
 
-import org.eclipse.core.runtime.jobs.Job
+import java.nio.file.Files
+import java.nio.file.Path
 
-import com.google.common.io.Files
+import org.eclipse.core.runtime.IStatus
 
 import eu.esdihumboldt.hale.app.transform.ConsoleProgressMonitor
 import eu.esdihumboldt.hale.common.cli.HaleCLIUtil
 import eu.esdihumboldt.hale.common.core.io.impl.LogProgressIndicator
 import eu.esdihumboldt.hale.common.core.io.report.IOReport
+import eu.esdihumboldt.hale.common.core.report.Message
+import eu.esdihumboldt.hale.common.core.report.Report
 import eu.esdihumboldt.hale.common.core.report.ReportHandler
 import eu.esdihumboldt.hale.common.core.service.ServiceProvider
 import eu.esdihumboldt.hale.common.headless.transform.filter.InstanceFilterDefinition
 import eu.esdihumboldt.hale.common.instance.io.InstanceReader
 import eu.esdihumboldt.hale.common.instance.io.InstanceWriter
+import eu.esdihumboldt.hale.common.instance.model.DataSet
 import eu.esdihumboldt.hale.common.instance.model.InstanceCollection
-import eu.esdihumboldt.hale.common.instance.orient.storage.LocalOrientDB
-import eu.esdihumboldt.hale.common.instance.orient.storage.StoreInstancesJob
+import eu.esdihumboldt.hale.common.instance.store.InstanceStore
+import eu.esdihumboldt.hale.common.instance.store.InstanceStoreExtension
+import eu.esdihumboldt.hale.common.instance.store.StoreInstancesJob
 import eu.esdihumboldt.hale.common.schema.model.SchemaSpace
 import eu.esdihumboldt.hale.common.schema.model.TypeIndex
 import eu.esdihumboldt.util.Pair
@@ -212,28 +217,70 @@ class InstanceCLI {
 
   // other helpers
 
+  /**
+   * Load instances into a temporary instance store.
+   *
+   * @param instances the instances to store
+   * @param schema the schema of the instances
+   * @param reports the report handler, may be <code>null</code>
+   * @return the store holding the instances, the caller must close it
+   * @throws IllegalStateException if not all instances could be stored
+   */
   @CompileStatic
-  static LocalOrientDB loadTempDatabase(InstanceCollection instances, TypeIndex schema,
+  static InstanceStore loadTempDatabase(InstanceCollection instances, TypeIndex schema,
     ReportHandler reports = null) {
-    // create db
-    File tmpDir = Files.createTempDir()
-    LocalOrientDB db = new LocalOrientDB(tmpDir)
-    tmpDir.deleteOnExit()
-
+    // the store owns the directory and deletes it when it is closed
+    Path tmpDir = Files.createTempDirectory('hale-cli-store')
     ServiceProvider serviceProvider = null
+    InstanceStore store
+    try {
+      store = InstanceStoreExtension.getInstance().createStore(DataSet.SOURCE, tmpDir,
+        serviceProvider)
+    } catch (Throwable e) {
+      // no store that could clean up the directory
+      tmpDir.toFile().deleteDir()
+      throw e
+    }
 
-    // run store instance job first...
-    Job storeJob = new StoreInstancesJob("Load source instances into temporary database",
-      db, instances, serviceProvider, reports, false) {
+    // collect the reports of the job to be able to check them for errors
+    List<Report<?>> storeReports = []
+    ReportHandler collector = { Report<?> report ->
+      storeReports.add(report)
+      reports?.publishReport(report)
+    } as ReportHandler
 
-        @Override
-        protected void onComplete() {
-          // do nothing
+    boolean success = false
+    try {
+      StoreInstancesJob storeJob = new StoreInstancesJob(
+        "Load source instances into temporary database", store, instances, schema,
+        serviceProvider, collector, false)
+      IStatus status = storeJob.run(new ConsoleProgressMonitor())
+      if (!status.isOK()) {
+        throw new IllegalStateException(
+        'Loading instances into temporary database failed: ' + status.message, status.exception)
+      }
+      // instances that cannot be stored are skipped by the job and only reported as errors
+      int errors = 0
+      String firstError = null
+      for (Report<?> report : storeReports) {
+        errors += report.totalErrors
+        if (firstError == null && !report.errors.isEmpty()) {
+          firstError = ((Message) report.errors.iterator().next()).message
         }
       }
+      if (errors > 0) {
+        // the listed messages may be capped, so there is not necessarily a message
+        String reason = firstError ? ", first error: ${firstError}" : ''
+        throw new IllegalStateException(
+        "Loading instances into temporary database failed: ${errors} error(s) reported${reason} - the data would be incomplete")
+      }
+      success = true
+    } finally {
+      if (!success) {
+        store.close()
+      }
+    }
 
-    storeJob.run(new ConsoleProgressMonitor())
-
-    db
+    store
   }
 }
