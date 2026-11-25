@@ -10,6 +10,7 @@ Here you can find an overview on which version of hale-core is used:
 
 | hale-cli | hale-core (major version) | Java |
 | -------- | ------------------------- | ---- |
+| 7.x      | 7                         | 17   |
 | 6.x      | 6                         | 17   |
 
 Earlier versions of hale-cli were based on [hale»studio](https://github.com/halestudio/hale) dependencies.
